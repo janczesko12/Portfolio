@@ -119,7 +119,8 @@ em { font-style:normal; color:var(--accent); }
 .project-card:nth-child(1), .project-card:nth-child(4), .project-card:nth-child(6) { grid-column:span 7; }
 .project-card:nth-child(2), .project-card:nth-child(3), .project-card:nth-child(5) { grid-column:span 5; }
 .project-index { color:#666d7b; font:700 .73rem ui-monospace,SFMono-Regular,Menlo,monospace; }
-.project-icon { position:absolute; top:19px; right:19px; width:45px; height:45px; border:1px solid var(--line); border-radius:14px; display:grid; place-items:center; color:var(--accent); background:rgba(255,255,255,.025); }
+.project-icon { position:absolute; top:19px; right:19px; width:54px; height:54px; border:1px solid var(--line); border-radius:15px; display:grid; place-items:center; color:var(--accent); background:rgba(255,255,255,.025); box-shadow:inset 0 0 18px rgba(255,255,255,.02); }
+.project-icon svg { width:30px; height:30px; display:block; filter:drop-shadow(0 0 8px rgba(183,255,74,.2)); }
 .project-card h3 { margin:55px 0 9px; font-size:1.65rem; letter-spacing:-.025em; }
 .project-card p { margin:0; color:var(--muted); max-width:650px; font-size:.9rem; }
 .project-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:19px; }
