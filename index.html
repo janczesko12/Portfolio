@@ -155,6 +155,31 @@
     </section>
   </main>
 
+  <div id="project-modal" class="project-modal" aria-hidden="true">
+    <div class="project-modal-backdrop" data-close-modal></div>
+    <section class="project-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-project-title">
+      <button class="modal-close" type="button" aria-label="Zamknij" data-close-modal>×</button>
+      <div class="modal-project-icon" id="modal-project-icon"></div>
+      <p class="kicker">SZCZEGÓŁY PROJEKTU</p>
+      <h2 id="modal-project-title">Projekt</h2>
+      <p id="modal-project-description" class="modal-description"></p>
+      <div class="modal-columns">
+        <div>
+          <span class="stack-label">CO ZAWIERA</span>
+          <ul id="modal-project-features" class="modal-list"></ul>
+        </div>
+        <div>
+          <span class="stack-label">TECHNOLOGIE</span>
+          <div id="modal-project-tags" class="chips modal-chips"></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <a id="modal-project-link" class="btn btn-primary" href="#" target="_blank" rel="noreferrer">Otwórz projekt <span>↗</span></a>
+        <button class="btn btn-ghost" type="button" data-close-modal>Wróć</button>
+      </div>
+    </section>
+  </div>
+
   <footer class="footer">
     <span>© <span id="year"></span> MYTHORIA</span>
     <span>zrobione z kodu ✦</span>
