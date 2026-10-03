@@ -1,125 +1,165 @@
 <!doctype html>
 <html lang="pl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="mythoria.pl — osobiste portfolio Jana">
-<title>mythoria.pl — Jan</title>
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Portfolio — projekty programistyczne, AI, automatyzacje i aplikacje." />
+  <meta name="theme-color" content="#0a0b10" />
+  <title>Mythoria — Portfolio</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<header>
-  <a class="brand" href="#start">mythoria<span>.pl</span></a>
-  <nav>
-    <a href="#start">Start</a><a href="#about">O mnie</a><a href="#projects">Projekty</a>
-    <a href="#setup">Mój setup</a><a href="#contact">Kontakt</a>
-  </nav>
-</header>
+  <div class="noise" aria-hidden="true"></div>
 
-<main>
-<section id="start" class="hero">
-  <div class="hero-text">
-    <div class="small">WŁAŚNIE TU ZACZYNA SIĘ MYTHORIA</div>
-    <h1>Hej, jestem<br><span>Jan.</span></h1>
-    <p class="intro">Lubię tworzyć rzeczy, które naprawdę działają.</p>
-    <p class="muted">Programowanie, aplikacje, automatyzacja, AI i własne projekty. Zamiast tylko korzystać z technologii, wolę sprawdzić, co sam mogę z niej zbudować.</p>
-    <div class="actions"><a class="btn" href="#projects">Zobacz moje projekty</a><a class="link" href="#about">Poznaj mnie ↓</a></div>
-  </div>
-  <div class="hero-card">
-    <div class="terminal-top"><i></i><i></i><i></i></div>
-    <div class="terminal">
-      <p><span class="blue">jan@mythoria</span>:~$ whoami</p>
-      <p class="white">twórca • programista • kombinator</p>
-      <p><span class="blue">jan@mythoria</span>:~$ current_project</p>
-      <p class="white">Lista Zakupów / AI / własne pomysły</p>
-      <p><span class="blue">jan@mythoria</span>:~$ <b>_</b></p>
-    </div>
-  </div>
-</section>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Strona główna">
+      <span class="brand-mark">M</span>
+      <span>MYTHORIA</span>
+    </a>
 
-<section id="about" class="section about">
-  <div>
-    <div class="small">O MNIE</div>
-    <h2>Nie siedzę tylko przy tutorialach.</h2>
-  </div>
-  <div class="about-copy">
-    <p>Najbardziej w programowaniu podoba mi się moment, kiedy pomysł przestaje być pomysłem i zaczyna działać.</p>
-    <p>Tworzę aplikacje, strony, boty i różne eksperymentalne projekty. Czasem zaczynam od prostego pytania „a da się to zrobić?”, a później kończy się to całym projektem.</p>
-    <p>Mythoria.pl jest miejscem, w którym chcę pokazywać właśnie tę stronę — rzeczy, które buduję, testuję i rozwijam.</p>
-  </div>
-</section>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
 
-<section id="projects" class="section">
-  <div class="small">MOJE PROJEKTY</div>
-  <div class="section-title"><h2>To tutaj dzieje się najwięcej.</h2><span>wybrane rzeczy, które tworzę</span></div>
-  <div class="projects">
-    <article>
-      <div class="num">01</div><h3>Lista Zakupów</h3>
-      <p>Aplikacja zakupowa na Androida. Listy, sklepy i synchronizacja danych — projekt rozwijany z wykorzystaniem Firebase.</p>
-      <div class="tags"><span>Kotlin</span><span>Android</span><span>Firebase</span></div>
-    </article>
-    <article>
-      <div class="num">02</div><h3>YarnBot</h3>
-      <p>Projekt automatyzacji gry mobilnej. Łączy sterowanie urządzeniem, ADB, przechwytywanie obrazu i analizę obrazu.</p>
-      <div class="tags"><span>Python</span><span>OpenCV</span><span>ADB</span></div>
-    </article>
-    <article>
-      <div class="num">03</div><h3>JanBot</h3>
-      <p>Własny bot Discord z funkcjami ekonomii, XP, moderacji i bazą danych.</p>
-      <div class="tags"><span>Python</span><span>Discord.py</span><span>SQLite</span></div>
-    </article>
-    <article>
-      <div class="num">04</div><h3>Projekty z AI</h3>
-      <p>Eksperymentuję z lokalnymi modelami, API i agentami AI. Sprawdzam, jak wykorzystać je do automatyzacji i budowania własnych narzędzi.</p>
-      <div class="tags"><span>AI</span><span>Ollama</span><span>Python</span></div>
-    </article>
-    <article>
-      <div class="num">05</div><h3>ESP32 / kamera</h3>
-      <p>Eksperymenty z kamerami, ESP32-CAM, rozpoznawaniem obrazu i automatycznym odczytem tablic.</p>
-      <div class="tags"><span>ESP32</span><span>OpenCV</span><span>OCR</span></div>
-    </article>
-    <article>
-      <div class="num">06</div><h3>Polska Wieś Simulator</h3>
-      <p>Projekt gry w Roblox Studio z własnym systemem działek, upraw, pieniędzy i zapisywania postępów.</p>
-      <div class="tags"><span>Roblox</span><span>Lua</span><span>DataStore</span></div>
-    </article>
-  </div>
-</section>
+    <nav id="nav" class="nav" aria-label="Główna nawigacja">
+      <a href="#about">O mnie</a>
+      <a href="#projects">Projekty</a>
+      <a href="#stack">Stack</a>
+      <a href="#contact">Kontakt</a>
+    </nav>
+  </header>
 
-<section id="setup" class="section setup">
-  <div class="small">MÓJ ŚWIAT</div>
-  <h2>Narzędzia, których używam.</h2>
-  <p class="muted wide">Nie przywiązuję się do jednej technologii. Dobieram narzędzia do tego, co akurat chcę zbudować.</p>
-  <div class="tools">
-    <div><b>Python</b><small>boty • AI • automatyzacja</small></div>
-    <div><b>Kotlin</b><small>aplikacje Android</small></div>
-    <div><b>Firebase</b><small>backend • synchronizacja</small></div>
-    <div><b>OpenCV</b><small>wizja komputerowa</small></div>
-    <div><b>JavaScript</b><small>web • interfejsy</small></div>
-    <div><b>Git / GitHub</b><small>projekty • wersjonowanie</small></div>
-    <div><b>WSL / Linux</b><small>narzędzia • środowisko</small></div>
-    <div><b>Ollama</b><small>lokalne modele AI</small></div>
-  </div>
-</section>
+  <main id="top">
+    <section class="hero section-pad">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span></span> portfolio / 2026</div>
+        <h1>Buduję <em>cyfrowe rzeczy</em>, które mają sens.</h1>
+        <p class="hero-lead">
+          Aplikacje, automatyzacje, projekty AI i małe narzędzia rozwiązujące konkretne problemy.
+          Od pomysłu do działającego produktu.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#projects">Zobacz projekty <span>↗</span></a>
+          <a class="btn btn-ghost" href="#contact">Kontakt</a>
+        </div>
 
-<section class="now">
-  <div>
-    <div class="small">AKTUALNIE</div>
-    <h2>Coś nowego zawsze jest w drodze.</h2>
-    <p>Mythoria nie jest skończonym projektem. To miejsce, które będzie się zmieniać razem z kolejnymi rzeczami, które buduję.</p>
-  </div>
-  <div class="now-mark">MYTHORIA<br><span>BUILD / TEST / REPEAT</span></div>
-</section>
+        <div class="hero-meta">
+          <div><b>AI</b><span>integracje i eksperymenty</span></div>
+          <div><b>DEV</b><span>web • mobile • Python</span></div>
+          <div><b>AUTO</b><span>skrypty i automatyzacje</span></div>
+        </div>
+      </div>
 
-<section id="contact" class="contact">
-  <div class="small">KONTAKT</div>
-  <h2>Masz pomysł?</h2>
-  <p>Jeżeli chcesz się odezwać albo pogadać o projekcie, napisz.</p>
-  <a class="btn" href="mailto:janczesko12@gmail.com">janczesko12@gmail.com</a>
-</section>
-</main>
+      <div class="hero-visual reveal reveal-delay" aria-hidden="true">
+        <div class="orbit orbit-a"></div>
+        <div class="orbit orbit-b"></div>
+        <div class="core-card">
+          <div class="terminal-top"><span></span><span></span><span></span><code>mythoria://portfolio</code></div>
+          <div class="terminal-body">
+            <p><span class="muted">$</span> whoami</p>
+            <p class="accent">builder_01</p>
+            <p><span class="muted">$</span> status</p>
+            <p class="status"><span class="dot"></span> creating</p>
+            <p><span class="muted">$</span> focus</p>
+            <p class="code-line">AI / Apps / Automation</p>
+            <p><span class="muted">$</span><span class="cursor"></span></p>
+          </div>
+        </div>
+        <div class="floating-tag tag-one">Python</div>
+        <div class="floating-tag tag-two">Kotlin</div>
+        <div class="floating-tag tag-three">AI</div>
+      </div>
+    </section>
 
-<footer><strong>mythoria<span>.pl</span></strong><span>© 2026 • Jan</span></footer>
+    <section id="about" class="section section-pad">
+      <div class="section-heading reveal">
+        <span class="section-number">01</span>
+        <div>
+          <p class="kicker">O MNIE</p>
+          <h2>Technologia jako narzędzie, nie cel.</h2>
+        </div>
+      </div>
+      <div class="about-grid">
+        <div class="about-main reveal">
+          <p class="big-copy">
+            Lubię brać problem, rozłożyć go na części i zbudować rozwiązanie, które po prostu działa.
+            Interesują mnie szczególnie aplikacje, AI, automatyzacja i projekty, w których software łączy się ze światem fizycznym.
+          </p>
+          <p>
+            W portfolio pokazuję projekty od szybkich eksperymentów po większe aplikacje. Koduję, testuję,
+            poprawiam i uczę się w praktyce — od backendu i baz danych po UI i integracje z urządzeniami.
+          </p>
+        </div>
+        <aside class="about-card reveal reveal-delay">
+          <div class="mini-label">AKTUALNIE</div>
+          <strong>Buduję. Testuję. Usprawniam.</strong>
+          <div class="availability"><span class="dot"></span> otwarty na ciekawe projekty</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="projects" class="section section-dark section-pad">
+      <div class="section-heading reveal">
+        <span class="section-number">02</span>
+        <div>
+          <p class="kicker">PROJEKTY</p>
+          <h2>Rzeczy, które faktycznie zbudowałem.</h2>
+        </div>
+      </div>
+
+      <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="stack" class="section section-pad">
+      <div class="section-heading reveal">
+        <span class="section-number">03</span>
+        <div>
+          <p class="kicker">STACK</p>
+          <h2>Narzędzia, których używam.</h2>
+        </div>
+      </div>
+
+      <div class="stack-wrap reveal">
+        <div class="stack-column">
+          <span class="stack-label">LANGUAGES</span>
+          <div class="chips">
+            <span>Python</span><span>Kotlin</span><span>JavaScript</span><span>HTML/CSS</span><span>SQL</span><span>PowerShell</span>
+          </div>
+        </div>
+        <div class="stack-column">
+          <span class="stack-label">TOOLS &amp; PLATFORMS</span>
+          <div class="chips">
+            <span>Git</span><span>GitHub</span><span>Docker</span><span>Firebase</span><span>Roblox Studio</span><span>VS Code</span>
+          </div>
+        </div>
+        <div class="stack-column">
+          <span class="stack-label">INTERESTS</span>
+          <div class="chips">
+            <span>AI</span><span>Computer Vision</span><span>Automation</span><span>IoT</span><span>3D Printing</span><span>Game Dev</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section-dark contact section-pad">
+      <div class="contact-card reveal">
+        <div>
+          <p class="kicker">04 / KONTAKT</p>
+          <h2>Masz pomysł?<br /><em>Napisz.</em></h2>
+          <p>Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.</p>
+        </div>
+        <div class="contact-actions">
+          <a id="email-link" class="btn btn-primary" href="mailto:twoj-email@example.com">E-mail <span>↗</span></a>
+          <a id="github-link" class="btn btn-ghost" href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="year"></span> MYTHORIA</span>
+    <span>zrobione z kodu ✦</span>
+  </footer>
+
+  <script src="script.js" defer></script>
 </body>
 </html>
