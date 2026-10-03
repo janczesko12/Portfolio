@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "pl.listazakupow.app",
+      "sha256_cert_fingerprints": [
+        "6E:88:87:3B:F2:61:C1:C5:4E:BB:5E:A2:9D:76:9F:A1:89:10:E7:D6:32:BF:18:A1:86:23:D9:4B:06:BC:FC:97"
+      ]
+    }
+  }
+]
