@@ -72,7 +72,10 @@ projectsGrid.innerHTML = portfolio.projects.map((project, index) => `
   </article>
 `).join("");
 
-document.querySelector("#email-link").href = `mailto:${portfolio.email}`;
+const emailLink = document.querySelector("#email-link");
+emailLink.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(portfolio.email)}`;
+emailLink.target = "_blank";
+emailLink.rel = "noopener noreferrer";
 document.querySelector("#github-link").href = portfolio.github;
 document.querySelector("#year").textContent = new Date().getFullYear();
 
