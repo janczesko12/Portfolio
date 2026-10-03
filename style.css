@@ -200,6 +200,7 @@ body.modal-open { overflow:hidden; }
 .modal-chips { margin-top:15px; }
 .modal-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:32px; }
 .project-modal .btn { cursor:pointer; }
+.project-modal .btn-ghost { color:#9da4b3; }
 .project-modal .btn.is-disabled { opacity:.45; cursor:default; pointer-events:none; }
 @media (max-width:700px) {
   .project-modal { padding:10px; }
