@@ -8,7 +8,7 @@ const portfolio = {
       description: "Agent z GUI, integracją modeli AI i lokalnym fallbackiem. Projekt skupia się na uruchamianiu poleceń, komunikacji z modelami oraz płynnym przełączaniu się między usługą online i modelem lokalnym.",
       features: ["Graficzny interfejs do pracy z agentem", "Obsługa modeli online i lokalnych", "Fallback do Ollama przy ograniczeniach API", "Eksperymenty z automatyzacją zadań"],
       tags: ["Python", "AI", "Gemini", "Ollama"],
-      link: "#"
+      link: "https://github.com/janczesko12/mythoria"
     },
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 21h32l-2.2 34H18.2L16 21Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M24 23v-3a8 8 0 0 1 16 0v3" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M25 34h14" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M31 28v12" stroke="currentColor" stroke-width="5" stroke-linecap="round" opacity=".7"/></svg>`,
@@ -16,7 +16,7 @@ const portfolio = {
       description: "Mobilna aplikacja do tworzenia i synchronizowania list zakupów. Projekt łączy nowoczesny interfejs Compose z kontami użytkowników i chmurą Firebase.",
       features: ["Lista produktów z oznaczaniem kupionych pozycji", "Logowanie i osobne dane użytkowników", "Synchronizacja przez Firestore", "Zakupy pogrupowane według sklepów", "Integracja Android + backend Firebase"],
       tags: ["Kotlin", "Compose", "Firebase", "Firestore"],
-      link: "#"
+      link: "https://github.com/janczesko12/ListaZakupow"
     },
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 19h28c5.5 0 10 4.5 10 10v9c0 10-8 18-18 18H26C16 56 8 48 8 38v-9c0-5.5 4.5-10 10-10Z" fill="currentColor"/><circle cx="24" cy="34" r="4" fill="#0b0d0a"/><circle cx="40" cy="34" r="4" fill="#0b0d0a"/><path d="M25 44c4 2.5 10 2.5 14 0" fill="none" stroke="#0b0d0a" stroke-width="3.5" stroke-linecap="round"/><path d="M32 19v-7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="9" r="3" fill="currentColor"/></svg>`,
@@ -24,7 +24,7 @@ const portfolio = {
       description: "Modułowy bot Discord z systemem ekonomii, XP, moderacją i bazą danych. Poszczególne funkcje są rozdzielone na cogi, dzięki czemu projekt można łatwo rozwijać.",
       features: ["Komendy użytkowe i pomoc", "System XP i poziomów", "Ekonomia serwera", "Moderacja i narzędzia administracyjne", "Baza danych SQLite / aiosqlite", "Architektura oparta o cogi"],
       tags: ["Python", "discord.py", "SQLite", "Bot"],
-      link: "#"
+      link: "https://github.com/janczesko12/JanBot"
     },
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="7" y="17" width="50" height="33" rx="7" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="32" cy="33.5" r="10" fill="none" stroke="currentColor" stroke-width="5"/><path d="M23 17l4-6h10l4 6" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M14 45h36" stroke="currentColor" stroke-width="3" opacity=".65"/></svg>`,
@@ -32,7 +32,7 @@ const portfolio = {
       description: "Eksperymenty z rozpoznawaniem tablic rejestracyjnych z wykorzystaniem obrazu z kamery. Projekt łączy OpenCV, OCR i własny serwer Flask.",
       features: ["Pobieranie obrazu z kamery IP / ESP32-CAM", "Przetwarzanie klatek przez OpenCV", "Rozpoznawanie tekstu z użyciem OCR", "Testy automatycznego odczytu tablic", "Własne endpointy serwera Flask"],
       tags: ["Python", "OpenCV", "OCR", "Flask"],
-      link: "#"
+      link: "https://github.com/janczesko12/roblox-friends-api"
     },
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="m22 15 20-5 7 27-20 5-7-27Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="m31 22 10-2.5 2.5 10L33.5 32 31 22Z" fill="currentColor"/></svg>`,
@@ -40,7 +40,7 @@ const portfolio = {
       description: "Zestaw projektów Roblox Studio obejmujący mechaniki gier, ekonomię, farming, GUI, DataStore i narzędzia budowane z myślą o rozgrywce multiplayer.",
       features: ["Systemy działek i przypisywania gracza", "Farming i wzrost upraw", "Ekonomia oraz sprzedaż przedmiotów", "GUI i RemoteEvents", "Zapisywanie postępów przez DataStore", "Mechaniki gier tworzonych w Roblox Studio"],
       tags: ["Roblox", "Lua", "Game Dev", "DataStore"],
-      link: "#"
+      link: "https://github.com/janczesko12/roblox-game"
     },
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 31a20 20 0 0 1 24 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 23a29 29 0 0 1 36 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".65"/><circle cx="32" cy="43" r="6" fill="currentColor"/><path d="M32 49v7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
@@ -48,7 +48,7 @@ const portfolio = {
       description: "Automatyzacje łączące komputer, gry i inteligentne oświetlenie. Skrypty wykrywają uruchomioną aplikację i zmieniają stan oświetlenia zależnie od aktywnego trybu.",
       features: ["Wykrywanie uruchomionych gier", "Automatyczne przełączanie scen LED", "Integracja z urządzeniami Tuya / CozyLife", "Skrypty PowerShell do automatyzacji", "Osobne profile kolorów dla różnych gier"],
       tags: ["PowerShell", "IoT", "Tuya", "Automation"],
-      link: "#"
+      link: "https://github.com/janczesko12/mythoria"
     }
   ]
 };
