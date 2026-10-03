@@ -153,24 +153,67 @@ em { font-style:normal; color:var(--accent); }
 }
 
 @media (max-width: 700px) {
-  .site-header { width:min(calc(100% - 20px), var(--max)); margin-top:10px; }
-  .menu-toggle { display:block; }
-  .nav { position:absolute; top:calc(100% + 8px); left:0; right:0; display:none; flex-direction:column; align-items:stretch; padding:10px; background:rgba(8,9,13,.96); border:1px solid var(--line); border-radius:16px; }
+  .site-header { width:calc(100% - 20px); margin:10px auto 0; padding:10px 10px 10px 12px; border-radius:16px; }
+  .brand { gap:8px; font-size:.72rem; letter-spacing:.13em; }
+  .brand-mark { width:30px; height:30px; border-radius:9px; }
+  .menu-toggle { display:block; min-height:38px; padding:7px 11px; font-size:.82rem; }
+  .nav { position:absolute; top:calc(100% + 8px); left:0; right:0; display:none; flex-direction:column; align-items:stretch; gap:2px; padding:8px; background:rgba(8,9,13,.97); border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 45px rgba(0,0,0,.45); }
   .nav.open { display:flex; }
-  .nav a { padding:11px 12px; }
-  .hero h1 { font-size:clamp(2.95rem, 15vw, 4.2rem); }
-  .hero-meta { display:grid; grid-template-columns:1fr; }
-  .hero-visual { min-height:360px; }
-  .core-card { width:96%; }
-  .orbit-a { width:340px; height:340px; }
-  .orbit-b { width:390px; height:250px; }
+  .nav a { padding:12px; border-radius:10px; }
+
+  .section-pad { width:calc(100% - 28px); }
+  .hero { min-height:auto; padding-top:58px; padding-bottom:65px; gap:28px; }
+  .eyebrow { margin-bottom:15px; font-size:.66rem; }
+  .hero h1 { font-size:clamp(2.75rem,14vw,4rem); line-height:.97; }
+  .hero-lead { margin-top:20px; font-size:.96rem; line-height:1.55; }
+  .hero-actions { margin-top:24px; }
+  .hero-actions .btn { flex:1 1 140px; }
+  .hero-meta { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:34px; padding-top:19px; }
+  .hero-meta b { font-size:.64rem; }
+  .hero-meta span { font-size:.66rem; line-height:1.35; }
+
+  .hero-visual { min-height:315px; width:100%; overflow:hidden; }
+  .core-card { width:100%; max-width:430px; transform:none; border-radius:20px; }
+  .terminal-top { height:42px; padding:0 12px; }
+  .terminal-top code { font-size:9px; }
+  .terminal-body { min-height:245px; padding:18px 18px 23px; font-size:11px; line-height:1.8; }
+  .orbit-a { width:300px; height:300px; }
+  .orbit-b { width:350px; height:220px; }
   .floating-tag { display:none; }
-  .section { padding-top:80px; padding-bottom:80px; }
-  .section-dark { padding-left:20px; padding-right:20px; }
-  .section-heading { margin-bottom:35px; }
-  .stack-column { grid-template-columns:1fr; gap:13px; }
-  .contact-card { padding:28px 24px; }
-  .footer { flex-direction:column; }
+
+  .section { padding-top:68px; padding-bottom:68px; }
+  .section-dark { padding-left:14px; padding-right:14px; }
+  .section-heading { gap:12px; margin-bottom:28px; }
+  .section-number { font-size:10px; padding-top:5px; }
+  .section-heading h2 { font-size:clamp(1.85rem,9vw,2.7rem); }
+  .about-main .big-copy { font-size:1.1rem; }
+  .about-main p { font-size:.93rem; }
+  .about-card { padding:20px; border-radius:18px; }
+
+  .projects-grid { grid-template-columns:1fr; gap:12px; }
+  .project-card, .project-card:nth-child(1), .project-card:nth-child(2), .project-card:nth-child(3), .project-card:nth-child(4), .project-card:nth-child(5), .project-card:nth-child(6) {
+    grid-column:1 / -1; min-height:0; padding:22px 20px 62px; border-radius:18px;
+  }
+  .project-icon { width:48px; height:48px; top:16px; right:16px; border-radius:13px; }
+  .project-icon svg { width:26px; height:26px; }
+  .project-card h3 { margin:45px 62px 9px 0; font-size:1.35rem; }
+  .project-card p { font-size:.84rem; line-height:1.55; }
+  .project-tags { margin-top:15px; gap:6px; padding-right:5px; }
+  .project-tags span { font-size:.65rem; padding:5px 7px; }
+  .project-link { right:20px; bottom:19px; font-size:.76rem; }
+
+  .stack-column { grid-template-columns:1fr; gap:12px; padding:20px 0; }
+  .chips { gap:7px; }
+  .chips span { padding:8px 10px; font-size:.76rem; }
+
+  .contact { padding-top:60px; padding-bottom:60px; }
+  .contact-card { padding:27px 21px; border-radius:20px; gap:25px; }
+  .contact-card h2 { font-size:clamp(2.4rem,13vw,3.5rem); }
+  .contact-card p:last-child { font-size:.9rem; }
+  .contact-actions { width:100%; }
+  .contact-actions .btn { flex:1; min-width:0; }
+
+  .footer { width:calc(100% - 28px); flex-direction:column; gap:7px; padding-bottom:25px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
