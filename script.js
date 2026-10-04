@@ -39,7 +39,7 @@ const portfolio = {
       link:"https://github.com/janczesko12/roblox-friends-api"
     },
     {
-      icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="m22 15 20-5 7 27-20 5-7-27Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="m31 22 10-2.5 2.5 10L33.5 32 31 22Z" fill="currentColor"/></svg>`,
+      icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="10" width="44" height="44" rx="4" transform="rotate(14 32 32)" fill="currentColor"/><rect x="25" y="25" width="14" height="14" rx="1.5" transform="rotate(14 32 32)" fill="#0b0d0a"/></svg>`,
       title:{pl:"Roblox Projects",en:"Roblox Projects"},
       status:{pl:"W rozwoju",en:"In development"},
       description:{pl:"Zestaw projektów Roblox Studio obejmujący mechaniki gier, ekonomię, farming, GUI, DataStore i narzędzia budowane z myślą o rozgrywce multiplayer.",en:"A collection of Roblox Studio projects covering game mechanics, economy, farming, GUI, DataStore and multiplayer-focused tools."},
