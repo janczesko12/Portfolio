@@ -222,14 +222,63 @@ fetch("https://api.github.com/users/janczesko12").then(r=>r.json()).then(data=>{
 
 const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
 let konamiIndex=0;
+
+function launchEasterEgg(){
+  document.body.classList.add("mythoria-easter");
+
+  const oldOverlay=document.querySelector(".easter-overlay");
+  if(oldOverlay) oldOverlay.remove();
+
+  const overlay=document.createElement("div");
+  overlay.className="easter-overlay";
+  overlay.innerHTML=`
+    <div class="easter-scanlines"></div>
+    <div class="easter-window">
+      <div class="easter-window-top">
+        <span class="easter-lights"><i></i><i></i><i></i></span>
+        <span>mythoria://secret-mode</span>
+        <b>ACCESS GRANTED</b>
+      </div>
+      <div class="easter-window-body">
+        <div class="easter-big">MYTHORIA</div>
+        <p><span>$</span> konami_code --unlock</p>
+        <p class="easter-ok">✓ easter egg unlocked</p>
+        <p>status: <strong>developer_mode</strong></p>
+        <p>system: <strong>all systems online</strong></p>
+        <div class="easter-bar"><span></span></div>
+        <small>sekret znaleziony. dobra robota ✦</small>
+      </div>
+    </div>
+    <div class="easter-particles" aria-hidden="true"></div>`;
+
+  const particles=overlay.querySelector(".easter-particles");
+  for(let i=0;i<28;i++){
+    const p=document.createElement("span");
+    p.style.left=`${Math.random()*100}%`;
+    p.style.animationDelay=`${Math.random()*1.4}s`;
+    p.style.animationDuration=`${2.2+Math.random()*2.8}s`;
+    p.style.setProperty("--drift",`${(Math.random()-.5)*180}px`);
+    particles.appendChild(p);
+  }
+
+  document.body.appendChild(overlay);
+  setTimeout(()=>overlay.classList.add("visible"),20);
+
+  window.clearTimeout(window.mythoriaEasterTimer);
+  window.mythoriaEasterTimer=window.setTimeout(()=>{
+    overlay.classList.remove("visible");
+    document.body.classList.remove("mythoria-easter");
+    setTimeout(()=>overlay.remove(),400);
+  },6500);
+}
+
 document.addEventListener("keydown",e=>{
   const key=e.key.length===1?e.key.toLowerCase():e.key;
   if(key===konami[konamiIndex]){
     konamiIndex++;
     if(konamiIndex===konami.length){
       konamiIndex=0;
-      document.body.classList.add("mythoria-easter");
-      setTimeout(()=>document.body.classList.remove("mythoria-easter"),5000);
+      launchEasterEgg();
     }
   }else{
     konamiIndex=key===konami[0]?1:0;
