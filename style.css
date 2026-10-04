@@ -313,3 +313,6 @@ body.mythoria-easter main{animation:easterShake .12s steps(2,end) 4}
 @keyframes easterFall{from{transform:translate3d(0,-20px,0) rotate(0deg);opacity:0}15%{opacity:1}to{transform:translate3d(var(--drift),110vh,0) rotate(420deg);opacity:0}}
 @media(max-width:700px){.easter-overlay{padding:14px}.easter-window{border-radius:18px}.easter-window-top{font-size:9px;gap:8px}.easter-window-top b{font-size:8px}.easter-window-body{padding:28px 22px 30px;font-size:11px}.easter-big{margin-bottom:22px}}
 @media(prefers-reduced-motion:reduce){.easter-overlay *{animation:none!important}}
+
+.project-card:nth-child(7){grid-column:span 12}
+@media(max-width:700px){.project-card:nth-child(7){grid-column:1 / -1}}
