@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#0a0b10" />
   <title>Mythoria — Portfolio</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,9 +15,11 @@
 
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Strona główna">
+
       <span class="brand-mark">M</span>
       <span>MYTHORIA</span>
     </a>
+    <div class="header-tools"><button id="language-toggle" class="lang-toggle" type="button" aria-label="Przełącz język">EN</button></div>
 
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
 
@@ -74,8 +77,8 @@
       <div class="section-heading reveal">
         <span class="section-number">01</span>
         <div>
-          <p class="kicker">O MNIE</p>
-          <h2>Technologia jako narzędzie, nie cel.</h2>
+          <p class="kicker" data-i18n="aboutKicker">O MNIE</p>
+          <h2 data-i18n="aboutTitle">Technologia jako narzędzie, nie cel.</h2>
         </div>
       </div>
       <div class="about-grid">
@@ -97,12 +100,34 @@
       </div>
     </section>
 
+    <section class="section section-pad featured-section">
+      <div class="featured-project reveal">
+        <div class="featured-media"><div class="featured-glow">ROBLOX</div><span class="featured-badge">⭐ WYRÓŻNIONY PROJEKT</span></div>
+        <div class="featured-copy">
+          <p class="kicker">NAJWAŻNIEJSZY PROJEKT</p>
+          <h2>Roblox — Kradnij Przekąski przed CaseOh</h2>
+          <p>Multiplayerowa gra Roblox z systemem spawnowania przekąsek, kradzieży, ucieczki i rozgrywki opartej na własnych mechanikach.</p>
+          <div class="project-tags"><span>Roblox</span><span>Lua</span><span>Multiplayer</span><span>Game Dev</span></div>
+          <div class="featured-actions"><a class="btn btn-primary" href="https://github.com/janczesko12/roblox-game" target="_blank" rel="noreferrer">GitHub ↗</a><a class="btn btn-ghost" href="#projects">Więcej projektów</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section stats-section section-dark section-pad">
+      <div class="stats-grid">
+        <div><b id="stat-projects">6+</b><span>PROJEKTÓW</span></div>
+        <div><b id="stat-repos">—</b><span>REPOZYTORIÓW GITHUB</span></div>
+        <div><b id="stat-followers">—</b><span>OBSERWUJĄCYCH</span></div>
+        <div><b>∞</b><span>POMYSŁÓW</span></div>
+      </div>
+    </section>
+
     <section id="projects" class="section section-dark section-pad">
       <div class="section-heading reveal">
         <span class="section-number">02</span>
         <div>
-          <p class="kicker">PROJEKTY</p>
-          <h2>Rzeczy, które faktycznie zbudowałem.</h2>
+          <p class="kicker" data-i18n="projectsKicker">PROJEKTY</p>
+          <h2 data-i18n="projectsTitle">Rzeczy, które faktycznie zbudowałem.</h2>
         </div>
       </div>
 
