@@ -275,7 +275,7 @@ function launchEasterEgg(){
     const p=document.createElement("span");
     p.style.left=`${Math.random()*100}%`;
     p.style.animationDelay=`${Math.random()*1.4}s`;
-    p.style.animationDuration=`${2.2+Math.random()*2.8}s`;
+    p.style.animationDuration=`${1.6+Math.random()*0.4}s`;
     p.style.setProperty("--drift",`${(Math.random()-.5)*180}px`);
     particles.appendChild(p);
   }
@@ -464,6 +464,8 @@ function launchEasterEgg(){
   resetGame(true);
   overlay.tabIndex=-1;
   overlay.focus();
+
+  window.setTimeout(()=>particles.remove(),2300);
 
   window.clearTimeout(window.mythoriaEasterTimer);
   window.mythoriaEasterTimer=window.setTimeout(()=>{
