@@ -5,6 +5,7 @@ const portfolio = {
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 37.7 24.3 56 30l-18.3 5.7L32 54l-5.7-18.3L8 30l18.3-5.7L32 6Z" fill="currentColor"/><path d="M50 6 52 12l6 2-6 2-2 6-2-6-6-2 6-2 2-6Z" fill="currentColor" opacity=".75"/></svg>`,
       title: { pl:"AI Agent", en:"AI Agent" },
+      status:{pl:"Eksperymentalny",en:"Experimental"},
       description: { pl:"Agent z GUI, integracją modeli AI i lokalnym fallbackiem. Projekt skupia się na uruchamianiu poleceń, komunikacji z modelami oraz płynnym przełączaniu się między usługą online i modelem lokalnym.", en:"An agent with a GUI, AI model integrations and a local fallback. The project focuses on running commands, communicating with models and smoothly switching between online services and a local model." },
       features: { pl:["Graficzny interfejs do pracy z agentem","Obsługa modeli online i lokalnych","Fallback do Ollama przy ograniczeniach API","Eksperymenty z automatyzacją zadań"], en:["Graphical interface for working with the agent","Support for online and local models","Ollama fallback when API limits are reached","Experiments with task automation"] },
       tags:["Python","AI","Gemini","Ollama"],
@@ -13,6 +14,7 @@ const portfolio = {
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 21h32l-2.2 34H18.2L16 21Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M24 23v-3a8 8 0 0 1 16 0v3" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M25 34h14" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M31 28v12" stroke="currentColor" stroke-width="5" stroke-linecap="round" opacity=".7"/></svg>`,
       title:{pl:"ListaZakupów",en:"Shopping List"},
+      status:{pl:"W rozwoju",en:"In development"},
       description:{pl:"Mobilna aplikacja do tworzenia i synchronizowania list zakupów. Projekt łączy nowoczesny interfejs Compose z kontami użytkowników i chmurą Firebase.",en:"A mobile app for creating and syncing shopping lists. It combines a modern Compose UI with user accounts and Firebase cloud services."},
       features:{pl:["Lista produktów z oznaczaniem kupionych pozycji","Logowanie i osobne dane użytkowników","Synchronizacja przez Firestore","Zakupy pogrupowane według sklepów","Integracja Android + backend Firebase"],en:["Product list with purchased-item tracking","Login and separate user data","Synchronization through Firestore","Shopping grouped by stores","Android + Firebase backend integration"]},
       tags:["Kotlin","Compose","Firebase","Firestore"],
@@ -21,6 +23,7 @@ const portfolio = {
     {
       icon: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 19h28c5.5 0 10 4.5 10 10v9c0 10-8 18-18 18H26C16 56 8 48 8 38v-9c0-5.5 4.5-10 10-10Z" fill="currentColor"/><circle cx="24" cy="34" r="4" fill="#0b0d0a"/><circle cx="40" cy="34" r="4" fill="#0b0d0a"/><path d="M25 44c4 2.5 10 2.5 14 0" fill="none" stroke="#0b0d0a" stroke-width="3.5" stroke-linecap="round"/><path d="M32 19v-7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="9" r="3" fill="currentColor"/></svg>`,
       title:{pl:"JanBot",en:"JanBot"},
+      status:{pl:"Gotowy",en:"Ready"},
       description:{pl:"Modułowy bot Discord z systemem ekonomii, XP, moderacją i bazą danych. Poszczególne funkcje są rozdzielone na cogi, dzięki czemu projekt można łatwo rozwijać.",en:"A modular Discord bot with economy, XP, moderation and a database. Features are split into cogs, making the project easy to extend."},
       features:{pl:["Komendy użytkowe i pomoc","System XP i poziomów","Ekonomia serwera","Moderacja i narzędzia administracyjne","Baza danych SQLite / aiosqlite","Architektura oparta o cogi"],en:["Utility and help commands","XP and leveling system","Server economy","Moderation and admin tools","SQLite / aiosqlite database","Cog-based architecture"]},
       tags:["Python","discord.py","SQLite","Bot"],
@@ -29,6 +32,7 @@ const portfolio = {
     {
       icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="7" y="17" width="50" height="33" rx="7" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="32" cy="33.5" r="10" fill="none" stroke="currentColor" stroke-width="5"/><path d="M23 17l4-6h10l4 6" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M14 45h36" stroke="currentColor" stroke-width="3" opacity=".65"/></svg>`,
       title:{pl:"Computer Vision / ALPR",en:"Computer Vision / ALPR"},
+      status:{pl:"Eksperymentalny",en:"Experimental"},
       description:{pl:"Eksperymenty z rozpoznawaniem tablic rejestracyjnych z wykorzystaniem obrazu z kamery. Projekt łączy OpenCV, OCR i własny serwer Flask.",en:"Experiments with automatic license plate recognition from camera footage. The project combines OpenCV, OCR and a custom Flask server."},
       features:{pl:["Pobieranie obrazu z kamery IP / ESP32-CAM","Przetwarzanie klatek przez OpenCV","Rozpoznawanie tekstu z użyciem OCR","Testy automatycznego odczytu tablic","Własne endpointy serwera Flask"],en:["Image capture from IP camera / ESP32-CAM","Frame processing with OpenCV","Text recognition with OCR","Automatic plate reading tests","Custom Flask server endpoints"]},
       tags:["Python","OpenCV","OCR","Flask"],
@@ -37,6 +41,7 @@ const portfolio = {
     {
       icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="m22 15 20-5 7 27-20 5-7-27Z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="m31 22 10-2.5 2.5 10L33.5 32 31 22Z" fill="currentColor"/></svg>`,
       title:{pl:"Roblox Projects",en:"Roblox Projects"},
+      status:{pl:"W rozwoju",en:"In development"},
       description:{pl:"Zestaw projektów Roblox Studio obejmujący mechaniki gier, ekonomię, farming, GUI, DataStore i narzędzia budowane z myślą o rozgrywce multiplayer.",en:"A collection of Roblox Studio projects covering game mechanics, economy, farming, GUI, DataStore and multiplayer-focused tools."},
       features:{pl:["Systemy działek i przypisywania gracza","Farming i wzrost upraw","Ekonomia oraz sprzedaż przedmiotów","GUI i RemoteEvents","Zapisywanie postępów przez DataStore","Mechaniki gier tworzonych w Roblox Studio"],en:["Plot and player assignment systems","Farming and crop growth","Economy and item selling","GUI and RemoteEvents","Progress saving with DataStore","Gameplay mechanics built in Roblox Studio"]},
       tags:["Roblox","Lua","Game Dev","DataStore"],
@@ -45,6 +50,7 @@ const portfolio = {
     {
       icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 31a20 20 0 0 1 24 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 23a29 29 0 0 1 36 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".65"/><circle cx="32" cy="43" r="6" fill="currentColor"/><path d="M32 49v7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
       title:{pl:"Smart Gaming Setup",en:"Smart Gaming Setup"},
+      status:{pl:"Działający",en:"Operational"},
       description:{pl:"Automatyzacje łączące komputer, gry i inteligentne oświetlenie. Skrypty wykrywają uruchomioną aplikację i zmieniają stan oświetlenia zależnie od aktywnego trybu.",en:"Automations connecting the PC, games and smart lighting. Scripts detect the active app and change lighting based on the current mode."},
       features:{pl:["Wykrywanie uruchomionych gier","Automatyczne przełączanie scen LED","Integracja z urządzeniami Tuya / CozyLife","Skrypty PowerShell do automatyzacji","Osobne profile kolorów dla różnych gier"],en:["Detecting running games","Automatic LED scene switching","Tuya / CozyLife device integration","PowerShell automation scripts","Separate color profiles for different games"]},
       tags:["PowerShell","IoT","Tuya","Automation"],
@@ -70,7 +76,7 @@ const translations = {
     statProjects:"PROJEKTÓW",statRepos:"REPOZYTORIÓW GITHUB",statFollowers:"OBSERWUJĄCYCH",statIdeas:"POMYSŁÓW",
     projectsKicker:"PROJEKTY",projectsTitle:"Rzeczy, które faktycznie zbudowałem.",
     stackKicker:"STACK",stackTitle:"Narzędzia, których używam.",stackLanguages:"JĘZYKI",stackTools:"NARZĘDZIA I PLATFORMY",stackInterests:"ZAINTERESOWANIA",
-    contactKicker:"04 / KONTAKT",contactTitle:"Masz pomysł?<br><em>Napisz.</em>",contactDescription:"Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.",
+    contactKicker:"04 / KONTAKT",contactTitle:"Masz pomysł?<br><em>Napisz.</em>",contactDescription:"Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.",statusLabel:"STATUS",
     email:"E-mail",modalKicker:"SZCZEGÓŁY PROJEKTU",modalFeatures:"CO ZAWIERA",modalTech:"TECHNOLOGIE",modalOpen:"Otwórz projekt",modalBack:"Wróć",
     modalPreparing:"Link w przygotowaniu",easterHint:"* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"zrobione z kodu ✦"
   },
@@ -90,7 +96,7 @@ const translations = {
     statProjects:"PROJECTS",statRepos:"GITHUB REPOSITORIES",statFollowers:"FOLLOWERS",statIdeas:"IDEAS",
     projectsKicker:"PROJECTS",projectsTitle:"Things I actually built.",
     stackKicker:"STACK",stackTitle:"Tools I use.",stackLanguages:"LANGUAGES",stackTools:"TOOLS & PLATFORMS",stackInterests:"INTERESTS",
-    contactKicker:"04 / CONTACT",contactTitle:"Got an idea?<br><em>Let's talk.</em>",contactDescription:"No long form — just be specific. GitHub link, email or a message.",
+    contactKicker:"04 / CONTACT",contactTitle:"Got an idea?<br><em>Let's talk.</em>",contactDescription:"No long form — just be specific. GitHub link, email or a message.",statusLabel:"STATUS",
     email:"Email",modalKicker:"PROJECT DETAILS",modalFeatures:"INCLUDES",modalTech:"TECHNOLOGIES",modalOpen:"Open project",modalBack:"Back",
     modalPreparing:"Link coming soon",easterHint:"* check the easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"made with code ✦"
   }
@@ -105,6 +111,7 @@ const projectModal=document.querySelector("#project-modal");
 const modalIcon=document.querySelector("#modal-project-icon");
 const modalTitle=document.querySelector("#modal-project-title");
 const modalDescription=document.querySelector("#modal-project-description");
+const modalStatus=document.querySelector("#modal-project-status");
 const modalFeatures=document.querySelector("#modal-project-features");
 const modalTags=document.querySelector("#modal-project-tags");
 const modalProjectLink=document.querySelector("#modal-project-link");
@@ -122,7 +129,7 @@ function renderProjects(){
     const description=project.description[currentLanguage];
     return `
       <article class="project-card reveal" style="animation-delay:${0.05*index}s">
-        <span class="project-index">0${index+1}</span>
+        <div class="project-card-top"><span class="project-index">0${index+1}</span><span class="project-status"><span class="project-status-dot"></span>${escapeHtml(project.status[currentLanguage])}</span></div>
         <div class="project-icon">${project.icon}</div>
         <h3>${escapeHtml(title)}</h3>
         <p>${escapeHtml(description)}</p>
@@ -152,6 +159,7 @@ function openProjectModal(index){
   projectModal.dataset.projectIndex=String(index);
   modalIcon.innerHTML=project.icon;
   modalTitle.textContent=project.title[currentLanguage];
+  modalStatus.innerHTML=`<span class="project-status-dot"></span><span>${escapeHtml(translations[currentLanguage].statusLabel)}: ${escapeHtml(project.status[currentLanguage])}</span>`;
   modalDescription.textContent=project.description[currentLanguage];
   modalFeatures.innerHTML=project.features[currentLanguage].map(item=>`<li>${escapeHtml(item)}</li>`).join("");
   modalTags.innerHTML=project.tags.map(tag=>`<span>${escapeHtml(tag)}</span>`).join("");
