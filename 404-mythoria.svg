@@ -37,11 +37,13 @@
 </g>
 <g transform="translate(395 225)">
   <text x="0" y="150" font-family="system-ui,Segoe UI,sans-serif" font-size="210" font-weight="950" letter-spacing="-14" fill="#eef2f5">4</text>
-  <g transform="translate(270 7) rotate(10)">
-    <rect width="160" height="160" rx="24" fill="none" stroke="url(#green)" stroke-width="10"/>
-    <rect x="53" y="53" width="54" height="54" rx="9" fill="url(#green)"/>
+  <!-- Roblox logo, optically centered between the two 4s -->
+  <g transform="translate(205 28) rotate(10)">
+    <rect width="122" height="122" rx="19" fill="rgba(183,255,74,.025)" stroke="url(#green)" stroke-width="9"/>
+    <rect x="41" y="41" width="40" height="40" rx="6" fill="url(#green)"/>
+    <rect x="50" y="50" width="22" height="22" rx="3" fill="#0a0d08"/>
   </g>
-  <text x="455" y="150" font-family="system-ui,Segoe UI,sans-serif" font-size="210" font-weight="950" letter-spacing="-14" fill="#eef2f5">4</text>
+  <text x="360" y="150" font-family="system-ui,Segoe UI,sans-serif" font-size="210" font-weight="950" letter-spacing="-14" fill="#eef2f5">4</text>
   <text x="265" y="196" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="20" font-weight="700" fill="#b7ff4a" letter-spacing="3">STRONA NIE ZNALEZIONA</text>
 </g>
 <g opacity=".8">
