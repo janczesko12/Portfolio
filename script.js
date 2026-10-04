@@ -48,6 +48,15 @@ const portfolio = {
       link:"https://github.com/janczesko12/roblox-game"
     },
     {
+      icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="8" width="44" height="48" rx="9" fill="none" stroke="currentColor" stroke-width="5"/><path d="M22 23h20M22 32h20M22 41h12" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="42" r="5" fill="currentColor"/></svg>`,
+      title:{pl:"Wydatki",en:"Expenses"},
+      description:{pl:"Aplikacja do zarządzania wydatkami z logowaniem użytkownika i synchronizacją danych przez Firebase Firestore. Projekt powstaje z myślą o wygodnym prowadzeniu finansów na telefonie i współpracy między Androidem a iPhonem.",en:"An expense-management app with user accounts and data synchronization through Firebase Firestore. It is being built for convenient mobile expense tracking and cooperation between Android and iPhone."},
+      features:{pl:["Dodawanie i przeglądanie wydatków","Konta użytkowników i osobne dane","Synchronizacja danych przez Firestore","Współpraca wersji Android i iPhone","Eksport i import danych"],en:["Adding and browsing expenses","User accounts and separate data","Data synchronization through Firestore","Android and iPhone versions working together","Data export and import"]},
+      tags:["iOS","Swift","Firebase","Firestore"],
+      status:{pl:"W rozwoju",en:"In development"},
+      link:"https://github.com/janczesko12/Wydatki"
+    },
+    {
       icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 31a20 20 0 0 1 24 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 23a29 29 0 0 1 36 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".65"/><circle cx="32" cy="43" r="6" fill="currentColor"/><path d="M32 49v7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
       title:{pl:"Smart Gaming Setup",en:"Smart Gaming Setup"},
       status:{pl:"Działający",en:"Operational"},
