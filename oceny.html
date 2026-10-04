@@ -1,7 +1,50 @@
-<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#08090d"><title>Mythoria — Podgląd ocen</title><link rel="icon" href="/favicon.svg"><style>
-:root{--bg:#06070a;--line:rgba(255,255,255,.1);--text:#f4f6f8;--muted:#8f97a7;--accent:#b7ff4a}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 10%,rgba(183,255,74,.09),transparent 30%),#06070a;color:var(--text);font-family:Inter,system-ui,sans-serif}.wrap{width:min(1050px,calc(100% - 28px));margin:30px auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:950;letter-spacing:.14em}.mark{width:38px;height:38px;border-radius:11px;background:var(--accent);color:#080b06;display:grid;place-items:center}.back{color:var(--accent);text-decoration:none;font-size:.85rem}.hero{border:1px solid var(--line);border-radius:24px;padding:30px;background:rgba(255,255,255,.018)}.kicker{color:var(--accent);font:800 .7rem ui-monospace,monospace;letter-spacing:.14em}.hero h1{font-size:clamp(2.3rem,6vw,4.8rem);letter-spacing:-.06em;margin:10px 0}.hero p{color:var(--muted)}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:25px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}.summary>div{padding:20px;background:#0b0d12}.summary b{display:block;color:var(--accent);font-size:2rem}.summary span{color:var(--muted);font-size:.7rem;letter-spacing:.08em}.reviews{display:grid;gap:10px;margin-top:16px}.review{padding:20px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.018)}.review-head{display:flex;justify-content:space-between;gap:10px}.stars{color:var(--accent);letter-spacing:2px}.date{color:#667080;font-size:.7rem}.comment{margin:12px 0 0;color:#cbd0d8;line-height:1.6}.empty{color:var(--muted);padding:25px;border:1px dashed var(--line);border-radius:16px}@media(max-width:600px){.summary{grid-template-columns:1fr}.top{align-items:flex-start}.hero{padding:23px 18px}}
-</style></head><body><main class="wrap"><header class="top"><a class="brand" href="/"><span class="mark">M</span>MYTHORIA</a><a class="back" href="/">← Wróć do portfolio</a></header><section class="hero"><div class="kicker">05 / OCENY</div><h1>Opinie odwiedzających.</h1><p>Podgląd ocen zapisanych w Firebase Firestore.</p><div class="summary"><div><b id="avg">—</b><span>ŚREDNIA OCENA</span></div><div><b id="total">0</b><span>WSZYSTKICH OCEN</span></div><div><b id="five">0%</b><span>OCEN 5/5</span></div></div></section><section id="reviews" class="reviews"><div class="empty">Ładowanie ocen…</div></section></main><script>
-const ENDPOINT="https://firestore.googleapis.com/v1/projects/listazakupow-3c325/databases/(default)/documents/portfolio_ratings";
-const esc=v=>String(v||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-async function load(){try{const response=await fetch(ENDPOINT+"?pageSize=200");if(!response.ok)throw new Error(response.status);const data=await response.json();const rows=(data.documents||[]).map(doc=>{const f=doc.fields||{};return{rating:Number(f.rating?.integerValue||f.rating?.doubleValue||0),comment:f.comment?.stringValue||"",createdAt:f.createdAt?.timestampValue||""}}).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));const avg=rows.length?rows.reduce((s,r)=>s+r.rating,0)/rows.length:0;document.querySelector("#avg").textContent=rows.length?avg.toFixed(1).replace(".",","):"—";document.querySelector("#total").textContent=rows.length;document.querySelector("#five").textContent=rows.length?Math.round(rows.filter(r=>r.rating===5).length/rows.length*100)+"%":"0%";const box=document.querySelector("#reviews");if(!rows.length){box.innerHTML='<div class="empty">Brak ocen — pierwsza pojawi się tutaj.</div>';return}box.innerHTML=rows.map(r=>'<article class="review"><div class="review-head"><span class="stars">'+"★★★★★".slice(0,r.rating)+"☆☆☆☆☆".slice(0,5-r.rating)+'</span><span class="date">'+(r.createdAt?new Date(r.createdAt).toLocaleString("pl-PL"):"")+'</span></div><p class="comment">'+(r.comment?esc(r.comment):"Bez komentarza.")+"</p></article>").join("")}catch(e){document.querySelector("#reviews").innerHTML='<div class="empty">Nie udało się pobrać ocen. Sprawdź reguły Firestore.</div>';console.error(e)}}load();
-</script></body></html>
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#08090d">
+<title>Mythoria — Podgląd ocen</title>
+<link rel="icon" href="/favicon.svg">
+<style>
+:root{--bg:#06070a;--line:rgba(255,255,255,.1);--text:#f4f6f8;--muted:#8f97a7;--accent:#b7ff4a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 10%,rgba(183,255,74,.09),transparent 30%),#06070a;color:var(--text);font-family:Inter,system-ui,sans-serif}
+.wrap{width:min(1050px,calc(100% - 28px));margin:30px auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:950;letter-spacing:.14em}.mark{width:38px;height:38px;border-radius:11px;background:var(--accent);color:#080b06;display:grid;place-items:center}.back{color:var(--accent);text-decoration:none;font-size:.85rem}
+.hero{border:1px solid var(--line);border-radius:24px;padding:30px;background:rgba(255,255,255,.018)}.kicker{color:var(--accent);font:800 .7rem ui-monospace,monospace;letter-spacing:.14em}.hero h1{font-size:clamp(2.3rem,6vw,4.8rem);letter-spacing:-.06em;margin:10px 0}.hero p{color:var(--muted)}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:25px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}.summary>div{padding:20px;background:#0b0d12}.summary b{display:block;color:var(--accent);font-size:2rem}.summary span{color:var(--muted);font-size:.7rem;letter-spacing:.08em}
+.reviews{display:grid;gap:10px;margin-top:16px}.review{padding:20px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.018)}.review-head{display:flex;justify-content:space-between;gap:10px}.stars{color:var(--accent);letter-spacing:2px}.date{color:#667080;font-size:.7rem}.comment{margin:12px 0 0;color:#cbd0d8;line-height:1.6}.empty{color:var(--muted);padding:25px;border:1px dashed var(--line);border-radius:16px}
+@media(max-width:600px){.summary{grid-template-columns:1fr}.top{align-items:flex-start;gap:15px}.hero{padding:23px 18px}.review-head{flex-direction:column}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="top"><a class="brand" href="/"><span class="mark">M</span>MYTHORIA</a><a class="back" href="/">← Wróć do portfolio</a></header>
+<section class="hero"><div class="kicker">05 / OCENY</div><h1>Opinie odwiedzających.</h1><p>Podgląd ocen zapisanych w Firebase Firestore.</p>
+<div class="summary"><div><b id="avg">—</b><span>ŚREDNIA OCENA</span></div><div><b id="total">0</b><span>WSZYSTKICH OCEN</span></div><div><b id="five">0%</b><span>OCEN 5/5</span></div></div>
+</section>
+<section id="reviews" class="reviews"><div class="empty">Ładowanie ocen…</div></section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+const firebaseConfig={apiKey:"AIzaSyAXb7y95RcEi5OkLL4AsQSYBEFYXu3qrvc",authDomain:"portfolio-395d6.firebaseapp.com",projectId:"portfolio-395d6",storageBucket:"portfolio-395d6.firebasestorage.app",messagingSenderId:"931360195608",appId:"1:931360195608:web:03b2b9b09e09e022cfaf6d",measurementId:"G-60PLFSNEFM"};
+const app=initializeApp(firebaseConfig);const db=getFirestore(app);const ratingsRef=collection(db,"portfolio_ratings");
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function load(){
+ try{
+  const snap=await getDocs(ratingsRef);
+  const rows=snap.docs.map(doc=>doc.data()).filter(r=>Number(r.rating)>=1&&Number(r.rating)<=5).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  const avg=rows.length?rows.reduce((s,r)=>s+Number(r.rating),0)/rows.length:0;
+  document.querySelector("#avg").textContent=rows.length?avg.toFixed(1).replace(".",","):"—";
+  document.querySelector("#total").textContent=rows.length;
+  document.querySelector("#five").textContent=rows.length?Math.round(rows.filter(r=>Number(r.rating)===5).length/rows.length*100)+"%":"0%";
+  const box=document.querySelector("#reviews");
+  if(!rows.length){box.innerHTML='<div class="empty">Brak ocen — pierwsza pojawi się tutaj.</div>';return}
+  box.innerHTML=rows.map(r=>'<article class="review"><div class="review-head"><span class="stars">'+"★★★★★".slice(0,Number(r.rating))+"☆☆☆☆☆".slice(0,5-Number(r.rating))+'</span><span class="date">'+(r.createdAt?.toDate? r.createdAt.toDate().toLocaleString("pl-PL"):"")+'</span></div><p class="comment">'+(r.comment?esc(r.comment):"Bez komentarza.")+"</p></article>").join("");
+ }catch(e){console.error(e);document.querySelector("#reviews").innerHTML='<div class="empty">Nie udało się pobrać ocen. Sprawdź reguły Firestore.</div>'}
+}
+load();
+</script>
+</body></html>
