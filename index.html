@@ -19,36 +19,33 @@
       <span class="brand-mark">M</span>
       <span>MYTHORIA</span>
     </a>
-    <div class="header-tools"><button id="language-toggle" class="lang-toggle" type="button" aria-label="Przełącz język">EN</button></div>
+    <div class="header-tools"><button id="language-toggle" class="lang-toggle" type="button" aria-label="Przełącz język"><span class="lang-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.6 2.4 3.9 5.4 3.9 9s-1.3 6.6-3.9 9c-2.6-2.4-3.9-5.4-3.9-9S9.4 5.4 12 3Z" stroke="currentColor" stroke-width="1.8"/></svg></span><span id="language-code">EN</span></button></div>
 
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
 
     <nav id="nav" class="nav" aria-label="Główna nawigacja">
-      <a href="#about">O mnie</a>
-      <a href="#projects">Projekty</a>
-      <a href="#stack">Stack</a>
-      <a href="#contact">Kontakt</a>
+      <a href="#about" data-i18n="navAbout">O mnie</a>
+      <a href="#projects" data-i18n="navProjects">Projekty</a>
+      <a href="#stack" data-i18n="navStack">Stack</a>
+      <a href="#contact" data-i18n="navContact">Kontakt</a>
     </nav>
   </header>
 
   <main id="top">
     <section class="hero section-pad">
       <div class="hero-copy reveal">
-        <div class="eyebrow"><span></span> portfolio / 2026</div>
-        <h1>Buduję <em>cyfrowe rzeczy</em>, które mają sens.</h1>
-        <p class="hero-lead">
-          Aplikacje, automatyzacje, projekty AI i małe narzędzia rozwiązujące konkretne problemy.
-          Od pomysłu do działającego produktu.
-        </p>
+        <div class="eyebrow"><span></span> <span data-i18n="heroEyebrow">portfolio / 2026</span></div>
+        <h1 data-i18n="heroTitle">Buduję <em>cyfrowe rzeczy</em>, które mają sens.</h1>
+        <p class="hero-lead" data-i18n="heroLead">Aplikacje, automatyzacje, projekty AI i małe narzędzia rozwiązujące konkretne problemy.<br>Od pomysłu do działającego produktu.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#projects">Zobacz projekty <span>↗</span></a>
-          <a class="btn btn-ghost" href="#contact">Kontakt</a>
+          <a class="btn btn-primary" href="#projects" data-i18n="heroProjects">Zobacz projekty <span>↗</span></a>
+          <a class="btn btn-ghost" href="#contact" data-i18n="heroContact">Kontakt</a>
         </div>
 
         <div class="hero-meta">
-          <div><b>AI</b><span>integracje i eksperymenty</span></div>
-          <div><b>DEV</b><span>web • mobile • Python</span></div>
-          <div><b>AUTO</b><span>skrypty i automatyzacje</span></div>
+          <div><b>AI</b><span data-i18n="heroMetaAi">integracje i eksperymenty</span></div>
+          <div><b>DEV</b><span data-i18n="heroMetaDev">web • mobile • Python</span></div>
+          <div><b>AUTO</b><span data-i18n="heroMetaAuto">skrypty i automatyzacje</span></div>
         </div>
       </div>
 
@@ -83,42 +80,36 @@
       </div>
       <div class="about-grid">
         <div class="about-main reveal">
-          <p class="big-copy">
-            Lubię brać problem, rozłożyć go na części i zbudować rozwiązanie, które po prostu działa.
-            Interesują mnie szczególnie aplikacje, AI, automatyzacja i projekty, w których software łączy się ze światem fizycznym.
-          </p>
-          <p>
-            W portfolio pokazuję projekty od szybkich eksperymentów po większe aplikacje. Koduję, testuję,
-            poprawiam i uczę się w praktyce — od backendu i baz danych po UI i integracje z urządzeniami.
-          </p>
+          <p class="big-copy" data-i18n="aboutCopy1">Lubię brać problem, rozłożyć go na części i zbudować rozwiązanie, które po prostu działa. Interesują mnie szczególnie aplikacje, AI, automatyzacja i projekty, w których software łączy się ze światem fizycznym.</p>
+          <p data-i18n="aboutCopy2">W portfolio pokazuję projekty od szybkich eksperymentów po większe aplikacje. Koduję, testuję, poprawiam i uczę się w praktyce — od backendu i baz danych po UI i integracje z urządzeniami.</p>
         </div>
         <aside class="about-card reveal reveal-delay">
-          <div class="mini-label">AKTUALNIE</div>
-          <strong>Buduję. Testuję. Usprawniam.</strong>
-          <div class="availability"><span class="dot"></span> otwarty na ciekawe projekty</div>
+          <div class="mini-label" data-i18n="currently">AKTUALNIE</div>
+          <strong data-i18n="currentlyTitle">Buduję. Testuję. Usprawniam.</strong>
+          <div class="availability"><span class="dot"></span> <span data-i18n="currentlyAvailability">otwarty na ciekawe projekty</span></div>
         </aside>
       </div>
     </section>
 
     <section class="section section-pad featured-section">
       <div class="featured-project reveal">
-        <div class="featured-media"><div class="featured-glow">ROBLOX</div><span class="featured-badge">⭐ WYRÓŻNIONY PROJEKT</span></div>
+        <div class="featured-media"><div class="featured-glow">ROBLOX</div><span class="featured-badge" data-i18n="featuredBadge">⭐ WYRÓŻNIONY PROJEKT</span></div>
         <div class="featured-copy">
-          <p class="kicker">NAJWAŻNIEJSZY PROJEKT</p>
-          <h2>Roblox — Kradnij Przekąski przed CaseOh</h2>
-          <p>Multiplayerowa gra Roblox z systemem spawnowania przekąsek, kradzieży, ucieczki i rozgrywki opartej na własnych mechanikach.</p>
+          <p class="kicker" data-i18n="featuredKicker">NAJWAŻNIEJSZY PROJEKT</p>
+          <h2 data-i18n="featuredTitle">Roblox — Kradnij Przekąski przed CaseOh</h2>
+          <p data-i18n="featuredDescription">Multiplayerowa gra Roblox z systemem spawnowania przekąsek, kradzieży, ucieczki i rozgrywki opartej na własnych mechanikach.</p>
           <div class="project-tags"><span>Roblox</span><span>Lua</span><span>Multiplayer</span><span>Game Dev</span></div>
-          <div class="featured-actions"><a class="btn btn-primary" href="https://github.com/janczesko12/roblox-game" target="_blank" rel="noreferrer">GitHub ↗</a><a class="btn btn-ghost" href="#projects">Więcej projektów</a></div>
+          <div class="featured-actions"><a class="btn btn-primary" href="https://github.com/janczesko12/roblox-game" target="_blank" rel="noreferrer"><span data-i18n="featuredGithub">GitHub ↗</span></a><a class="btn btn-ghost" href="#projects" data-i18n="featuredMore">Więcej projektów</a></div>
         </div>
       </div>
     </section>
 
     <section class="section stats-section section-dark section-pad">
       <div class="stats-grid">
-        <div><b id="stat-projects">6+</b><span>PROJEKTÓW</span></div>
-        <div><b id="stat-repos">—</b><span>REPOZYTORIÓW GITHUB</span></div>
-        <div><b id="stat-followers">—</b><span>OBSERWUJĄCYCH</span></div>
-        <div><b>∞</b><span>POMYSŁÓW</span></div>
+        <div><b id="stat-projects">6+</b><span data-i18n="statProjects">PROJEKTÓW</span></div>
+        <div><b id="stat-repos">—</b><span data-i18n="statRepos">REPOZYTORIÓW GITHUB</span></div>
+        <div><b id="stat-followers">—</b><span data-i18n="statFollowers">OBSERWUJĄCYCH</span></div>
+        <div><b>∞</b><span data-i18n="statIdeas">POMYSŁÓW</span></div>
       </div>
     </section>
 
@@ -138,26 +129,26 @@
       <div class="section-heading reveal">
         <span class="section-number">03</span>
         <div>
-          <p class="kicker">STACK</p>
-          <h2>Narzędzia, których używam.</h2>
+          <p class="kicker" data-i18n="stackKicker">STACK</p>
+          <h2 data-i18n="stackTitle">Narzędzia, których używam.</h2>
         </div>
       </div>
 
       <div class="stack-wrap reveal">
         <div class="stack-column">
-          <span class="stack-label">LANGUAGES</span>
+          <span class="stack-label" data-i18n="stackLanguages">LANGUAGES</span>
           <div class="chips">
             <span>Python</span><span>Kotlin</span><span>JavaScript</span><span>HTML/CSS</span><span>SQL</span><span>PowerShell</span>
           </div>
         </div>
         <div class="stack-column">
-          <span class="stack-label">TOOLS &amp; PLATFORMS</span>
+          <span class="stack-label" data-i18n="stackTools">TOOLS &amp; PLATFORMS</span>
           <div class="chips">
             <span>Git</span><span>GitHub</span><span>Docker</span><span>Firebase</span><span>Roblox Studio</span><span>VS Code</span>
           </div>
         </div>
         <div class="stack-column">
-          <span class="stack-label">INTERESTS</span>
+          <span class="stack-label" data-i18n="stackInterests">INTERESTS</span>
           <div class="chips">
             <span>AI</span><span>Computer Vision</span><span>Automation</span><span>IoT</span><span>3D Printing</span><span>Game Dev</span>
           </div>
@@ -168,12 +159,12 @@
     <section id="contact" class="section section-dark contact section-pad">
       <div class="contact-card reveal">
         <div>
-          <p class="kicker">04 / KONTAKT</p>
-          <h2>Masz pomysł?<br /><em>Napisz.</em></h2>
-          <p>Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.</p>
+          <p class="kicker" data-i18n="contactKicker">04 / KONTAKT</p>
+          <h2 data-i18n="contactTitle">Masz pomysł?<br><em>Napisz.</em></h2>
+          <p data-i18n="contactDescription">Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.</p>
         </div>
         <div class="contact-actions">
-          <a id="email-link" class="btn btn-primary" href="mailto:twoj-email@example.com">E-mail <span>↗</span></a>
+          <a id="email-link" class="btn btn-primary" href="mailto:twoj-email@example.com"><span data-i18n="email">E-mail</span> <span>↗</span></a>
           <a id="github-link" class="btn btn-ghost" href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a>
         </div>
       </div>
@@ -185,29 +176,30 @@
     <section class="project-modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-project-title">
       <button class="modal-close" type="button" aria-label="Zamknij" data-close-modal>×</button>
       <div class="modal-project-icon" id="modal-project-icon"></div>
-      <p class="kicker">SZCZEGÓŁY PROJEKTU</p>
+      <p class="kicker" data-i18n="modalKicker">SZCZEGÓŁY PROJEKTU</p>
       <h2 id="modal-project-title">Projekt</h2>
       <p id="modal-project-description" class="modal-description"></p>
       <div class="modal-columns">
         <div>
-          <span class="stack-label">CO ZAWIERA</span>
+          <span class="stack-label" data-i18n="modalFeatures">CO ZAWIERA</span>
           <ul id="modal-project-features" class="modal-list"></ul>
         </div>
         <div>
-          <span class="stack-label">TECHNOLOGIE</span>
+          <span class="stack-label" data-i18n="modalTech">TECHNOLOGIE</span>
           <div id="modal-project-tags" class="chips modal-chips"></div>
         </div>
       </div>
       <div class="modal-actions">
-        <a id="modal-project-link" class="btn btn-primary" href="#" target="_blank" rel="noreferrer">Otwórz projekt <span>↗</span></a>
-        <button class="btn btn-ghost" type="button" data-close-modal>Wróć</button>
+        <a id="modal-project-link" class="btn btn-primary" href="#" target="_blank" rel="noreferrer"><span data-i18n="modalOpen">Otwórz projekt</span> <span>↗</span></a>
+        <button class="btn btn-ghost" type="button" data-close-modal><span data-i18n="modalBack">Wróć</span></button>
       </div>
     </section>
   </div>
 
   <footer class="footer">
     <span>© <span id="year"></span> MYTHORIA</span>
-    <span>zrobione z kodu ✦</span>
+    <span data-i18n="footerMade">zrobione z kodu ✦</span>
+    <span class="easter-hint" data-i18n="easterHint">* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd></span>
   </footer>
 
   <script src="script.js" defer></script>
