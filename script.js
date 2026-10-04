@@ -87,7 +87,7 @@ const translations = {
     stackKicker:"STACK",stackTitle:"Narzędzia, których używam.",stackLanguages:"JĘZYKI",stackTools:"NARZĘDZIA I PLATFORMY",stackInterests:"ZAINTERESOWANIA",
     contactKicker:"04 / KONTAKT",contactTitle:"Masz pomysł?<br><em>Napisz.</em>",contactDescription:"Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.",statusLabel:"STATUS",
     email:"E-mail",modalKicker:"SZCZEGÓŁY PROJEKTU",modalFeatures:"CO ZAWIERA",modalTech:"TECHNOLOGIE",modalOpen:"Otwórz projekt",modalBack:"Wróć",
-    modalPreparing:"Link w przygotowaniu",easterHint:"* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"zrobione z kodu ✦"
+    modalPreparing:"Link w przygotowaniu",ratingsKicker:"05 / OCENA",ratingsTitle:"Jak oceniasz moje portfolio?",ratingsDescription:"Zostaw ocenę i krótką opinię. Każda ocena trafia do mojego podglądu.",ratingsVotes:"ocen",ratingsDashboard:"Podgląd wszystkich ocen ↗",ratingsChoose:"Wybierz ocenę 1–5",ratingsOpinion:"Opinia (opcjonalnie)",ratingsSubmit:"Wyślij ocenę",easterHint:"* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"zrobione z kodu ✦"
   },
   en:{
     navAbout:"About",navProjects:"Projects",navStack:"Stack",navContact:"Contact",
@@ -107,7 +107,7 @@ const translations = {
     stackKicker:"STACK",stackTitle:"Tools I use.",stackLanguages:"LANGUAGES",stackTools:"TOOLS & PLATFORMS",stackInterests:"INTERESTS",
     contactKicker:"04 / CONTACT",contactTitle:"Got an idea?<br><em>Let's talk.</em>",contactDescription:"No long form — just be specific. GitHub link, email or a message.",statusLabel:"STATUS",
     email:"Email",modalKicker:"PROJECT DETAILS",modalFeatures:"INCLUDES",modalTech:"TECHNOLOGIES",modalOpen:"Open project",modalBack:"Back",
-    modalPreparing:"Link coming soon",easterHint:"* check the easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"made with code ✦"
+    modalPreparing:"Link coming soon",ratingsKicker:"05 / RATE",ratingsTitle:"How would you rate my portfolio?",ratingsDescription:"Leave a rating and a short review. Every rating appears in my dashboard.",ratingsVotes:"ratings",ratingsDashboard:"View all ratings ↗",ratingsChoose:"Choose a rating 1–5",ratingsOpinion:"Review (optional)",ratingsSubmit:"Send rating",easterHint:"* check the easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"made with code ✦"
   }
 };
 
