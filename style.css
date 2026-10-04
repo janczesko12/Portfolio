@@ -316,3 +316,31 @@ body.mythoria-easter main{animation:easterShake .12s steps(2,end) 4}
 
 .project-card:nth-child(7){grid-column:1 / -1 !important; width:100%;}
 @media(max-width:700px){.project-card:nth-child(7){grid-column:1 / -1}}
+
+/* Interactive Snake Easter Egg */
+.easter-overlay{pointer-events:auto}
+.easter-game-window{width:min(600px,100%);max-height:94vh}
+.snake-header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 22px;border-bottom:1px solid rgba(183,255,74,.12)}
+.snake-title{font:900 17px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8eee9;letter-spacing:.08em}
+.snake-header small{display:block;margin-top:5px;color:#6f7b72;font:600 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
+.snake-score{font:700 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#7f8a82;letter-spacing:.08em}
+.snake-score strong{font-size:18px;color:var(--accent);margin-left:6px}
+.snake-stage{position:relative;padding:18px;display:grid;place-items:center}
+#snake-canvas{display:block;width:min(100%,420px);height:auto;aspect-ratio:1;border:1px solid rgba(183,255,74,.18);border-radius:12px;box-shadow:0 0 40px rgba(183,255,74,.07)}
+.snake-message{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 20px;border:1px solid rgba(183,255,74,.28);border-radius:16px;background:rgba(6,10,10,.92);box-shadow:0 0 35px rgba(183,255,74,.12);text-align:center}
+.snake-message.hidden{display:none}
+.snake-message strong{font:950 23px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);letter-spacing:.05em}
+.snake-message span{color:#a0aba3;font:600 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
+.snake-btn{border:1px solid rgba(183,255,74,.32);border-radius:9px;background:rgba(183,255,74,.08);color:var(--accent);padding:9px 13px;font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em;cursor:pointer}
+.snake-btn:hover{background:rgba(183,255,74,.17);transform:translateY(-1px)}
+.snake-small{padding:8px 10px}
+.snake-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 22px 20px;color:#667169;font:600 9px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
+.snake-controls div{display:flex;gap:7px}
+@media(max-width:700px){
+  .easter-game-window{width:min(100%,500px);max-height:92vh}
+  .snake-header{padding:15px 16px}
+  .snake-title{font-size:14px}
+  .snake-stage{padding:12px}
+  .snake-controls{padding:0 16px 15px;flex-direction:column;align-items:stretch;text-align:center}
+  .snake-controls div{justify-content:center}
+}
