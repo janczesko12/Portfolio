@@ -169,6 +169,26 @@
         </div>
       </div>
     </section>
+    <section id="ratings" class="section section-dark ratings-section section-pad">
+      <div class="ratings-card reveal">
+        <div class="ratings-copy">
+          <p class="kicker" data-i18n="ratingsKicker">05 / OCENA</p>
+          <h2 data-i18n="ratingsTitle">Jak oceniasz moje portfolio?</h2>
+          <p data-i18n="ratingsDescription">Zostaw ocenę i krótką opinię. Każda ocena trafia do mojego podglądu.</p>
+          <div class="rating-summary"><strong id="rating-average">—</strong><span class="rating-stars" id="rating-average-stars">☆☆☆☆☆</span><small><span id="rating-count">0</span> <span data-i18n="ratingsVotes">ocen</span></small></div>
+          <a class="rating-dashboard-link" href="/oceny.html" target="_blank" rel="noreferrer" data-i18n="ratingsDashboard">Podgląd wszystkich ocen ↗</a>
+        </div>
+        <form id="rating-form" class="rating-form">
+          <div class="rating-choice" role="radiogroup" aria-label="Ocena">
+            <button type="button" class="rating-star" data-rating="1">★</button><button type="button" class="rating-star" data-rating="2">★</button><button type="button" class="rating-star" data-rating="3">★</button><button type="button" class="rating-star" data-rating="4">★</button><button type="button" class="rating-star" data-rating="5">★</button>
+          </div>
+          <div class="rating-selected" id="rating-selected" data-i18n="ratingsChoose">Wybierz ocenę 1–5</div>
+          <label><span data-i18n="ratingsOpinion">Opinia (opcjonalnie)</span><textarea id="rating-comment" maxlength="300" rows="4" placeholder="Co mogę poprawić?"></textarea></label>
+          <button class="btn btn-primary rating-submit" type="submit" data-i18n="ratingsSubmit">Wyślij ocenę</button>
+          <p id="rating-message" class="rating-message" role="status"></p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <div id="project-modal" class="project-modal" aria-hidden="true">
@@ -203,6 +223,7 @@
     <span class="easter-hint" data-i18n="easterHint">* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd></span>
   </footer>
 
+  <script type="module" src="ratings.js"></script>
   <script src="script.js" defer></script>
 </body>
 </html>
