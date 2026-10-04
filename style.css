@@ -344,3 +344,12 @@ body.mythoria-easter main{animation:easterShake .12s steps(2,end) 4}
   .snake-controls{padding:0 16px 15px;flex-direction:column;align-items:stretch;text-align:center}
   .snake-controls div{justify-content:center}
 }
+
+/* Snake controls */
+.snake-dpad{display:none}
+.snake-dpad button{width:40px;height:36px;border:1px solid rgba(183,255,74,.25);border-radius:9px;background:rgba(183,255,74,.06);color:var(--accent);font:900 18px/1 ui-monospace,SFMono-Regular,Menlo,monospace;cursor:pointer;touch-action:none}
+.snake-dpad div{display:flex;gap:6px}
+.snake-dpad button:hover{background:rgba(183,255,74,.14)}
+@media(max-width:700px){
+  .snake-dpad{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:10px;position:relative;z-index:3}
+}
