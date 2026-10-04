@@ -295,7 +295,7 @@ body.mythoria-easter main{animation:easterShake .12s steps(2,end) 4}
 .easter-overlay{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 50% 40%,rgba(183,255,74,.12),rgba(4,6,9,.91) 48%,rgba(1,2,4,.97));backdrop-filter:blur(7px);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease;overflow:hidden;pointer-events:none}
 .easter-overlay.visible{opacity:1;visibility:visible}
 .easter-scanlines{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(183,255,74,.035) 4px 5px);mix-blend-mode:screen;opacity:.7}
-.easter-window{position:relative;width:min(720px,100%);border:1px solid rgba(183,255,74,.55);border-radius:22px;background:rgba(6,10,10,.93);box-shadow:0 0 80px rgba(183,255,74,.16),inset 0 0 45px rgba(183,255,74,.035);overflow:hidden;transform:translateY(18px) scale(.97);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+.easter-window{position:relative;z-index:2;width:min(720px,100%);border:1px solid rgba(183,255,74,.55);border-radius:22px;background:rgba(6,10,10,.93);box-shadow:0 0 80px rgba(183,255,74,.16),inset 0 0 45px rgba(183,255,74,.035);overflow:hidden;transform:translateY(18px) scale(.97);transition:transform .45s cubic-bezier(.2,.8,.2,1)}
 .easter-overlay.visible .easter-window{transform:none}
 .easter-window-top{min-height:46px;padding:0 15px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(183,255,74,.16);font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:#7f8a82}
 .easter-window-top b{margin-left:auto;color:var(--accent);font-size:10px;letter-spacing:.09em}
@@ -305,8 +305,8 @@ body.mythoria-easter main{animation:easterShake .12s steps(2,end) 4}
 .easter-window-body p{margin:5px 0}.easter-window-body p span,.easter-ok{color:var(--accent)}.easter-window-body strong{color:#e8eee9}
 .easter-bar{height:7px;margin:24px 0 15px;border:1px solid rgba(183,255,74,.22);border-radius:99px;overflow:hidden}.easter-bar span{display:block;width:100%;height:100%;background:var(--accent);box-shadow:0 0 18px rgba(183,255,74,.85);animation:easterProgress 1.1s ease-out}
 .easter-window-body small{color:#667169}
-.easter-particles{position:absolute;inset:0;overflow:hidden}
-.easter-particles span{position:absolute;top:-12px;width:3px;height:10px;border-radius:4px;background:var(--accent);box-shadow:0 0 10px rgba(183,255,74,.7);animation:easterFall linear infinite}
+.easter-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.easter-particles span{position:absolute;top:-12px;width:3px;height:10px;border-radius:4px;background:var(--accent);box-shadow:0 0 10px rgba(183,255,74,.7);animation:easterFall linear forwards}
 @keyframes easterShake{0%,100%{transform:translate(0)}25%{transform:translate(1px,-1px)}50%{transform:translate(-1px,1px)}75%{transform:translate(1px,1px)}}
 @keyframes easterCardPulse{from{box-shadow:0 0 0 rgba(183,255,74,0)}to{box-shadow:0 0 28px rgba(183,255,74,.12)}}
 @keyframes easterProgress{from{width:0}to{width:100%}}
