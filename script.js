@@ -137,3 +137,34 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && projectModal.classList.contains("open")) closeProjectModal();
 });
+
+
+const translations = {
+  pl: { aboutKicker:"O MNIE", aboutTitle:"Technologia jako narzędzie, nie cel.", projectsKicker:"PROJEKTY", projectsTitle:"Rzeczy, które faktycznie zbudowałem." },
+  en: { aboutKicker:"ABOUT ME", aboutTitle:"Technology as a tool, not a goal.", projectsKicker:"PROJECTS", projectsTitle:"Things I actually built." }
+};
+let currentLanguage = localStorage.getItem("mythoria-language") || "pl";
+const languageToggle = document.querySelector("#language-toggle");
+function applyLanguage() {
+  const t = translations[currentLanguage];
+  document.documentElement.lang = currentLanguage;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t[el.dataset.i18n] || el.textContent; });
+  languageToggle.textContent = currentLanguage === "pl" ? "EN" : "PL";
+}
+languageToggle.addEventListener("click", () => { currentLanguage = currentLanguage === "pl" ? "en" : "pl"; localStorage.setItem("mythoria-language", currentLanguage); applyLanguage(); });
+applyLanguage();
+
+fetch("https://api.github.com/users/janczesko12").then(r=>r.json()).then(data=>{
+  if(data.public_repos) document.querySelector("#stat-repos").textContent = data.public_repos;
+  if(typeof data.followers === "number") document.querySelector("#stat-followers").textContent = data.followers;
+}).catch(()=>{});
+
+const konami = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let konamiIndex = 0;
+document.addEventListener("keydown", e => {
+  const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  if(key === konami[konamiIndex]) { konamiIndex++; if(konamiIndex === konami.length) { konamiIndex=0; document.body.classList.add("mythoria-easter"); setTimeout(()=>document.body.classList.remove("mythoria-easter"),5000); } }
+  else konamiIndex = 0;
+});
+
+if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("/sw.js").catch(()=>{}));
