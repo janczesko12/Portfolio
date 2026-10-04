@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+<title id="title">Mythoria 404</title><desc id="desc">Dark neon gaming desk scene with a large 404 and a cat.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#05070b"/><stop offset=".55" stop-color="#0a0d13"/><stop offset="1" stop-color="#020306"/></linearGradient>
+  <radialGradient id="glow" cx=".52" cy=".42" r=".55"><stop stop-color="#b7ff4a" stop-opacity=".16"/><stop offset="1" stop-color="#b7ff4a" stop-opacity="0"/></radialGradient>
+  <linearGradient id="green" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#aaff33"/><stop offset="1" stop-color="#d7ff91"/></linearGradient>
+  <linearGradient id="desk" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#141922"/><stop offset="1" stop-color="#07090d"/></linearGradient>
+  <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+  <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="24" flood-opacity=".6"/></filter>
+</defs>
+<rect width="1200" height="720" fill="url(#bg)"/>
+<rect width="1200" height="720" fill="url(#glow)"/>
+<g opacity=".55">
+  <rect x="38" y="70" width="330" height="275" rx="18" fill="#08111b" stroke="#203348"/>
+  <circle cx="205" cy="160" r="58" fill="#eaf1ff"/>
+  <circle cx="180" cy="145" r="58" fill="#08111b"/>
+  <path d="M46 300 C110 240 145 270 205 248 S305 248 360 286 V337 H46Z" fill="#091522"/>
+  <g fill="#b7ff4a" opacity=".7"><circle cx="93" cy="135" r="2"/><circle cx="134" cy="102" r="2"/><circle cx="274" cy="122" r="2"/><circle cx="312" cy="171" r="2"/><circle cx="226" cy="95" r="2"/></g>
+</g>
+<g filter="url(#shadow)">
+  <path d="M0 548 Q240 500 450 534 T840 522 T1200 548 V720 H0Z" fill="url(#desk)"/>
+  <path d="M60 583 H1140" stroke="#2b3440" stroke-width="2"/>
+</g>
+<g transform="translate(115 505)">
+  <path d="M0 88 Q78 20 157 88 L150 143 H8Z" fill="#090c11" stroke="#2a323b"/>
+  <rect x="24" y="58" width="110" height="8" rx="4" fill="#b7ff4a" opacity=".85"/>
+  <circle cx="79" cy="26" r="23" fill="#10151d" stroke="#384351"/>
+  <path d="M65 18 L58 3 L74 13 M93 13 L110 3 L103 20" fill="#10151d" stroke="#384351"/>
+  <path d="M67 31 Q79 39 91 31" fill="none" stroke="#b7ff4a" stroke-width="2"/>
+</g>
+<g transform="translate(760 480)">
+  <rect x="0" y="0" width="280" height="150" rx="16" fill="#090d12" stroke="#2a333e"/>
+  <rect x="14" y="14" width="252" height="108" rx="10" fill="#06090d" stroke="#26313b"/>
+  <text x="140" y="82" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="58" font-weight="800" fill="url(#green)">404</text>
+  <rect x="74" y="134" width="132" height="7" rx="3.5" fill="#2d3540"/>
+  <rect x="86" y="141" width="108" height="9" rx="4.5" fill="#141a22"/>
+</g>
+<g transform="translate(395 225)">
+  <text x="0" y="150" font-family="system-ui,Segoe UI,sans-serif" font-size="210" font-weight="950" letter-spacing="-14" fill="#eef2f5">4</text>
+  <g transform="translate(270 7) rotate(10)">
+    <rect width="160" height="160" rx="24" fill="none" stroke="url(#green)" stroke-width="10"/>
+    <rect x="53" y="53" width="54" height="54" rx="9" fill="url(#green)"/>
+  </g>
+  <text x="455" y="150" font-family="system-ui,Segoe UI,sans-serif" font-size="210" font-weight="950" letter-spacing="-14" fill="#eef2f5">4</text>
+  <text x="265" y="196" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-size="20" font-weight="700" fill="#b7ff4a" letter-spacing="3">STRONA NIE ZNALEZIONA</text>
+</g>
+<g opacity=".8">
+  <circle cx="515" cy="150" r="110" fill="#b7ff4a" opacity=".06" filter="url(#blur)"/>
+  <circle cx="925" cy="280" r="100" fill="#4b75ff" opacity=".08" filter="url(#blur)"/>
+</g>
+</svg>
