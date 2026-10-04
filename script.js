@@ -242,20 +242,30 @@ function launchEasterEgg(){
   overlay.className="easter-overlay";
   overlay.innerHTML=`
     <div class="easter-scanlines"></div>
-    <div class="easter-window">
+    <div class="easter-window easter-game-window">
       <div class="easter-window-top">
         <span class="easter-lights"><i></i><i></i><i></i></span>
         <span>mythoria://secret-mode</span>
         <b>ACCESS GRANTED</b>
       </div>
-      <div class="easter-window-body">
-        <div class="easter-big">MYTHORIA</div>
-        <p><span>$</span> konami_code --unlock</p>
-        <p class="easter-ok">✓ easter egg unlocked</p>
-        <p>status: <strong>developer_mode</strong></p>
-        <p>system: <strong>all systems online</strong></p>
-        <div class="easter-bar"><span></span></div>
-        <small>sekret znaleziony. dobra robota ✦</small>
+      <div class="snake-header">
+        <div>
+          <div class="snake-title">MYTHORIA SNAKE</div>
+          <small>Wąż odblokowany ✦</small>
+        </div>
+        <div class="snake-score">SCORE <strong id="snake-score">0</strong></div>
+      </div>
+      <div class="snake-stage">
+        <canvas id="snake-canvas" width="420" height="420" aria-label="Gra Snake"></canvas>
+        <div class="snake-message" id="snake-message">
+          <strong>START</strong>
+          <span>Strzałki / WASD</span>
+          <button type="button" id="snake-start" class="snake-btn">GRAJ</button>
+        </div>
+      </div>
+      <div class="snake-controls">
+        <span>↑ ↓ ← → / WASD</span>
+        <div><button type="button" id="snake-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="snake-restart" class="snake-btn snake-small">RESET</button></div>
       </div>
     </div>
     <div class="easter-particles" aria-hidden="true"></div>`;
@@ -273,12 +283,195 @@ function launchEasterEgg(){
   document.body.appendChild(overlay);
   setTimeout(()=>overlay.classList.add("visible"),20);
 
+  const canvas=overlay.querySelector("#snake-canvas");
+  const ctx=canvas.getContext("2d");
+  const scoreEl=overlay.querySelector("#snake-score");
+  const message=overlay.querySelector("#snake-message");
+  const startBtn=overlay.querySelector("#snake-start");
+  const pauseBtn=overlay.querySelector("#snake-pause");
+  const restartBtn=overlay.querySelector("#snake-restart");
+
+  const size=21;
+  const cell=canvas.width/size;
+  let snake=[];
+  let food={x:10,y:10};
+  let direction={x:1,y:0};
+  let nextDirection={x:1,y:0};
+  let score=0;
+  let running=false;
+  let paused=false;
+  let gameTimer=null;
+
+  function randomFood(){
+    let next;
+    do{
+      next={x:Math.floor(Math.random()*size),y:Math.floor(Math.random()*size)};
+    }while(snake.some(part=>part.x===next.x && part.y===next.y));
+    return next;
+  }
+
+  function resetGame(showStart=true){
+    clearInterval(gameTimer);
+    snake=[
+      {x:10,y:11},{x:9,y:11},{x:8,y:11},{x:7,y:11}
+    ];
+    direction={x:1,y:0};
+    nextDirection={x:1,y:0};
+    score=0;
+    scoreEl.textContent="0";
+    food=randomFood();
+    running=false;
+    paused=false;
+    pauseBtn.textContent="PAUZA";
+    draw();
+    if(showStart){
+      message.classList.remove("hidden");
+      message.querySelector("strong").textContent="START";
+      message.querySelector("span").textContent="Strzałki / WASD";
+      startBtn.textContent="GRAJ";
+    }else{
+      message.classList.add("hidden");
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#071008";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.strokeStyle="rgba(183,255,74,.055)";
+    ctx.lineWidth=1;
+    for(let i=0;i<=size;i++){
+      const p=i*cell;
+      ctx.beginPath();ctx.moveTo(p,0);ctx.lineTo(p,canvas.height);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(0,p);ctx.lineTo(canvas.width,p);ctx.stroke();
+    }
+
+    ctx.fillStyle="#b7ff4a";
+    ctx.shadowColor="#b7ff4a";
+    ctx.shadowBlur=18;
+    ctx.beginPath();
+    ctx.arc((food.x+.5)*cell,(food.y+.5)*cell,cell*.28,0,Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur=0;
+
+    snake.forEach((part,index)=>{
+      const pad=index===0?2.5:3.5;
+      ctx.fillStyle=index===0?"#d7ff91":"#7fd52f";
+      ctx.fillRect(part.x*cell+pad,part.y*cell+pad,cell-pad*2,cell-pad*2);
+      if(index===0){
+        ctx.fillStyle="#0b0d0a";
+        const eye=cell*.13;
+        const ox=direction.x===0?cell*.3:(direction.x>0?cell*.63:cell*.25);
+        const oy=direction.y===0?cell*.3:(direction.y>0?cell*.63:cell*.25);
+        ctx.beginPath();ctx.arc(part.x*cell+ox,part.y*cell+oy,eye,0,Math.PI*2);ctx.fill();
+      }
+    });
+  }
+
+  function gameOver(){
+    running=false;
+    clearInterval(gameTimer);
+    message.classList.remove("hidden");
+    message.querySelector("strong").textContent="GAME OVER";
+    message.querySelector("span").textContent=`Wynik: ${score}`;
+    startBtn.textContent="ZAGRAJ PONOWNIE";
+    draw();
+  }
+
+  function tick(){
+    if(!running || paused) return;
+    direction=nextDirection;
+    const head={
+      x:snake[0].x+direction.x,
+      y:snake[0].y+direction.y
+    };
+
+    if(head.x<0 || head.x>=size || head.y<0 || head.y>=size ||
+       snake.some((part,index)=>index>0 && part.x===head.x && part.y===head.y)){
+      gameOver();
+      return;
+    }
+
+    snake.unshift(head);
+    if(head.x===food.x && head.y===food.y){
+      score++;
+      scoreEl.textContent=String(score);
+      food=randomFood();
+    }else{
+      snake.pop();
+    }
+    draw();
+  }
+
+  function startGame(){
+    resetGame(false);
+    running=true;
+    paused=false;
+    message.classList.add("hidden");
+    clearInterval(gameTimer);
+    gameTimer=setInterval(tick,115);
+  }
+
+  function togglePause(){
+    if(!running) return;
+    paused=!paused;
+    pauseBtn.textContent=paused?"WZNÓW":"PAUZA";
+    if(paused){
+      message.classList.remove("hidden");
+      message.querySelector("strong").textContent="PAUZA";
+      message.querySelector("span").textContent="Kliknij WZNÓW";
+      startBtn.textContent="WZNÓW";
+    }else{
+      message.classList.add("hidden");
+    }
+  }
+
+  function setDirection(x,y){
+    if(!running || paused) return;
+    if(x===-direction.x && y===-direction.y) return;
+    if(x===-nextDirection.x && y===-nextDirection.y) return;
+    nextDirection={x,y};
+  }
+
+  function onSnakeKey(e){
+    const key=e.key.length===1?e.key.toLowerCase():e.key;
+    const map={
+      ArrowUp:{x:0,y:-1},w:{x:0,y:-1},
+      ArrowDown:{x:0,y:1},s:{x:0,y:1},
+      ArrowLeft:{x:-1,y:0},a:{x:-1,y:0},
+      ArrowRight:{x:1,y:0},d:{x:1,y:0}
+    };
+    if(map[key]){
+      e.preventDefault();
+      setDirection(map[key].x,map[key].y);
+    }
+    if(key===" "){
+      e.preventDefault();
+      togglePause();
+    }
+  }
+
+  overlay.addEventListener("keydown",onSnakeKey);
+  startBtn.addEventListener("click",()=>{
+    if(!running || message.querySelector("strong").textContent==="GAME OVER") startGame();
+    else togglePause();
+    canvas.focus();
+  });
+  pauseBtn.addEventListener("click",togglePause);
+  restartBtn.addEventListener("click",()=>resetGame(true));
+
+  resetGame(true);
+  overlay.tabIndex=-1;
+  overlay.focus();
+
   window.clearTimeout(window.mythoriaEasterTimer);
   window.mythoriaEasterTimer=window.setTimeout(()=>{
+    clearInterval(gameTimer);
     overlay.classList.remove("visible");
     document.body.classList.remove("mythoria-easter");
     setTimeout(()=>overlay.remove(),400);
-  },6500);
+  },180000);
 }
 
 document.addEventListener("keydown",e=>{
