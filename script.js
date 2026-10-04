@@ -435,6 +435,9 @@ function launchEasterEgg(){
   }
 
   function onSnakeKey(e){
+    const gameVisible=document.querySelector(".easter-game-window");
+    if(!gameVisible || !document.body.classList.contains("mythoria-easter")) return;
+
     const key=e.key.length===1?e.key.toLowerCase():e.key;
     const map={
       ArrowUp:{x:0,y:-1},w:{x:0,y:-1},
@@ -442,17 +445,23 @@ function launchEasterEgg(){
       ArrowLeft:{x:-1,y:0},a:{x:-1,y:0},
       ArrowRight:{x:1,y:0},d:{x:1,y:0}
     };
+
     if(map[key]){
       e.preventDefault();
+      e.stopPropagation();
       setDirection(map[key].x,map[key].y);
+      return;
     }
+
     if(key===" "){
       e.preventDefault();
+      e.stopPropagation();
       togglePause();
     }
   }
 
-  overlay.addEventListener("keydown",onSnakeKey);
+  document.addEventListener("keydown",onSnakeKey,true);
+  overlay.addEventListener("click",()=>canvas.focus());
   startBtn.addEventListener("click",()=>{
     if(!running || message.querySelector("strong").textContent==="GAME OVER") startGame();
     else togglePause();
@@ -461,15 +470,17 @@ function launchEasterEgg(){
   pauseBtn.addEventListener("click",togglePause);
   restartBtn.addEventListener("click",()=>resetGame(true));
 
+  canvas.tabIndex=0;
   resetGame(true);
   overlay.tabIndex=-1;
-  overlay.focus();
+  canvas.focus();
 
   window.setTimeout(()=>particles.remove(),2300);
 
   window.clearTimeout(window.mythoriaEasterTimer);
   window.mythoriaEasterTimer=window.setTimeout(()=>{
     clearInterval(gameTimer);
+    document.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
     document.body.classList.remove("mythoria-easter");
     setTimeout(()=>overlay.remove(),400);
