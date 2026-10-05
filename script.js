@@ -196,6 +196,18 @@ function renderTimeline(){
     </div>`).join("");
 }
 
+function updateEasterHint(){
+  const combo=document.querySelector("#easter-combo");
+  if(!combo) return;
+
+  const isPhone=/Android|iPhone|iPod|Windows Phone/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints>1 && window.matchMedia("(max-width:700px)").matches);
+
+  combo.textContent=isPhone
+    ? "3× M → przytrzymaj 1 s"
+    : "↑ ↑ ↓ ↓ ← → ← → B A";
+}
+
 function applyLanguage(){
   const t=translations[currentLanguage];
   document.documentElement.lang=currentLanguage;
@@ -206,6 +218,7 @@ function applyLanguage(){
   languageToggle.setAttribute("aria-label",currentLanguage==="pl"?"Switch to English":"Przełącz na polski");
   renderProjects();
   renderTimeline();
+  updateEasterHint();
   if(projectModal.classList.contains("open") && projectModal.dataset.projectIndex!==undefined){
     openProjectModal(Number(projectModal.dataset.projectIndex));
   }
