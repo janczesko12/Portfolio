@@ -109,6 +109,7 @@
         <div><b id="stat-projects">7+</b><span data-i18n="statProjects">PROJEKTÓW</span></div>
         <div><b id="stat-repos">—</b><span data-i18n="statRepos">REPOZYTORIÓW GITHUB</span></div>
         <div><b id="stat-followers">—</b><span data-i18n="statFollowers">OBSERWUJĄCYCH</span></div>
+        <div><b id="stat-visits">—</b><span data-i18n="statVisits">ODWIEDZIN</span></div>
         <div><b>∞</b><span data-i18n="statIdeas">POMYSŁÓW</span></div>
       </div>
     </section>
@@ -122,12 +123,35 @@
         </div>
       </div>
 
-      <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
+      <div class="project-filters" role="toolbar" aria-label="Filtry projektów">
+  <span class="project-filters-label" data-i18n="projectsFilterLabel">FILTRUJ</span>
+  <div class="project-filter-buttons">
+    <button type="button" class="project-filter active" data-project-filter="all" data-i18n="filterAll">Wszystkie</button>
+    <button type="button" class="project-filter" data-project-filter="AI" data-i18n="filterAI">AI</button>
+    <button type="button" class="project-filter" data-project-filter="Python" data-i18n="filterPython">Python</button>
+    <button type="button" class="project-filter" data-project-filter="Mobile" data-i18n="filterMobile">Mobile</button>
+    <button type="button" class="project-filter" data-project-filter="Roblox" data-i18n="filterRoblox">Roblox</button>
+    <button type="button" class="project-filter" data-project-filter="IoT" data-i18n="filterIoT">IoT</button>
+    <button type="button" class="project-filter" data-project-filter="Firebase" data-i18n="filterFirebase">Firebase</button>
+  </div>
+</div>
+<div id="projects-grid" class="projects-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="timeline" class="section section-pad timeline-section">
+      <div class="section-heading reveal">
+        <span class="section-number">03</span>
+        <div>
+          <p class="kicker" data-i18n="timelineKicker">OŚ CZASU</p>
+          <h2 data-i18n="timelineTitle">Jak rozwijały się moje projekty.</h2>
+        </div>
+      </div>
+      <div id="project-timeline" class="project-timeline" aria-live="polite"></div>
     </section>
 
     <section id="stack" class="section section-pad">
       <div class="section-heading reveal">
-        <span class="section-number">03</span>
+        <span class="section-number">04</span>
         <div>
           <p class="kicker" data-i18n="stackKicker">STACK</p>
           <h2 data-i18n="stackTitle">Narzędzia, których używam.</h2>
@@ -159,7 +183,7 @@
     <section id="contact" class="section section-dark contact section-pad">
       <div class="contact-card reveal">
         <div>
-          <p class="kicker" data-i18n="contactKicker">04 / KONTAKT</p>
+          <p class="kicker" data-i18n="contactKicker">05 / KONTAKT</p>
           <h2 data-i18n="contactTitle">Masz pomysł?<br><em>Napisz.</em></h2>
           <p data-i18n="contactDescription">Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.</p>
         </div>
@@ -172,7 +196,7 @@
     <section id="ratings" class="section section-dark ratings-section section-pad">
       <div class="ratings-card reveal">
         <div class="ratings-copy">
-          <p class="kicker" data-i18n="ratingsKicker">05 / OCENA</p>
+          <p class="kicker" data-i18n="ratingsKicker">06 / OCENA</p>
           <h2 data-i18n="ratingsTitle">Jak oceniasz moje portfolio?</h2>
           <p data-i18n="ratingsDescription">Zostaw ocenę i krótką opinię. Każda ocena trafia do mojego podglądu.</p>
           <div class="rating-summary"><strong id="rating-average">—</strong><span class="rating-stars" id="rating-average-stars">☆☆☆☆☆</span><small><span id="rating-count">0</span> <span data-i18n="ratingsVotes">ocen</span></small></div>
