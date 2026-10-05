@@ -197,13 +197,22 @@ function renderTimeline(){
 }
 
 function updateEasterHint(){
-  const combo=document.querySelector("#easter-combo");
+  const combo=document.querySelector(".easter-hint kbd");
   if(!combo) return;
 
-  const isPhone=/Android|iPhone|iPod|Windows Phone/i.test(navigator.userAgent)
-    || (navigator.maxTouchPoints>1 && window.matchMedia("(max-width:700px)").matches);
+  combo.id="easter-combo";
 
-  combo.textContent=isPhone
+  const touchDevice = navigator.maxTouchPoints > 0 ||
+    ("ontouchstart" in window) ||
+    /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
+
+  const compactTouchLayout = window.matchMedia("(max-width: 800px)").matches &&
+    window.matchMedia("(pointer: coarse)").matches;
+
+  const isPhone = /Android|iPhone|iPod|Windows Phone/i.test(navigator.userAgent) ||
+    (touchDevice && compactTouchLayout);
+
+  combo.textContent = isPhone
     ? "Kliknij 5× M"
     : "↑ ↑ ↓ ↓ ← → ← → B A";
 }
