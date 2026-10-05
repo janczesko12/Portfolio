@@ -5,6 +5,10 @@ import {
   collection,
   addDoc,
   getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  increment,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -69,6 +73,23 @@ function showMessage(text, type = "") {
   message.className = "rating-message " + type;
 }
 
+async function recordVisit() {
+  const visitDoc = doc(db, "portfolio_stats", "visits");
+  const alreadyCounted = sessionStorage.getItem("mythoria-visit-counted") === "1";
+  try {
+    if (!alreadyCounted) {
+      await setDoc(visitDoc, { count: increment(1) }, { merge: true });
+      sessionStorage.setItem("mythoria-visit-counted", "1");
+    }
+    const snapshot = await getDoc(visitDoc);
+    const visits = Number(snapshot.data()?.count || 0);
+    const stat = document.querySelector("#stat-visits");
+    if (stat) stat.textContent = visits.toLocaleString("pl-PL");
+  } catch (error) {
+    console.warn("Nie udało się zaktualizować licznika odwiedzin:", error);
+  }
+}
+
 async function loadSummary() {
   try {
     const snapshot = await getDocs(ratingsRef);
@@ -131,7 +152,8 @@ form?.addEventListener("submit", async event => {
     chosen = 0;
     paint(0);
     selected.textContent = "Wybierz ocenę 1–5";
-    await loadSummary();
+    await recordVisit();
+loadSummary();
   } catch (error) {
     console.error(error);
     showMessage("Nie udało się zapisać oceny. Sprawdź reguły Firestore.", "error");
