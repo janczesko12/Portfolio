@@ -561,6 +561,51 @@ function launchEasterEgg(){
   },180000);
 }
 
+
+/* Mobile Easter Egg: tap the M logo 3x, then hold it for 1 second */
+const mobileEasterTarget=document.querySelector(".brand-mark");
+let mobileTapCount=0;
+let mobileTapTimer=null;
+let mobileHoldTimer=null;
+
+function resetMobileEaster(){
+  mobileTapCount=0;
+  clearTimeout(mobileTapTimer);
+}
+
+mobileEasterTarget?.addEventListener("pointerdown",(event)=>{
+  if(event.pointerType==="mouse") return;
+
+  clearTimeout(mobileHoldTimer);
+  clearTimeout(mobileTapTimer);
+
+  if(mobileTapCount===3){
+    mobileHoldTimer=window.setTimeout(()=>{
+      mobileTapCount=0;
+      launchEasterEgg();
+    },1000);
+  }
+});
+
+mobileEasterTarget?.addEventListener("pointerup",(event)=>{
+  if(event.pointerType==="mouse") return;
+
+  clearTimeout(mobileHoldTimer);
+
+  if(mobileTapCount===3) return;
+
+  mobileTapCount++;
+  mobileTapTimer=window.setTimeout(resetMobileEaster,900);
+});
+
+mobileEasterTarget?.addEventListener("pointercancel",()=>{
+  clearTimeout(mobileHoldTimer);
+  resetMobileEaster();
+});
+
+mobileEasterTarget?.addEventListener("contextmenu",event=>event.preventDefault());
+
+
 document.addEventListener("keydown",e=>{
   const key=e.key.length===1?e.key.toLowerCase():e.key;
   if(key===konami[konamiIndex]){
