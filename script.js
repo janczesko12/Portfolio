@@ -204,7 +204,7 @@ function updateEasterHint(){
     || (navigator.maxTouchPoints>1 && window.matchMedia("(max-width:700px)").matches);
 
   combo.textContent=isPhone
-    ? "3× M → przytrzymaj 1 s"
+    ? "Kliknij 5× M"
     : "↑ ↑ ↓ ↓ ← → ← → B A";
 }
 
@@ -575,44 +575,33 @@ function launchEasterEgg(){
 }
 
 
-/* Mobile Easter Egg: tap the M logo 3x, then hold it for 1 second */
+/* Mobile Easter Egg: tap the M logo 5x */
 const mobileEasterTarget=document.querySelector(".brand-mark");
 let mobileTapCount=0;
 let mobileTapTimer=null;
-let mobileHoldTimer=null;
 
 function resetMobileEaster(){
   mobileTapCount=0;
   clearTimeout(mobileTapTimer);
 }
 
-mobileEasterTarget?.addEventListener("pointerdown",(event)=>{
-  if(event.pointerType==="mouse") return;
-
-  clearTimeout(mobileHoldTimer);
-  clearTimeout(mobileTapTimer);
-
-  if(mobileTapCount===3){
-    mobileHoldTimer=window.setTimeout(()=>{
-      mobileTapCount=0;
-      launchEasterEgg();
-    },1000);
-  }
-});
-
 mobileEasterTarget?.addEventListener("pointerup",(event)=>{
   if(event.pointerType==="mouse") return;
 
-  clearTimeout(mobileHoldTimer);
-
-  if(mobileTapCount===3) return;
-
   mobileTapCount++;
+
+  if(mobileTapCount>=5){
+    mobileTapCount=0;
+    clearTimeout(mobileTapTimer);
+    launchEasterEgg();
+    return;
+  }
+
+  clearTimeout(mobileTapTimer);
   mobileTapTimer=window.setTimeout(resetMobileEaster,900);
 });
 
 mobileEasterTarget?.addEventListener("pointercancel",()=>{
-  clearTimeout(mobileHoldTimer);
   resetMobileEaster();
 });
 
