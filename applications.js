@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAXb7y95RcEi5OkLL4AsQSYBEFYXu3qrvc",
@@ -44,8 +44,8 @@ function renderCard(item) {
   body.append(actions); card.append(media,body); return card;
 }
 try {
-  const snapshot = await getDocs(query(collection(db, "applications"), orderBy("sortOrder", "asc")));
-  const apps = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(item => item.published === true);
+  const snapshot = await getDocs(query(collection(db, "applications"), where("published", "==", true), orderBy("sortOrder", "asc")));
+  const apps = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   grid.replaceChildren();
   if (!apps.length) {
     status.textContent = "Lista aplikacji jest gotowa. Wkrótce pojawią się tutaj pierwsze pozycje.";
