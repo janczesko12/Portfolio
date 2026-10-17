@@ -141,7 +141,7 @@ const menuToggle=document.querySelector(".menu-toggle");
 const nav=document.querySelector("#nav");
 const languageToggle=document.querySelector("#language-toggle");
 const languageCode=document.querySelector("#language-code");
-let currentLanguage=localStorage.getItem("mythoria-language")||"pl";
+let currentLanguage=localStorage.getItem("novydev-language")||"pl";
 
 let currentProjectFilter="all";
 
@@ -299,7 +299,7 @@ document.addEventListener("keydown",(event)=>{
 
 languageToggle.addEventListener("click",()=>{
   currentLanguage=currentLanguage==="pl"?"en":"pl";
-  localStorage.setItem("mythoria-language",currentLanguage);
+  localStorage.setItem("novydev-language",currentLanguage);
   applyLanguage();
 });
 
@@ -573,8 +573,8 @@ function launchEasterEgg(){
 
   window.setTimeout(()=>particles.remove(),2300);
 
-  window.clearTimeout(window.mythoriaEasterTimer);
-  window.mythoriaEasterTimer=window.setTimeout(()=>{
+  window.clearTimeout(window.novydevEasterTimer);
+  window.novydevEasterTimer=window.setTimeout(()=>{
     clearInterval(gameTimer);
     window.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
