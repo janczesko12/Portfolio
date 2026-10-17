@@ -59,3 +59,20 @@
 .admin-nav{gap:22px}
 .admin-page [hidden],.admin-form[hidden],#admin-workspace[hidden]{display:none!important}
 @media(max-width:760px){.admin-page{width:min(100% - 28px,1180px);padding-top:32px}.admin-top{align-items:flex-start;flex-direction:column}.admin-fields{grid-template-columns:1fr;gap:15px}.admin-fields .wide{grid-column:auto}.admin-toolbar{align-items:flex-start;flex-direction:column}.admin-app-row{gap:12px}.admin-thumb{width:52px;height:52px;flex-basis:52px}.admin-form-heading{align-items:flex-start}.admin-nav{gap:12px}}
+
+
+/* Clear navigation back to the homepage from sub-pages */
+.page-return {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 28px;
+  color: var(--text);
+  border-color: rgba(255,255,255,.14);
+}
+.page-return:hover {
+  border-color: rgba(183,255,74,.45);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
