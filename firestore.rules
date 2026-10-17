@@ -2,6 +2,38 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "janczesko12@gmail.com"
+        && request.auth.token.email_verified == true;
+    }
+
+    match /applications/{applicationId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'name','description','platform','version','sortOrder','imageUrl',
+          'downloadUrl','websiteUrl','buttonLabel','published','createdAt',
+          'createdBy','updatedAt','updatedBy'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 1200
+        && request.resource.data.sortOrder is int
+        && request.resource.data.published is bool
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if isAdmin()
+        && request.resource.data.keys().hasOnly([
+          'name','description','platform','version','sortOrder','imageUrl',
+          'downloadUrl','websiteUrl','buttonLabel','published','createdAt',
+          'createdBy','updatedAt','updatedBy'
+        ])
+        && request.resource.data.updatedBy == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
     match /portfolio_ratings/{ratingId} {
       allow read: if true;
       allow create: if
