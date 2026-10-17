@@ -1,11 +1,11 @@
 {
-  "name": "Mythoria — Portfolio",
-  "short_name": "Mythoria",
+  "name": "NovyDev — Portfolio",
+  "short_name": "NovyDev",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#08090d",
   "theme_color": "#b7ff4a",
-  "description": "Mythoria — portfolio projektów programistycznych.",
+  "description": "NovyDev — portfolio projektów programistycznych.",
   "icons": [
     {
       "src": "favicon.svg",
