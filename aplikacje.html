@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0b10">
+  <title>Aplikacje — NovyDev</title>
+  <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/applications.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Strona główna NovyDev"><span class="brand-mark" aria-hidden="true">N</span><span>NOVYDEV</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav id="nav" class="nav" aria-label="Główna nawigacja">
+      <a href="/">Portfolio</a><a href="/#projects">Projekty</a><a href="/aplikacje.html" aria-current="page">Aplikacje</a><a href="/#contact">Kontakt</a>
+    </nav>
+  </header>
+  <main class="apps-page section-pad">
+    <div class="apps-heading">
+      <p class="kicker">NOVYDEV / APLIKACJE</p>
+      <h1>Twoje następne <em>ulubione narzędzie.</em></h1>
+      <p>Moje aplikacje w jednym miejscu. Wybierz aplikację, poznaj szczegóły i przejdź do pobierania.</p>
+    </div>
+    <div id="apps-status" class="apps-status" role="status">Ładowanie aplikacji…</div>
+    <section id="apps-grid" class="apps-grid" aria-live="polite"></section>
+  </main>
+  <footer class="footer"><span>© <span id="year"></span> NOVYDEV</span><span>zrobione z kodu ✦</span></footer>
+  <script type="module" src="/applications.js"></script>
+  <script>
+    document.querySelector('#year').textContent = new Date().getFullYear();
+    const toggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('#nav');
+    toggle?.addEventListener('click', () => { const open = toggle.getAttribute('aria-expanded') === 'true'; toggle.setAttribute('aria-expanded', String(!open)); nav.classList.toggle('open', !open); });
+  </script>
+</body>
+</html>
