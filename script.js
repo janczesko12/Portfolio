@@ -312,7 +312,7 @@ const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRigh
 let konamiIndex=0;
 
 function launchEasterEgg(){
-  document.body.classList.add("mythoria-easter");
+  document.body.classList.add("novydev-easter");
 
   const oldOverlay=document.querySelector(".easter-overlay");
   if(oldOverlay) oldOverlay.remove();
@@ -324,12 +324,12 @@ function launchEasterEgg(){
     <div class="easter-window easter-game-window">
       <div class="easter-window-top">
         <span class="easter-lights"><i></i><i></i><i></i></span>
-        <span>mythoria://secret-mode</span>
+        <span>novydev://secret-mode</span>
         <b>ACCESS GRANTED</b>
       </div>
       <div class="snake-header">
         <div>
-          <div class="snake-title">MYTHORIA SNAKE</div>
+          <div class="snake-title">NOVYDEV SNAKE</div>
           <small>Wąż odblokowany ✦</small>
         </div>
         <div class="snake-score">SCORE <strong id="snake-score">0</strong></div>
@@ -519,7 +519,7 @@ function launchEasterEgg(){
 
   function onSnakeKey(e){
     const gameVisible=document.querySelector(".easter-game-window");
-    if(!gameVisible || !document.body.classList.contains("mythoria-easter")) return;
+    if(!gameVisible || !document.body.classList.contains("novydev-easter")) return;
 
     const map={
       ArrowUp:{x:0,y:-1},KeyW:{x:0,y:-1},
@@ -578,7 +578,7 @@ function launchEasterEgg(){
     clearInterval(gameTimer);
     window.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
-    document.body.classList.remove("mythoria-easter");
+    document.body.classList.remove("novydev-easter");
     setTimeout(()=>overlay.remove(),400);
   },180000);
 }
