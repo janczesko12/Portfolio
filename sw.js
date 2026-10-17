@@ -1,4 +1,4 @@
-const CACHE = "mythoria-v3";
+const CACHE = "novydev-v4";
 const ASSETS = ["/","/index.html","/style.css","/script.js","/favicon.svg","/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
