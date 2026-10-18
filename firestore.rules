@@ -53,5 +53,20 @@ service cloud.firestore {
         request.resource.data.language.size() <= 2;
       allow update, delete: if false;
     }
+
+    // Public visit counter. Only the aggregate document can be updated,
+    // and only by adding exactly one to the existing numeric count.
+    match /portfolio_stats/visits {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count is int
+        && request.resource.data.count == 1;
+      allow update: if request.resource.data.keys().hasOnly(['count'])
+        && resource.data.keys().hasOnly(['count'])
+        && resource.data.count is int
+        && request.resource.data.count is int
+        && request.resource.data.count == resource.data.count + 1;
+      allow delete: if false;
+    }
   }
 }
