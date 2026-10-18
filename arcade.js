@@ -9,7 +9,7 @@
     reaction: ["TEST REFLEKSU", "Kliknij dopiero wtedy, gdy pole zrobi się zielone."],
     simon: ["SIMON SAYS", "Zapamiętuj sekwencję kolorów i powtarzaj ją."],
     whack: ["WHACK-A-MOLE", "Klikaj pojawiający się cel, zanim zniknie."],
-    mario: ["MARIO RUN", "Skacz po platformach, zbieraj monety i unikaj przeciwników."],
+    mario: ["MARIO ADVENTURE", "Klasyczna platformówka 2D: bieganie, skoki, monety, bloki i przeciwnicy."],
     fishing: ["FISHING SIMULATOR", "Zarzuć wędkę, wyczuj branie i zbieraj ryby na ulepszenia."],
     racer: ["NEON RACER", "Omijaj ruch uliczny na neonowej autostradzie i pobij rekord."],
     invaders: ["SPACE INVADERS", "Broń Ziemi przed falami kosmitów. Strzelaj i unikaj pocisków."]
@@ -162,22 +162,247 @@
 
 
     function marioGame(){
-      const canvas=make("canvas","arcade-canvas mario-canvas");canvas.width=800;canvas.height=420;canvas.tabIndex=0;put(canvas);
-      const ctx=canvas.getContext("2d");let player={x:90,y:290,w:25,h:34,vx:0,vy:0,onGround:false};let camera=0,coins=[],enemies=[],score=0,lives=3,ended=false,last=0,keys=new Set(),rafId=0;
-      const world=4200,gravity=1500;
-      const platforms=[{x:0,y:350,w:650,h:70},{x:730,y:320,w:250,h:100},{x:1060,y:280,w:230,h:140},{x:1370,y:340,w:420,h:80},{x:1880,y:300,w:300,h:120},{x:2260,y:350,w:400,h:70},{x:2740,y:290,w:260,h:130},{x:3090,y:330,w:430,h:90},{x:3620,y:280,w:360,h:140},{x:4010,y:350,w:190,h:70},{x:250,y:260,w:120,h:18},{x:520,y:210,w:110,h:18},{x:820,y:220,w:110,h:18},{x:1130,y:180,w:110,h:18},{x:1510,y:250,w:120,h:18},{x:1980,y:210,w:120,h:18},{x:2380,y:250,w:130,h:18},{x:2820,y:190,w:120,h:18},{x:3240,y:230,w:120,h:18},{x:3710,y:180,w:120,h:18}];
-      function seed(){coins=[];for(let x=180;x<world-100;x+=105){let platform=platforms.filter(p=>x>=p.x&&x<p.x+p.w).sort((a,b)=>a.y-b.y)[0];coins.push({x,y:platform?platform.y-36:260,taken:false});}enemies=[];for(let x=500;x<world-200;x+=430)enemies.push({x,y:0,w:25,h:24,dir:Math.random()<.5?-1:1,alive:true});}
-      function fresh(){player={x:70,y:290,w:25,h:34,vx:0,vy:0,onGround:false};camera=0;score=0;lives=3;ended=false;last=0;keys.clear();seed();say("Zbieraj monety • dojdz do mety");draw();if(rafId)cancelAnimationFrame(rafId);rafId=requestAnimationFrame(tick);}
-      function jump(){if(ended){fresh();return;}if(player.onGround){player.vy=-570;player.onGround=false;}}
-      function draw(){const grad=ctx.createLinearGradient(0,0,0,420);grad.addColorStop(0,"#101b43");grad.addColorStop(1,"#312653");ctx.fillStyle=grad;ctx.fillRect(0,0,800,420);for(let i=0;i<55;i++){ctx.fillStyle="rgba(255,255,255,.45)";ctx.fillRect((i*137-camera*.18)%850,25+(i*71)%170,2,2);}ctx.save();ctx.translate(-camera,0);
-        platforms.forEach(p=>{ctx.fillStyle="#243f39";ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillStyle="#9bea58";ctx.fillRect(p.x,p.y,p.w,7);for(let x=p.x+12;x<p.x+p.w;x+=28){ctx.fillStyle="rgba(255,255,255,.05)";ctx.fillRect(x,p.y+16,12,3);}});
-        coins.forEach(c=>{if(c.taken)return;ctx.fillStyle="#ffd166";ctx.beginPath();ctx.ellipse(c.x,c.y,8,11,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff0a8";ctx.fillRect(c.x-2,c.y-6,3,12);});
-        enemies.forEach(e=>{if(!e.alive)return;ctx.fillStyle="#f36f78";ctx.fillRect(e.x,e.y,e.w,e.h);ctx.fillStyle="#1b1727";ctx.fillRect(e.x+5,e.y+6,4,5);ctx.fillRect(e.x+16,e.y+6,4,5);ctx.fillStyle="#fff";ctx.fillRect(e.x+4,e.y+e.h-3,7,3);ctx.fillRect(e.x+15,e.y+e.h-3,7,3);});
-        // Original pixel hero, not an imported game sprite.
-        ctx.fillStyle="#ff595e";ctx.fillRect(player.x+2,player.y,21,8);ctx.fillRect(player.x,player.y+6,25,5);ctx.fillStyle="#f2b38b";ctx.fillRect(player.x+5,player.y+10,16,10);ctx.fillStyle="#201a27";ctx.fillRect(player.x+17,player.y+14,3,3);ctx.fillStyle="#3978ff";ctx.fillRect(player.x+4,player.y+20,18,10);ctx.fillStyle="#f2b38b";ctx.fillRect(player.x,player.y+20,5,8);ctx.fillRect(player.x+21,player.y+20,5,8);ctx.fillStyle="#5b3b2b";ctx.fillRect(player.x+4,player.y+29,7,5);ctx.fillRect(player.x+16,player.y+29,7,5);
-        ctx.fillStyle="#b7ff4a";ctx.fillRect(4160,310,8,40);ctx.fillRect(4140,310,28,5);ctx.restore();ctx.fillStyle="#fff";ctx.font="bold 15px ui-monospace,monospace";ctx.fillText("MONETY "+score+"   ŻYCIA "+lives,18,26);if(ended){ctx.fillStyle="rgba(5,8,15,.78)";ctx.fillRect(140,145,520,120);ctx.textAlign="center";ctx.fillStyle="#b7ff4a";ctx.font="bold 25px ui-monospace,monospace";ctx.fillText(player.x>4100?"POZIOM UKOŃCZONY!":"KONIEC GRY",400,190);ctx.fillStyle="#fff";ctx.font="13px ui-monospace,monospace";ctx.fillText("Monety: "+score+" • naciśnij OD NOWA",400,220);ctx.textAlign="left";}}
-      function tick(t){if(destroyed)return;const dt=Math.min(.03,(t-(last||t))/1000);last=t;if(!ended){const oldY=player.y;player.vx=(keys.has("ArrowRight")||keys.has("KeyD")?260:0)-(keys.has("ArrowLeft")||keys.has("KeyA")?260:0);player.x=Math.max(0,Math.min(world-player.w,player.x+player.vx*dt));player.vy=Math.min(900,player.vy+gravity*dt);player.y+=player.vy*dt;player.onGround=false;for(const p of platforms){if(player.x+player.w>p.x&&player.x<p.x+p.w&&oldY+player.h<=p.y+5&&player.y+player.h>=p.y&&player.vy>=0){player.y=p.y-player.h;player.vy=0;player.onGround=true;}}if(player.y>500){lives--;if(lives<=0)ended=true;else{player.x=Math.max(70,player.x-180);player.y=180;player.vy=0;}}coins.forEach(c=>{if(!c.taken&&Math.abs(player.x+player.w/2-c.x)<20&&Math.abs(player.y+player.h/2-c.y)<25){c.taken=true;score++;}});enemies.forEach(e=>{if(!e.alive)return;e.y=(platforms.filter(p=>e.x>=p.x&&e.x<p.x+p.w).sort((a,b)=>a.y-b.y)[0]?.y||350)-e.h;e.x+=e.dir*65*dt;if(e.x<0||e.x>world-50)e.dir*=-1;if(player.x+player.w>e.x&&player.x<e.x+e.w&&player.y+player.h>e.y&&player.y<e.y+e.h){if(player.vy>80&&player.y+player.h<e.y+15){e.alive=false;player.vy=-350;score+=3;}else{lives--;player.x=Math.max(0,player.x-100);player.vy=-220;if(lives<=0)ended=true;}}});if(player.x>4120){ended=true;say("Poziom ukończony!");}camera=Math.max(0,Math.min(world-800,player.x-250));}draw();rafId=requestAnimationFrame(tick);}
-      const kd=e=>{if(["ArrowLeft","ArrowRight","ArrowUp","Space","KeyA","KeyD","KeyW"].includes(e.code)){e.preventDefault();keys.add(e.code);if(["ArrowUp","Space","KeyW"].includes(e.code))jump();}},ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);on(canvas,"pointerdown",e=>{canvas.focus();const r=canvas.getBoundingClientRect();if(e.pointerType==="touch"||e.pointerType==="pen"){const px=e.clientX-r.left,py=e.clientY-r.top;if(py<r.height*.55)jump();else player.x=Math.max(0,Math.min(world-player.w,player.x+(px<r.width/2?-125:125)));return;}if(e.clientX>r.left+r.width*.55)keys.add("ArrowRight");else keys.add("ArrowLeft");if(e.clientY<r.top+r.height*.55)jump();});on(canvas,"pointerup",()=>{keys.delete("ArrowLeft");keys.delete("ArrowRight");});on(reset,"click",fresh);help("← → / A D — ruch • ↑ / W / SPACJA — skok • telefon: dotknij lewej/prawej strony");fresh();
+      const canvas=make("canvas","arcade-canvas mario-canvas");
+      canvas.width=800;canvas.height=450;canvas.tabIndex=0;canvas.setAttribute("aria-label","Mario Adventure — poziom 1-1");
+      put(canvas);
+      const ctx=canvas.getContext("2d");
+      const controls=make("div","mario-touch-controls");
+      const movePad=make("div","mario-move-controls");
+      const actionPad=make("div","mario-action-controls");
+      const leftBtn=button("◀","mario-control mario-left");
+      const rightBtn=button("▶","mario-control mario-right");
+      const jumpBtn=button("⬆","mario-control mario-jump");
+      const runBtn=button("⚡","mario-control mario-run");
+      leftBtn.setAttribute("aria-label","Idź w lewo");rightBtn.setAttribute("aria-label","Idź w prawo");
+      jumpBtn.setAttribute("aria-label","Skacz");runBtn.setAttribute("aria-label","Biegnij szybciej");
+      movePad.append(leftBtn,rightBtn);actionPad.append(jumpBtn,runBtn);controls.append(movePad,actionPad);put(controls);
+      const W=800,H=450,groundY=390,world=5900,gravity=1420;
+      let player={x:60,y:352,w:27,h:38,vx:0,vy:0,onGround:false,facing:1,big:false,invulnerable:0};
+      let camera=0,coins=[],enemies=[],mushrooms=[],score=0,coinCount=0,lives=3,ended=false,won=false,last=0,rafId=0,elapsed=0;
+      const keys=new Set(),solids=[],ground=[];
+      const gaps=[[1700,1810],[3180,3290],[4370,4470]];
+      const coinLine=[210,252,294,560,602,644,850,892,934,1200,1242,1284,1510,1552,1594,1930,1972,2014,2290,2332,2374,2690,2732,2774,3040,3082,3124,3440,3482,3524,3860,3902,3944,4200,4242,4284,4630,4672,4714,4960,5002,5044,5250,5292,5334];
+      function addSolid(x,y,w,h,type,extra){const s={x,y,w,h,type,...(extra||{})};solids.push(s);return s;}
+      let start=0;
+      gaps.forEach(g=>{if(g[0]>start){ground.push({x:start,w:g[0]-start});addSolid(start,groundY,g[0]-start,H-groundY,"ground");}start=g[1];});
+      ground.push({x:start,w:world-start});addSolid(start,groundY,world-start,H-groundY,"ground");
+      function row(x,count,y,type){for(let i=0;i<count;i++)addSolid(x+i*32,y,32,32,type||"brick");}
+      function question(x,y,reward){addSolid(x,y,32,32,"question",{reward:reward||"coin"});}
+      // Układ poziomu inspirowany klasycznymi platformówkami 8-bit.
+      question(320,292,"coin");row(384,3,292,"brick");question(416,292,"coin");row(512,2,228,"brick");question(544,228,"mushroom");
+      row(800,3,292,"brick");question(832,292,"coin");question(960,260,"coin");row(1120,4,292,"brick");question(1152,292,"coin");
+      addSolid(650,groundY-55,64,55,"pipe");addSolid(1370,groundY-82,64,82,"pipe");
+      question(1512,258,"coin");row(1544,3,258,"brick");question(1608,258,"coin");
+      question(1944,292,"mushroom");row(1976,3,292,"brick");row(2104,3,228,"brick");question(2136,228,"coin");
+      addSolid(2440,groundY-62,64,62,"pipe");question(2656,292,"coin");row(2688,4,292,"brick");
+      row(2848,3,244,"brick");question(2880,244,"coin");addSolid(3000,groundY-96,64,96,"pipe");
+      question(3400,260,"mushroom");row(3432,4,260,"brick");question(3560,292,"coin");
+      addSolid(3790,groundY-78,64,78,"pipe");row(3984,3,292,"brick");question(4016,292,"coin");
+      row(4144,3,228,"brick");question(4176,228,"coin");addSolid(4620,groundY-56,64,56,"pipe");
+      row(4824,4,292,"brick");question(4856,292,"coin");question(5000,258,"coin");row(5032,3,258,"brick");
+      row(5200,292,0,"brick"); // placeholder removed below
+      solids.splice(solids.length-1,1);
+      row(5200,3,292,"brick");question(5232,292,"coin");
+      // Klasyczne schodki prowadzące do flagi.
+      row(5384,1,358,"brick");row(5416,2,326,"brick");row(5448,3,294,"brick");row(5480,4,262,"brick");
+      function seed(){
+        coins=coinLine.map((x,i)=>({x,y:((i%5===0)?246:(i%3===0)?285:330),taken:false,fly:false}));
+        enemies=[
+          {x:520,min:470,max:625,w:28,h:26,dir:-1,alive:true},
+          {x:900,min:850,max:1010,w:28,h:26,dir:1,alive:true},
+          {x:1050,min:1000,max:1190,w:28,h:26,dir:-1,alive:true},
+          {x:1460,min:1420,max:1640,w:28,h:26,dir:1,alive:true},
+          {x:1900,min:1850,max:2070,w:28,h:26,dir:1,alive:true},
+          {x:2350,min:2260,max:2490,w:28,h:26,dir:-1,alive:true},
+          {x:2780,min:2700,max:2950,w:28,h:26,dir:1,alive:true},
+          {x:3360,min:3320,max:3570,w:28,h:26,dir:-1,alive:true},
+          {x:3900,min:3820,max:4070,w:28,h:26,dir:1,alive:true},
+          {x:4690,min:4500,max:4780,w:28,h:26,dir:-1,alive:true},
+          {x:5070,min:5000,max:5170,w:28,h:26,dir:1,alive:true}
+        ];
+        mushrooms=[];
+      }
+      function fresh(){
+        player={x:60,y:groundY-38,w:27,h:38,vx:0,vy:0,onGround:true,facing:1,big:false,invulnerable:0};
+        camera=0;score=0;coinCount=0;lives=3;ended=false;won=false;last=0;elapsed=0;keys.clear();seed();
+        say("Poziom 1-1 • powodzenia!");draw(0);
+        if(rafId)cancelAnimationFrame(rafId);rafId=requestAnimationFrame(tick);
+      }
+      function addFloatingCoin(x,y){coins.push({x,y,baseY:y,taken:false,fly:true,vy:-390,age:0});}
+      function jump(){
+        if(ended)return;
+        if(player.onGround){player.vy=-560;player.onGround=false;player.jumpHold=0;}
+      }
+      function loseLife(){
+        if(player.invulnerable>0||ended)return;
+        if(player.big){player.big=false;player.h=38;player.y+=10;player.invulnerable=1.25;say("Super Mario stracił moc!");return;}
+        lives--;player.invulnerable=1.5;player.vx=-player.facing*130;player.vy=-280;
+        if(lives<=0){ended=true;won=false;say("Koniec gry • wybierz OD NOWA");}
+        else say("Uważaj! Pozostało żyć: "+lives);
+      }
+      function bump(s){
+        if(s.type==="question"){
+          const reward=s.reward;s.type="used";score+=200;
+          if(reward==="mushroom")mushrooms.push({x:s.x+3,y:s.y-25,w:26,h:25,vx:80,vy:-180,age:0});
+          else addFloatingCoin(s.x+16,s.y-8);
+          say(reward==="mushroom"?"Grzybek! Złap go!":"+200 punktów • moneta!");
+        }else if(s.type==="brick"&&player.big){
+          s.broken=true;score+=50;s.type="broken";
+        }
+      }
+      function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
+      function moveAndCollide(dt){
+        const oldX=player.x,oldY=player.y,oldBottom=oldY+player.h;
+        const left=keys.has("ArrowLeft")||keys.has("KeyA"),right=keys.has("ArrowRight")||keys.has("KeyD");
+        const running=keys.has("ShiftLeft")||keys.has("ShiftRight")||keys.has("ControlLeft")||keys.has("ControlRight");
+        const target=(right?1:0)-(left?1:0);
+        if(target){player.facing=target;player.vx+=target*(running?1500:1250)*dt;player.vx=Math.max(-(running?310:225),Math.min(running?310:225,player.vx));}
+        else {player.vx*=Math.pow(.0008,dt);if(Math.abs(player.vx)<7)player.vx=0;}
+        player.x=Math.max(0,Math.min(world-player.w,player.x+player.vx*dt));
+        for(const s of solids){
+          if(s.type==="broken")continue;
+          if(player.y+player.h>s.y+3&&player.y<s.y+s.h-3&&player.x+player.w>s.x&&player.x<s.x+s.w){
+            if(player.vx>0&&oldX+player.w<=s.x+Math.abs(player.vx*dt)+1){player.x=s.x-player.w;player.vx=0;}
+            else if(player.vx<0&&oldX>=s.x+s.w-Math.abs(player.vx*dt)-1){player.x=s.x+s.w;player.vx=0;}
+          }
+        }
+        const wasOnGround=player.onGround;
+        player.vy=Math.min(880,player.vy+gravity*dt);
+        if(player.vy<0&&(keys.has("Space")||keys.has("ArrowUp")||keys.has("KeyW"))&&(player.jumpHold||0)<.22){
+          player.vy-=gravity*.52*dt;player.jumpHold=(player.jumpHold||0)+dt;
+        }
+        player.y+=player.vy*dt;player.onGround=false;
+        for(const s of solids){
+          if(s.type==="broken")continue;
+          if(player.x+player.w<=s.x+2||player.x>=s.x+s.w-2)continue;
+          const bottom=player.y+player.h;
+          if(player.vy>=0&&oldBottom<=s.y+7&&bottom>=s.y){
+            player.y=s.y-player.h;player.vy=0;player.onGround=true;
+          }else if(player.vy<0&&oldY>=s.y+s.h-5&&player.y<=s.y+s.h){
+            player.y=s.y+s.h;player.vy=0;
+            if(s.type==="question"||s.type==="brick")bump(s);
+          }
+        }
+        if(player.onGround&&!wasOnGround)player.jumpHold=0;
+        if(player.y>H+100){lives--;if(lives<=0){ended=true;won=false;say("Wpadłeś! Koniec gry.");}else{player.x=Math.max(50,player.x-190);player.y=groundY-100;player.vx=0;player.vy=0;say("Uważaj na przepaście! Życia: "+lives);}}
+      }
+      function update(dt){
+        elapsed+=dt;
+        if(player.invulnerable>0)player.invulnerable=Math.max(0,player.invulnerable-dt);
+        moveAndCollide(dt);
+        for(const c of coins){
+          if(c.taken)continue;
+          if(c.fly){c.age+=dt;c.y+=c.vy*dt;c.vy+=gravity*dt;if(c.age>.55){c.taken=true;score+=100;coinCount++;}}
+          else if(Math.abs(player.x+player.w/2-c.x)<22&&Math.abs(player.y+player.h/2-c.y)<28){c.taken=true;score+=100;coinCount++;say("Monety: "+coinCount);}
+        }
+        for(const e of enemies){
+          if(!e.alive)continue;
+          e.x+=e.dir*66*dt;if(e.x<e.min){e.x=e.min;e.dir=1;}if(e.x>e.max){e.x=e.max;e.dir=-1;}
+          const support=solids.filter(s=>s.type==="ground"&&e.x+e.w>s.x&&e.x<s.x+s.w).find(s=>s.y>=groundY);
+          e.y=(support?support.y:groundY)-e.h;
+          if(overlap(player,e)){
+            if(player.vy>80&&player.y+player.h-e.y<18){e.alive=false;player.vy=-370;score+=200;say("+200 • świetny skok!");}
+            else if(player.invulnerable<=0)loseLife();
+          }
+        }
+        for(const m of mushrooms){
+          if(m.gone)continue;m.age+=dt;m.vy=Math.min(700,m.vy+gravity*dt);m.x+=m.vx*dt;m.y+=m.vy*dt;
+          for(const s of solids){if(s.type==="broken")continue;if(m.x+m.w>s.x&&m.x<s.x+s.w&&m.y+m.h>s.y&&m.y+m.h-m.vy*dt<=s.y&&m.vy>=0){m.y=s.y-m.h;m.vy=0;}}
+          if(m.x<0||m.x>world-m.w)m.vx*=-1;
+          if(overlap(player,m)){m.gone=true;score+=1000;player.big=true;const bottom=player.y+player.h;player.h=48;player.y=bottom-player.h;say("SUPER MARIO! +1000");}
+        }
+        if(player.x>5660){ended=true;won=true;score+=1000;say("Poziom ukończony! +1000");}
+        camera=Math.max(0,Math.min(world-W,player.x-270));
+      }
+      function drawCloud(x,y,scale){
+        ctx.fillStyle="#fff";ctx.fillRect(x+12*scale,y+10*scale,48*scale,17*scale);
+        ctx.fillRect(x+20*scale,y,20*scale,20*scale);ctx.fillRect(x+39*scale,y+5*scale,19*scale,18*scale);
+        ctx.fillStyle="#d7efff";ctx.fillRect(x+18*scale,y+22*scale,38*scale,4*scale);
+      }
+      function drawBackground(){
+        ctx.fillStyle="#5c94fc";ctx.fillRect(0,0,W,H);
+        ctx.fillStyle="#ffd35a";ctx.beginPath();ctx.arc(680,86,28,0,Math.PI*2);ctx.fill();
+        const shift=camera*.24;
+        for(let i=0;i<10;i++){let x=((i*210-shift)%(W+250)+W+250)%(W+250)-90;drawCloud(x,56+(i%3)*42,1+(i%2)*.16);}
+        for(let i=0;i<9;i++){let x=i*280-camera*.42;while(x< -320)x+=2520;while(x<W+60){ctx.fillStyle="#64bd62";ctx.beginPath();ctx.moveTo(x,groundY);ctx.quadraticCurveTo(x+75,groundY-125,x+160,groundY);ctx.fill();ctx.fillStyle="#8be08a";ctx.fillRect(x+82,groundY-52,17,5);x+=2520;}}
+      }
+      function drawGround(s){
+        ctx.fillStyle="#c77936";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#65bd45";ctx.fillRect(s.x,s.y,s.w,9);ctx.fillStyle="#b2e95d";ctx.fillRect(s.x,s.y,s.w,3);
+        for(let x=s.x;x<s.x+s.w;x+=32){ctx.strokeStyle="#8a4a23";ctx.lineWidth=2;ctx.strokeRect(x,s.y+10,32,25);ctx.beginPath();ctx.moveTo(x,s.y+23);ctx.lineTo(x+32,s.y+23);ctx.moveTo(x+16,s.y+10);ctx.lineTo(x+16,s.y+23);ctx.stroke();}
+      }
+      function drawBlock(s){
+        if(s.type==="broken")return;
+        if(s.type==="pipe"){
+          ctx.fillStyle="#087d19";ctx.fillRect(s.x,s.y+6,s.w,s.h-6);ctx.fillStyle="#14b82a";ctx.fillRect(s.x+7,s.y+9,12,s.h-9);ctx.fillStyle="#087d19";ctx.fillRect(s.x-5,s.y,s.w+10,15);ctx.fillStyle="#24d53b";ctx.fillRect(s.x+1,s.y+2,s.w-2,9);ctx.fillStyle="#075c17";ctx.fillRect(s.x+s.w-7,s.y+12,4,s.h-12);return;
+        }
+        if(s.type==="question"||s.type==="used"){
+          ctx.fillStyle=s.type==="used"?"#ad6a3e":"#ffbf37";ctx.fillRect(s.x,s.y,32,32);ctx.fillStyle=s.type==="used"?"#81502e":"#fff078";ctx.fillRect(s.x+3,s.y+3,26,26);ctx.strokeStyle="#944b22";ctx.lineWidth=2;ctx.strokeRect(s.x+1,s.y+1,30,30);
+          ctx.fillStyle=s.type==="used"?"#85532e":"#b15a1d";ctx.font="bold 24px monospace";ctx.textAlign="center";ctx.fillText(s.type==="used"?"·":"?",s.x+16,s.y+25);ctx.textAlign="left";return;
+        }
+        if(s.type==="brick"){
+          ctx.fillStyle="#b95025";ctx.fillRect(s.x,s.y,32,32);ctx.strokeStyle="#6d2b19";ctx.lineWidth=2;ctx.strokeRect(s.x+1,s.y+1,30,30);ctx.beginPath();ctx.moveTo(s.x,s.y+16);ctx.lineTo(s.x+32,s.y+16);ctx.moveTo(s.x+16,s.y);ctx.lineTo(s.x+16,s.y+16);ctx.moveTo(s.x+8,s.y+16);ctx.lineTo(s.x+8,s.y+32);ctx.moveTo(s.x+25,s.y+16);ctx.lineTo(s.x+25,s.y+32);ctx.stroke();ctx.fillStyle="#e97b39";ctx.fillRect(s.x+3,s.y+3,10,3);return;
+        }
+      }
+      function drawCoin(c,t){
+        if(c.taken)return;const width=c.fly?6:Math.max(3,Math.abs(Math.sin(t/150))*10);
+        ctx.fillStyle="#f8a51c";ctx.beginPath();ctx.ellipse(c.x,c.y,width,12,0,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#fff079";ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(c.x,c.y,width*.45,8,0,0,Math.PI*2);ctx.stroke();
+      }
+      function drawGoomba(e,t){
+        if(!e.alive)return;ctx.fillStyle="#7b361c";ctx.fillRect(e.x+3,e.y+8,e.w-6,e.h-9);ctx.fillStyle="#a9572a";ctx.beginPath();ctx.ellipse(e.x+e.w/2,e.y+12,e.w/2,12,0,Math.PI,Math.PI*2);ctx.fill();
+        ctx.fillStyle="#fff";ctx.fillRect(e.x+5,e.y+12,6,7);ctx.fillRect(e.x+17,e.y+12,6,7);ctx.fillStyle="#1b1522";ctx.fillRect(e.x+7,e.y+15,3,4);ctx.fillRect(e.x+19,e.y+15,3,4);ctx.fillStyle="#562416";ctx.fillRect(e.x+2,e.y+e.h-5,10,5);ctx.fillRect(e.x+17,e.y+e.h-5,10,5);
+      }
+      function drawMushroom(m){
+        if(m.gone)return;ctx.fillStyle="#ffdfbd";ctx.fillRect(m.x+5,m.y+10,16,15);ctx.fillStyle="#f44845";ctx.beginPath();ctx.ellipse(m.x+13,m.y+10,13,10,0,Math.PI,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(m.x+5,m.y+3,5,5);ctx.fillRect(m.x+15,m.y,5,5);ctx.fillStyle="#241a1a";ctx.fillRect(m.x+8,m.y+13,3,4);ctx.fillRect(m.x+17,m.y+13,3,4);
+      }
+      function drawHero(t){
+        if(player.invulnerable>0&&Math.floor(t/90)%2===0)return;
+        const x=Math.round(player.x),y=Math.round(player.y),h=player.h,leg=(Math.floor(t/90)%2)&&Math.abs(player.vx)>20;
+        // Autorski, pikselowy bohater: czerwona czapka, niebieski kombinezon i brązowe buty.
+        ctx.fillStyle="#b9271d";ctx.fillRect(x+3,y+2,player.w-5,7);ctx.fillRect(x,y+7,player.w,5);
+        ctx.fillStyle="#f2b27b";ctx.fillRect(x+5,y+11,player.w-10,10);ctx.fillStyle="#5b2b18";ctx.fillRect(x+(player.facing>0?15:7),y+16,3,4);ctx.fillRect(x+5,y+21,player.w-10,3);
+        ctx.fillStyle="#1760cf";ctx.fillRect(x+4,y+24,player.w-8,h-29);ctx.fillStyle="#f5ce3a";ctx.fillRect(x+7,y+25,3,4);ctx.fillRect(x+player.w-10,y+25,3,4);
+        ctx.fillStyle="#e6a56f";ctx.fillRect(x,y+23,5,9);ctx.fillRect(x+player.w-5,y+23,5,9);
+        ctx.fillStyle="#67351d";ctx.fillRect(x+2,y+h-6,10,6);ctx.fillRect(x+player.w-12+(leg?4:0),y+h-6,11,6);
+        if(player.big){ctx.fillStyle="#fff";ctx.fillRect(x+4,y+8,player.w-8,2);}
+      }
+      function draw(t){
+        drawBackground();ctx.save();ctx.translate(-Math.floor(camera),0);
+        for(const s of solids){if(s.type==="ground")drawGround(s);else drawBlock(s);}
+        // Dodatkowe dekoracyjne chmurki i krzaki na pierwszym planie.
+        for(let x=120;x<world;x+=520){ctx.fillStyle="#168d35";ctx.beginPath();ctx.ellipse(x,groundY-7,34,20,0,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(x-34,groundY-7,68,7);ctx.fillStyle="#54d45e";ctx.fillRect(x-15,groundY-20,4,4);ctx.fillRect(x+9,groundY-15,4,4);}
+        coins.forEach(c=>drawCoin(c,t));mushrooms.forEach(drawMushroom);enemies.forEach(e=>drawGoomba(e,t));
+        ctx.fillStyle="#fff";ctx.fillRect(5570,220,6,170);ctx.fillStyle="#e92b39";ctx.beginPath();ctx.moveTo(5576,226);ctx.lineTo(5626,240);ctx.lineTo(5576,254);ctx.closePath();ctx.fill();ctx.fillStyle="#dfdfdf";ctx.fillRect(5565,386,16,4);
+        // Mały zamek za metą.
+        ctx.fillStyle="#e9c9a0";ctx.fillRect(5705,330,80,60);ctx.fillRect(5712,313,17,17);ctx.fillRect(5758,313,17,17);ctx.fillStyle="#8e563a";ctx.fillRect(5736,358,18,32);ctx.fillStyle="#b15a39";ctx.fillRect(5720,342,8,8);ctx.fillRect(5760,342,8,8);
+        ctx.restore();
+        ctx.fillStyle="#fff";ctx.font="bold 14px monospace";ctx.textAlign="left";ctx.fillText("MARIO",22,22);ctx.fillText(String(score).padStart(6,"0"),22,40);ctx.fillText("● ×"+String(coinCount).padStart(2,"0"),185,22);ctx.fillText("WORLD",360,22);ctx.fillText("1-1",375,40);ctx.fillText("TIME",655,22);ctx.fillText(String(Math.max(0,300-Math.floor(elapsed))).padStart(3,"0"),665,40);ctx.fillText("♥ "+lives,720,40);
+        if(ended){ctx.fillStyle="rgba(8,18,44,.82)";ctx.fillRect(125,145,550,145);ctx.textAlign="center";ctx.fillStyle=won?"#ffe45c":"#fff";ctx.font="bold 30px monospace";ctx.fillText(won?"POZIOM UKOŃCZONY!":"KONIEC GRY",400,196);ctx.fillStyle="#fff";ctx.font="bold 16px monospace";ctx.fillText("Wynik: "+score+"   Monety: "+coinCount,400,229);ctx.font="13px monospace";ctx.fillText("Naciśnij OD NOWA, aby zagrać ponownie",400,258);ctx.textAlign="left";}
+      }
+      function tick(t){
+        if(destroyed)return;const dt=Math.min(.032,(t-(last||t))/1000||.016);last=t;
+        if(!ended)update(dt);draw(t);
+        rafId=requestAnimationFrame(tick);
+      }
+      const keyDown=e=>{
+        if(!root.hidden&&["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Space","KeyA","KeyD","KeyW","ShiftLeft","ShiftRight","ControlLeft","ControlRight"].includes(e.code)){
+          e.preventDefault();
+          const was=keys.has(e.code);keys.add(e.code);
+          if(!was&&["ArrowUp","Space","KeyW"].includes(e.code))jump();
+        }
+      };
+      const keyUp=e=>keys.delete(e.code);
+      on(window,"keydown",keyDown,true);on(window,"keyup",keyUp,true);
+      function hold(btn,code,doJump){
+        const down=e=>{e.preventDefault();if(btn.setPointerCapture&&e.pointerId!==undefined){try{btn.setPointerCapture(e.pointerId);}catch(_){}}btn.classList.add("is-pressed");if(doJump){keys.add(code);jump();}else keys.add(code);};
+        const up=e=>{if(e)e.preventDefault();keys.delete(code);btn.classList.remove("is-pressed");};
+        on(btn,"pointerdown",down);on(btn,"pointerup",up);on(btn,"pointercancel",up);on(btn,"lostpointercapture",up);on(btn,"contextmenu",e=>e.preventDefault());
+      }
+      hold(leftBtn,"ArrowLeft",false);hold(rightBtn,"ArrowRight",false);hold(jumpBtn,"Space",true);
+      hold(runBtn,"ShiftLeft",false);
+      on(canvas,"pointerdown",e=>{canvas.focus();if(e.pointerType==="mouse"&&e.button===0){if(e.clientY<canvas.getBoundingClientRect().top+canvas.clientHeight*.55)jump();}});
+      on(reset,"click",fresh);cleanup.push(()=>{cancelAnimationFrame(rafId);keys.clear();});
+      help("← / → lub A / D — ruch • przytrzymaj ↑ / W / SPACJĘ, aby skoczyć wyżej • SHIFT / ⚡ — bieg");
+      fresh();
     }
 
     function fishingGame(){
