@@ -337,25 +337,57 @@ function launchEasterEgg(){
         <span>novydev://secret-mode</span>
         <b>ACCESS GRANTED</b>
       </div>
-      <div class="snake-header">
-        <div>
-          <div class="snake-title">NOVYDEV SNAKE</div>
-          <small>Wąż odblokowany ✦</small>
-        </div>
-        <div class="snake-score">SCORE <strong id="snake-score">0</strong></div>
+      <div class="easter-game-select" role="tablist" aria-label="Wybierz grę">
+        <button type="button" class="easter-game-tab active" id="snake-game-tab" role="tab" aria-selected="true" aria-controls="snake-game-panel">🐍 SNAKE</button>
+        <button type="button" class="easter-game-tab" id="breakout-game-tab" role="tab" aria-selected="false" aria-controls="breakout-game-panel">🧱 BLOCK BREAKER</button>
       </div>
-      <div class="snake-stage">
-        <canvas id="snake-canvas" width="420" height="420" aria-label="Gra Snake"></canvas>
-        <p class="snake-swipe-hint">Przesuń palcem po planszy, aby sterować wężem</p>
-        <div class="snake-message" id="snake-message">
-          <strong>START</strong>
-          <span>Strzałki / WASD</span>
-          <button type="button" id="snake-start" class="snake-btn">GRAJ</button>
+      <div id="snake-game-panel" class="easter-game-panel">
+        <div class="snake-header">
+          <div>
+            <div class="snake-title">NOVYDEV SNAKE</div>
+            <small>Wąż odblokowany ✦</small>
+          </div>
+          <div class="snake-score">SCORE <strong id="snake-score">0</strong></div>
+        </div>
+        <div class="snake-stage">
+          <canvas id="snake-canvas" width="420" height="420" aria-label="Gra Snake"></canvas>
+          <p class="snake-swipe-hint">Przesuń palcem po planszy, aby sterować wężem</p>
+          <div class="snake-message" id="snake-message">
+            <strong>START</strong>
+            <span>Strzałki / WASD</span>
+            <button type="button" id="snake-start" class="snake-btn">GRAJ</button>
+          </div>
+        </div>
+        <div class="snake-controls">
+          <span>↑ ↓ ← → / WASD</span>
+          <div><button type="button" id="snake-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="snake-restart" class="snake-btn snake-small">RESET</button></div>
         </div>
       </div>
-      <div class="snake-controls">
-        <span>↑ ↓ ← → / WASD</span>
-        <div><button type="button" id="snake-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="snake-restart" class="snake-btn snake-small">RESET</button></div>
+      <div id="breakout-game-panel" class="easter-game-panel" role="tabpanel" aria-labelledby="breakout-game-tab" hidden>
+        <div class="breakout-header">
+          <div>
+            <div class="snake-title">NOVYDEV BLOCK BREAKER</div>
+            <small>Nieskończone stage • coraz trudniejsze poziomy</small>
+          </div>
+          <div class="breakout-stats">
+            <span>STAGE <strong id="breakout-level">1</strong></span>
+            <span>WYNIK <strong id="breakout-score">0</strong></span>
+            <span>ŻYCIA <strong id="breakout-lives">3</strong></span>
+          </div>
+        </div>
+        <div class="breakout-stage">
+          <canvas id="breakout-canvas" width="900" height="540" aria-label="Gra Block Breaker"></canvas>
+          <div class="breakout-message" id="breakout-message">
+            <strong id="breakout-message-title">BLOCK BREAKER</strong>
+            <span id="breakout-message-text">Zbij wszystkie bloki. Kolejne stage są generowane bez końca, a trudność rośnie.</span>
+            <button type="button" id="breakout-start" class="snake-btn">GRAJ</button>
+          </div>
+        </div>
+        <p class="breakout-swipe-hint">Przesuwaj palcem po planszy, aby sterować platformą. Na komputerze użyj ← → lub A / D.</p>
+        <div class="breakout-controls">
+          <span>KULKA + PLATFORMa + BLOKI</span>
+          <div><button type="button" id="breakout-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="breakout-reset" class="snake-btn snake-small">RESET</button></div>
+        </div>
       </div>
     </div>
     <div class="easter-particles" aria-hidden="true"></div>`;
@@ -380,6 +412,11 @@ function launchEasterEgg(){
   const startBtn=overlay.querySelector("#snake-start");
   const pauseBtn=overlay.querySelector("#snake-pause");
   const restartBtn=overlay.querySelector("#snake-restart");
+  const snakePanel=overlay.querySelector("#snake-game-panel");
+  const breakoutPanel=overlay.querySelector("#breakout-game-panel");
+  const snakeTab=overlay.querySelector("#snake-game-tab");
+  const breakoutTab=overlay.querySelector("#breakout-game-tab");
+  let breakoutInstance=null;
 
   const size=21;
   const cell=canvas.width/size;
@@ -658,6 +695,35 @@ function launchEasterEgg(){
   pauseBtn.addEventListener("click",togglePause);
   restartBtn.addEventListener("click",()=>resetGame(true));
 
+  function selectGame(game){
+    const isBreakout=game==="breakout";
+    snakePanel.hidden=isBreakout;
+    breakoutPanel.hidden=!isBreakout;
+    snakeTab.classList.toggle("active",!isBreakout);
+    breakoutTab.classList.toggle("active",isBreakout);
+    snakeTab.setAttribute("aria-selected",String(!isBreakout));
+    breakoutTab.setAttribute("aria-selected",String(isBreakout));
+
+    if(isBreakout){
+      if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+      gameFrame=null;
+      running=false;
+      paused=false;
+      if(!breakoutInstance && typeof window.createBreakoutGame==="function"){
+        breakoutInstance=window.createBreakoutGame(breakoutPanel);
+      }
+      breakoutPanel.querySelector("#breakout-canvas")?.focus();
+    }else{
+      breakoutInstance?.destroy();
+      breakoutInstance=null;
+      resetGame(true);
+      canvas.focus();
+    }
+  }
+
+  snakeTab.addEventListener("click",()=>selectGame("snake"));
+  breakoutTab.addEventListener("click",()=>selectGame("breakout"));
+
   canvas.tabIndex=0;
   resetGame(true);
   overlay.tabIndex=-1;
@@ -669,6 +735,8 @@ function launchEasterEgg(){
   window.novydevEasterTimer=window.setTimeout(()=>{
     if(gameFrame!==null) cancelAnimationFrame(gameFrame);
     gameFrame=null;
+    breakoutInstance?.destroy();
+    breakoutInstance=null;
     window.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
     document.body.classList.remove("novydev-easter");
