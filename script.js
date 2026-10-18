@@ -442,8 +442,8 @@ function launchEasterEgg(){
   const restartBtn=overlay.querySelector("#snake-restart");
   const snakePanel=overlay.querySelector("#snake-game-panel");
   const breakoutPanel=overlay.querySelector("#breakout-game-panel");
-  const snakeTab=overlay.querySelector("#snake-game-tab");
-  const breakoutTab=overlay.querySelector("#breakout-game-tab");
+  const snakeTab=overlay.querySelector('[data-arcade-game="snake"]');
+  const breakoutTab=overlay.querySelector('[data-arcade-game="breakout"]');
   const arcadePanel=overlay.querySelector("#arcade-games-panel");
   const arcadeTabs=[...overlay.querySelectorAll("[data-arcade-game]")];
   const gameFilters=[...overlay.querySelectorAll("[data-game-filter]")];
