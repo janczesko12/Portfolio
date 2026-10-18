@@ -75,11 +75,13 @@ function showMessage(text, type = "") {
 
 async function recordVisit() {
   const visitDoc = doc(db, "portfolio_stats", "visits");
-  const alreadyCounted = sessionStorage.getItem("mythoria-visit-counted") === "1";
+  // Count at most one visit per browser tab/session. Opening a fresh tab
+  // or returning later in a new session counts again.
+  const alreadyCounted = sessionStorage.getItem("novydev-visit-counted") === "1";
   try {
     if (!alreadyCounted) {
       await setDoc(visitDoc, { count: increment(1) }, { merge: true });
-      sessionStorage.setItem("mythoria-visit-counted", "1");
+      sessionStorage.setItem("novydev-visit-counted", "1");
     }
     const snapshot = await getDoc(visitDoc);
     const visits = Number(snapshot.data()?.count || 0);
@@ -89,6 +91,7 @@ async function recordVisit() {
     console.warn("Nie udało się zaktualizować licznika odwiedzin:", error);
   }
 }
+
 
 async function loadSummary() {
   try {
@@ -166,4 +169,5 @@ if (localStorage.getItem("mythoria-rated") === "1") {
   showMessage("Ocena z tego urządzenia została już wysłana.");
 }
 
+recordVisit();
 loadSummary();
