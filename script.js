@@ -341,7 +341,7 @@ function launchEasterEgg(){
         <button type="button" class="easter-game-tab active" id="snake-game-tab" role="tab" aria-selected="true" aria-controls="snake-game-panel">🐍 SNAKE</button>
         <button type="button" class="easter-game-tab" id="breakout-game-tab" role="tab" aria-selected="false" aria-controls="breakout-game-panel">🧱 BLOCK BREAKER</button>
       </div>
-      <div id="snake-game-panel" class="easter-game-panel">
+      <div id="snake-game-panel" class="easter-game-panel" role="tabpanel" aria-labelledby="snake-game-tab">
         <div class="snake-header">
           <div>
             <div class="snake-title">NOVYDEV SNAKE</div>
@@ -385,7 +385,7 @@ function launchEasterEgg(){
         </div>
         <p class="breakout-swipe-hint">Przesuwaj palcem po planszy, aby sterować platformą. Na komputerze użyj ← → lub A / D.</p>
         <div class="breakout-controls">
-          <span>KULKA + PLATFORMa + BLOKI</span>
+          <span>KULKA • PLATFORMA • BLOKI</span>
           <div><button type="button" id="breakout-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="breakout-reset" class="snake-btn snake-small">RESET</button></div>
         </div>
       </div>
