@@ -174,12 +174,31 @@
 
     function flappyGame(){
       const canvas=make("canvas","arcade-canvas flappy-canvas");canvas.width=420;canvas.height=600;canvas.tabIndex=0;put(canvas);const ctx=canvas.getContext("2d");
-      let bird=290,vy=0,pipes=[],score=0,started=false,dead=false,last=0,spawn=0;
+      let bird=290,vy=0,pipes=[],score=0,started=false,dead=false,last=0,spawn=0,flight=0;
       help("Dotknij planszy lub naciśnij spację, aby podskoczyć.");
-      function draw(){const grad=ctx.createLinearGradient(0,0,0,600);grad.addColorStop(0,"#102d40");grad.addColorStop(1,"#10172b");ctx.fillStyle=grad;ctx.fillRect(0,0,420,600);ctx.fillStyle="rgba(255,255,255,.07)";for(let i=0;i<7;i++){const x=((i*89-score*2)%520+520)%520-40;ctx.beginPath();ctx.ellipse(x,90+i%3*35,30,9,0,0,Math.PI*2);ctx.fill();}pipes.forEach(p=>{ctx.fillStyle="#75cf53";ctx.fillRect(p.x,0,58,p.top);ctx.fillRect(p.x,p.top+150,58,600-p.top-150);ctx.fillStyle="#b7ff4a";ctx.fillRect(p.x-4,p.top-15,66,15);ctx.fillRect(p.x-4,p.top+150,66,15);});ctx.fillStyle="#ffd166";ctx.beginPath();ctx.arc(100,bird,14,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(105,bird-4,4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ff9f43";ctx.beginPath();ctx.moveTo(112,bird+1);ctx.lineTo(128,bird+6);ctx.lineTo(112,bird+10);ctx.fill();ctx.font="bold 30px ui-monospace,monospace";ctx.textAlign="center";ctx.fillStyle="#fff";ctx.fillText(score,210,50);if(!started||dead){ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(30,245,360,100);ctx.fillStyle="#b7ff4a";ctx.font="bold 18px ui-monospace,monospace";ctx.fillText(dead?"KONIEC GRY":"GOTOWY?",210,282);ctx.font="12px ui-monospace,monospace";ctx.fillStyle="#fff";ctx.fillText(dead?"Dotknij, aby spróbować ponownie":"Dotknij / spacja = lot",210,311);}}
-      function fresh(){bird=290;vy=0;pipes=[];score=0;started=false;dead=false;last=0;spawn=0;say("Dotknij, aby wystartować");draw();}
+      function drawCity(){ 
+        const grad=ctx.createLinearGradient(0,0,0,600);grad.addColorStop(0,"#65c9ff");grad.addColorStop(1,"#e0f7ff");ctx.fillStyle=grad;ctx.fillRect(0,0,420,600);
+        // Słońce i delikatne chmury — jasny, dzienny klimat.
+        ctx.fillStyle="#ffe879";ctx.beginPath();ctx.arc(350,76,31,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle="rgba(255,255,255,.82)";
+        for(let i=0;i<4;i++){const x=((i*137-flight*.18)%520+520)%520-50,y=90+(i%3)*54;ctx.beginPath();ctx.ellipse(x,y,28,10,0,0,Math.PI*2);ctx.ellipse(x+18,y-5,18,12,0,0,Math.PI*2);ctx.ellipse(x+32,y,23,9,0,0,Math.PI*2);ctx.fill();}
+        // Panorama miasta przesuwa się delikatnie podczas lotu.
+        for(let i=0;i<12;i++){const bw=30+(i*17%23),bh=72+(i*31%105),x=((i*57-flight*.28)%520+520)%520-45,y=535-bh;ctx.fillStyle=i%3===0?"#8ab8cf":i%3===1?"#a6c9d9":"#79a9c3";ctx.fillRect(x,y,bw,bh);ctx.fillStyle="rgba(255,244,174,.85)";for(let wy=y+13;wy<520;wy+=19){for(let wx=x+7;wx<x+bw-4;wx+=13)ctx.fillRect(wx,wy,5,7);}}
+        // Ulica na dole planszy.
+        ctx.fillStyle="#596b79";ctx.fillRect(0,540,420,60);ctx.fillStyle="#f8f4cf";for(let x=-40+(flight*.7%80);x<460;x+=80)ctx.fillRect(x,568,42,4);
+        // Karetka jedzie po ulicy i porusza się wraz z postępem lotu.
+        const ax=((flight*.75)%560)-100,ay=511,bob=Math.sin(flight*.035)*1.5;
+        ctx.save();ctx.translate(ax,ay+bob);
+        ctx.fillStyle="#f7fbff";ctx.fillRect(0,8,76,27);ctx.fillStyle="#d9e7f0";ctx.fillRect(7,2,45,12);ctx.fillStyle="#86d8ff";ctx.fillRect(12,4,13,9);ctx.fillRect(29,4,17,9);
+        ctx.fillStyle="#e83e4b";ctx.fillRect(0,23,76,12);ctx.fillStyle="#fff";ctx.fillRect(33,12,8,16);ctx.fillRect(27,18,20,7);
+        ctx.fillStyle="#ff3d4f";ctx.fillRect(26,0,12,4);ctx.fillStyle="#4385ff";ctx.fillRect(39,0,12,4);
+        ctx.fillStyle="#253746";ctx.beginPath();ctx.arc(17,36,7,0,Math.PI*2);ctx.arc(59,36,7,0,Math.PI*2);ctx.fill();ctx.fillStyle="#b8c9d5";ctx.beginPath();ctx.arc(17,36,3,0,Math.PI*2);ctx.arc(59,36,3,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+      }
+      function draw(){drawCity();pipes.forEach(p=>{ctx.fillStyle="#75cf53";ctx.fillRect(p.x,0,58,p.top);ctx.fillRect(p.x,p.top+150,58,600-p.top-150);ctx.fillStyle="#b7ff4a";ctx.fillRect(p.x-4,p.top-15,66,15);ctx.fillRect(p.x-4,p.top+150,66,15);});ctx.fillStyle="#ffd166";ctx.beginPath();ctx.arc(100,bird,14,0,Math.PI*2);ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(105,bird-4,4,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ff9f43";ctx.beginPath();ctx.moveTo(112,bird+1);ctx.lineTo(128,bird+6);ctx.lineTo(112,bird+10);ctx.fill();ctx.font="bold 30px ui-monospace,monospace";ctx.textAlign="center";ctx.fillStyle="#fff";ctx.fillText(score,210,50);if(!started||dead){ctx.fillStyle="rgba(0,0,0,.6)";ctx.fillRect(30,245,360,100);ctx.fillStyle="#b7ff4a";ctx.font="bold 18px ui-monospace,monospace";ctx.fillText(dead?"KONIEC GRY":"GOTOWY?",210,282);ctx.font="12px ui-monospace,monospace";ctx.fillStyle="#fff";ctx.fillText(dead?"Dotknij, aby spróbować ponownie":"Dotknij / spacja = lot",210,311);}}
+      function fresh(){bird=290;vy=0;pipes=[];score=0;started=false;dead=false;last=0;spawn=0;flight=0;say("Dotknij, aby wystartować");draw();}
       function flap(){if(dead){fresh();started=true;}if(!started){started=true;say("Leć!");}vy=-390;}
-      function tick(t){if(destroyed)return;const dt=Math.min(.03,(t-(last||t))/1000);last=t;if(started&&!dead){vy+=1080*dt;bird+=vy*dt;spawn+=dt;if(spawn>1.45){spawn=0;pipes.push({x:440,top:70+Math.random()*270,passed:false});}pipes.forEach(p=>{p.x-=165*dt;if(!p.passed&&p.x+58<100){p.passed=true;score++;say("Punkty: "+score);}if(100+14>p.x&&100-14<p.x+58&&(bird-14<p.top||bird+14>p.top+150))dead=true;});pipes=pipes.filter(p=>p.x>-70);if(bird>586||bird<0)dead=true;if(dead)say("Koniec. Wynik: "+score);}draw();raf=requestAnimationFrame(tick);}
+      function tick(t){if(destroyed)return;const dt=Math.min(.03,(t-(last||t))/1000);last=t;if(started&&!dead){vy+=1080*dt;bird+=vy*dt;spawn+=dt;flight+=165*dt;if(spawn>1.45){spawn=0;pipes.push({x:440,top:70+Math.random()*270,passed:false});}pipes.forEach(p=>{p.x-=165*dt;if(!p.passed&&p.x+58<100){p.passed=true;score++;say("Punkty: "+score);}if(100+14>p.x&&100-14<p.x+58&&(bird-14<p.top||bird+14>p.top+150))dead=true;});pipes=pipes.filter(p=>p.x>-70);if(bird>586||bird<0)dead=true;if(dead)say("Koniec. Wynik: "+score);}draw();raf=requestAnimationFrame(tick);}
       const kd=e=>{if(e.code==="Space"||e.code==="ArrowUp"){if(!root.hidden){e.preventDefault();flap();}}};on(window,"keydown",kd,true);on(canvas,"pointerdown",e=>{e.preventDefault();flap();});on(reset,"click",fresh);fresh();raf=requestAnimationFrame(tick);
     }
 
