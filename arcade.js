@@ -70,8 +70,9 @@
       const grid=make("div","memory-grid"),line=make("div","arcade-score-line"),movesEl=make("span","","Ruchy: 0"),pairsEl=make("span","","Pary: 0/8");
       line.append(movesEl,pairsEl);put(line);put(grid);help("Odkrywaj po dwie karty i znajdź wszystkie pary.");
       function deal(){cards=[...symbols,...symbols].sort(()=>Math.random()-.5).map((s,i)=>({id:i,s,open:false,match:false}));first=null;locked=false;pairs=0;moves=0;render();say("Znajdź 8 par");}
-      function render(){grid.replaceChildren();cards.forEach(c=>{const b=button(c.open||c.match?c.s:"?","memory-card"+(c.match?" matched":"")+(c.open?" open":""));b.disabled=c.match;b.setAttribute("aria-label",c.open||c.match?c.s:"Zakryta karta");on(b,"click",()=>flip(c));grid.append(b);});movesEl.textContent="Ruchy: "+moves;pairsEl.textContent="Pary: "+pairs+"/8";}
+      function render(){grid.replaceChildren();cards.forEach(c=>{const b=button(c.open||c.match?c.s:"?","memory-card"+(c.match?" matched":"")+(c.open?" open":""));b.disabled=c.match;b.dataset.cardId=String(c.id);b.setAttribute("aria-label",c.open||c.match?c.s:"Zakryta karta");grid.append(b);});movesEl.textContent="Ruchy: "+moves;pairsEl.textContent="Pary: "+pairs+"/8";}
       function flip(c){if(locked||c.open||c.match)return;c.open=true;if(!first){first=c;render();return;}moves++;if(first.s===c.s){first.match=c.match=true;first=null;pairs++;render();if(pairs===8)say("Wygrana! Liczba ruchów: "+moves);}else{const old=first;first=null;locked=true;render();later(()=>{old.open=false;c.open=false;locked=false;render();},650);}}
+      on(grid,"click",e=>{const b=e.target.closest("[data-card-id]");if(b)flip(cards[Number(b.dataset.cardId)]);});
       on(reset,"click",deal);deal();
     }
 
@@ -79,10 +80,12 @@
       const n=9,total=81,mineCount=10;let cells=[],flagMode=false,ended=false,revealed=0;
       const grid=make("div","mines-grid"),line=make("div","arcade-score-line"),flag=button("🚩 TRYB FLAGI","arcade-btn"),counter=make("span","","Flagi: 0/10");line.append(flag,counter);put(line);put(grid);help("Kliknij pole, aby odkryć. Włącz tryb flagi, aby oznaczać miny.");
       function fresh(){cells=Array.from({length:total},()=>({mine:false,open:false,flag:false,near:0}));let count=0;while(count<mineCount){let i=Math.floor(Math.random()*total);if(!cells[i].mine){cells[i].mine=true;count++;}}cells.forEach((c,i)=>{if(c.mine)return;let r=Math.floor(i/n),col=i%n;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){let rr=r+dr,cc=col+dc;if(rr>=0&&rr<n&&cc>=0&&cc<n&&cells[rr*n+cc].mine)c.near++;}});flagMode=false;ended=false;revealed=0;flag.classList.remove("active");flag.textContent="🚩 TRYB FLAGI";render();say("Powodzenia!");}
-      function render(){grid.replaceChildren();cells.forEach((c,i)=>{const b=button(c.flag?"🚩":c.open?(c.mine?"💣":c.near?String(c.near):""):"","mine-cell"+(c.open?" revealed":"")+(c.mine&&ended?" exploded":""));if(c.open&&!c.mine&&c.near)b.dataset.n=String(c.near);b.disabled=c.open||ended;on(b,"click",()=>act(i));on(b,"contextmenu",e=>{e.preventDefault();toggleFlag(i);});grid.append(b);});counter.textContent="Flagi: "+cells.filter(c=>c.flag).length+"/"+mineCount;}
+      function render(){grid.replaceChildren();cells.forEach((c,i)=>{const b=button(c.flag?"🚩":c.open?(c.mine?"💣":c.near?String(c.near):""):"","mine-cell"+(c.open?" revealed":"")+(c.mine&&ended?" exploded":""));b.dataset.cellIndex=String(i);if(c.open&&!c.mine&&c.near)b.dataset.n=String(c.near);b.disabled=c.open||ended;grid.append(b);});counter.textContent="Flagi: "+cells.filter(c=>c.flag).length+"/"+mineCount;}
       function toggleFlag(i){if(ended||cells[i].open)return;cells[i].flag=!cells[i].flag;render();}
       function reveal(i){const c=cells[i];if(c.open||c.flag||ended)return;c.open=true;revealed++;if(c.mine){ended=true;cells.forEach(x=>{if(x.mine)x.open=true;});say("BUM! Naciśnij OD NOWA.");return;}if(!c.near){const r=Math.floor(i/n),col=i%n;for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){let rr=r+dr,cc=col+dc;if(rr>=0&&rr<n&&cc>=0&&cc<n)reveal(rr*n+cc);}}}
       function act(i){if(flagMode){toggleFlag(i);return;}reveal(i);if(!ended&&revealed===total-mineCount){ended=true;say("Wygrana! Wszystkie bezpieczne pola odkryte.");}render();}
+      on(grid,"click",e=>{const b=e.target.closest("[data-cell-index]");if(b)act(Number(b.dataset.cellIndex));});
+      on(grid,"contextmenu",e=>{const b=e.target.closest("[data-cell-index]");if(b){e.preventDefault();toggleFlag(Number(b.dataset.cellIndex));}});
       on(flag,"click",()=>{flagMode=!flagMode;flag.classList.toggle("active",flagMode);flag.textContent=flagMode?"✓ TRYB FLAGI":"🚩 TRYB FLAGI";});on(reset,"click",fresh);fresh();
     }
 
@@ -92,8 +95,9 @@
       const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
       function winner(){return wins.find(a=>board[a[0]]&&board[a[0]]===board[a[1]]&&board[a[1]]===board[a[2]]);}
       function fresh(){board=Array(9).fill("");turn="X";ended=false;render();say("Ruch: X");}
-      function render(){grid.replaceChildren();board.forEach((v,i)=>{const b=button(v,"ttt-cell"+(v?" "+v.toLowerCase():""));b.disabled=ended||!!v;on(b,"click",()=>play(i));grid.append(b);});score.textContent="X: "+scores[0]+" • O: "+scores[1];}
+      function render(){grid.replaceChildren();board.forEach((v,i)=>{const b=button(v,"ttt-cell"+(v?" "+v.toLowerCase():""));b.dataset.tttIndex=String(i);b.disabled=ended||!!v;grid.append(b);});score.textContent="X: "+scores[0]+" • O: "+scores[1];}
       function play(i){if(ended||board[i])return;board[i]=turn;const w=winner();if(w){ended=true;scores[turn==="X"?0:1]++;render();say("Wygrywa "+turn+"!");}else if(board.every(Boolean)){ended=true;render();say("Remis!");}else{turn=turn==="X"?"O":"X";render();say("Ruch: "+turn);}}
+      on(grid,"click",e=>{const b=e.target.closest("[data-ttt-index]");if(b)play(Number(b.dataset.tttIndex));});
       on(next,"click",fresh);on(reset,"click",()=>{scores=[0,0];fresh();});fresh();
     }
 
@@ -120,7 +124,8 @@
       let score=0,remaining=30,active=-1,running=false,tick=null;
       const line=make("div","arcade-score-line"),sc=make("span","","Punkty: 0"),tm=make("span","","Czas: 30 s"),grid=make("div","whack-grid"),start=button("START 30 S","arcade-btn");
       line.append(sc,tm);put(line);put(grid);put(start);help("Kliknij kreta, gdy się pojawi. Trafienie daje punkt.");
-      function render(){grid.replaceChildren();for(let i=0;i<9;i++){const b=button(active===i?"🐹":"", "whack-hole"+(active===i?" mole":""));on(b,"click",()=>{if(!running||active!==i)return;score++;sc.textContent="Punkty: "+score;active=-1;render();});grid.append(b);}tm.textContent="Czas: "+remaining+" s";}
+      function render(){grid.replaceChildren();for(let i=0;i<9;i++){const b=button(active===i?"🐹":"", "whack-hole"+(active===i?" mole":""));b.dataset.holeIndex=String(i);grid.append(b);}tm.textContent="Czas: "+remaining+" s";}
+      on(grid,"click",e=>{const b=e.target.closest("[data-hole-index]");if(!b||!running||active!==Number(b.dataset.holeIndex))return;score++;sc.textContent="Punkty: "+score;active=-1;render();});
       function end(){running=false;active=-1;render();start.disabled=false;start.textContent="ZAGRAJ JESZCZE RAZ";say("Koniec! Wynik: "+score);}
       function begin(){score=0;remaining=30;active=Math.floor(Math.random()*9);running=true;start.disabled=true;start.textContent="GRA W TOKU";sc.textContent="Punkty: 0";render();if(tick)clearInterval(tick);tick=every(()=>{if(!running)return;remaining--;active=Math.floor(Math.random()*9);render();if(remaining<=0)end();},1000);}
       on(start,"click",begin);on(reset,"click",begin);render();say("Naciśnij START");
@@ -135,7 +140,7 @@
       function tick(t){if(destroyed||!live)return;const dt=Math.min(.03,(t-(last||t))/1000);last=t;if(keys.has("ArrowUp")||keys.has("KeyW"))p1-=420*dt;if(keys.has("ArrowDown")||keys.has("KeyS"))p1+=420*dt;p1=Math.max(50,Math.min(370,p1));p2+=((ball.y-p2)*Math.min(1,dt*4.3));p2=Math.max(50,Math.min(370,p2));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.y<8||ball.y>412)ball.vy*=-1;if(ball.vx<0&&ball.x<38&&ball.y>p1-50&&ball.y<p1+50){ball.vx=Math.abs(ball.vx)*1.04;ball.vy+=((ball.y-p1)/50)*120;}if(ball.vx>0&&ball.x>682&&ball.y>p2-50&&ball.y<p2+50){ball.vx=-Math.abs(ball.vx)*1.04;ball.vy+=((ball.y-p2)/50)*100;}if(ball.x<0||ball.x>720){scores[ball.x<0?1:0]++;if(Math.max(...scores)>=7){live=false;say(scores[0]>=7?"Wygrywasz!":"Komputer wygrywa.");draw();return;}serve(ball.x<0?1:-1);}draw();raf=requestAnimationFrame(tick);}
       const kd=e=>{if(["ArrowUp","ArrowDown"].includes(e.code))e.preventDefault();if(["ArrowUp","ArrowDown","KeyW","KeyS"].includes(e.code))keys.add(e.code);};const ku=e=>keys.delete(e.code);
       const pos=e=>{const r=canvas.getBoundingClientRect();if(r.height)p1=Math.max(50,Math.min(370,(e.clientY-r.top)*420/r.height));};
-      function fresh(){scores=[0,0];p1=p2=210;live=true;last=0;keys.clear();serve(Math.random()<.5?1:-1);say("Gra trwa");draw();raf=requestAnimationFrame(tick);}
+      function fresh(){if(raf)cancelAnimationFrame(raf);raf=0;scores=[0,0];p1=p2=210;live=true;last=0;keys.clear();serve(Math.random()<.5?1:-1);say("Gra trwa");draw();raf=requestAnimationFrame(tick);}
       on(window,"keydown",kd,true);on(window,"keyup",ku,true);on(canvas,"pointermove",pos);on(canvas,"pointerdown",pos);on(reset,"click",fresh);fresh();cleanup.push(()=>{live=false;});
     }
 
