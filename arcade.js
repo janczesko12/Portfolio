@@ -636,7 +636,7 @@
         if(!started||ended){ctx.fillStyle="rgba(4,6,18,.84)";ctx.fillRect(45,238,330,142);ctx.textAlign="center";ctx.fillStyle=ended?"#ff6b8d":"#00eaff";ctx.font="bold 23px ui-monospace,monospace";ctx.fillText(ended?"KOLIZJA!":"NEON RACER",210,278);ctx.fillStyle="#fff";ctx.font="12px ui-monospace,monospace";ctx.fillText(ended?"Wynik: "+Math.floor(score)+" m":"Dotknij lub użyj A/D · ← →",210,308);ctx.fillStyle="#b8c2d4";ctx.font="11px ui-monospace,monospace";ctx.fillText(ended?"Naciśnij, aby spróbować ponownie":"Zbieraj złote żetony · omijaj auta",210,333);ctx.textAlign="left";}
       }
       function beginRun(){fresh();started=true;garage.hidden=true;garageToggle.classList.remove("active");garageToggle.disabled=true;say("Uważaj na ruch! Zbieraj złote żetony.");}
-      function steerToPointer(e){const rect=canvas.getBoundingClientRect(),px=(e.clientX-rect.left)/Math.max(1,rect.width)*canvas.width;targetX=x=Math.max(67,Math.min(353,px));}
+      function steerToPointer(e){const rect=canvas.getBoundingClientRect();if(!rect.width)return;const px=(e.clientX-rect.left)*canvas.width/rect.width;targetX=x=Math.max(67,Math.min(353,px));}
       function tick(t){
         if(destroyed)return;const dt=Math.min(.04,(t-(last||t))/1000);last=t;
         if(started&&!ended){
@@ -657,9 +657,9 @@
       }
       const kd=e=>{if(!["ArrowLeft","ArrowRight","KeyA","KeyD","Space"].includes(e.code))return;e.preventDefault();if(!garage.hidden)return;if(!started||ended)beginRun();if(e.code==="ArrowLeft"||e.code==="KeyA")keys.add(e.code);if(e.code==="ArrowRight"||e.code==="KeyD")keys.add(e.code);};
       const ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);
-      on(canvas,"pointerdown",e=>{if(!garage.hidden)return;canvas.focus();if(!started||ended)beginRun();pointerDown=true;steerToPointer(e);});
-      on(canvas,"pointermove",e=>{if(pointerDown&&!garage.hidden)steerToPointer(e);});
-      const endPointer=()=>{pointerDown=false;};on(window,"pointerup",endPointer);
+      on(canvas,"pointerdown",e=>{if(!garage.hidden)return;e.preventDefault();canvas.focus();if(!started||ended)beginRun();pointerDown=true;try{canvas.setPointerCapture(e.pointerId);}catch{}steerToPointer(e);});
+      on(canvas,"pointermove",e=>{if(pointerDown&&!garage.hidden){e.preventDefault();steerToPointer(e);}});
+      const endPointer=e=>{pointerDown=false;try{if(e&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}catch{}};on(canvas,"pointerup",endPointer);on(canvas,"pointercancel",endPointer);on(window,"pointerup",endPointer);
       on(garageToggle,"click",()=>{if(started&&!ended)return;garage.hidden=!garage.hidden;garageToggle.classList.toggle("active",!garage.hidden);if(!garage.hidden){renderGarage();say("Wybierz lakier w garażu.");}else say("Gotowy do wyścigu.");});
       on(garageClose,"click",()=>{garage.hidden=true;garageToggle.classList.remove("active");say("Gotowy do wyścigu.");});
       on(garageGrid,"click",e=>{
