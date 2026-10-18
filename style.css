@@ -481,3 +481,58 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
   .breakout-controls{padding:0 12px 14px;flex-direction:column;align-items:stretch;text-align:center}
   .breakout-controls div{justify-content:center}
 }
+
+
+/* Arcade: 9 additional mini-games */
+.easter-game-select{display:flex;gap:7px;flex-wrap:wrap;max-height:145px;overflow-y:auto;overscroll-behavior:contain;padding:12px 15px;border-bottom:1px solid rgba(183,255,74,.12);background:rgba(255,255,255,.012)}
+.easter-game-tab{flex:0 0 auto;appearance:none;border:1px solid rgba(183,255,74,.18);border-radius:10px;padding:9px 11px;background:rgba(255,255,255,.025);color:#8c978e;font:800 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.035em;cursor:pointer;transition:background .18s,border-color .18s,color .18s,transform .18s}
+.easter-game-tab:hover{transform:translateY(-1px);color:#e8eee9;border-color:rgba(183,255,74,.35)}
+.easter-game-tab.active{background:rgba(183,255,74,.13);border-color:rgba(183,255,74,.65);color:var(--accent);box-shadow:0 0 20px rgba(183,255,74,.08)}
+.easter-game-panel[hidden]{display:none!important}
+.arcade-root{min-width:0}
+.arcade-shell{max-width:760px;margin:0 auto;padding:18px}
+.arcade-game-heading{display:flex;flex-direction:column;gap:6px;margin:0 0 14px}
+.arcade-game-name{font:950 clamp(17px,4vw,24px)/1.05 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.04em;color:#e8eee9}
+.arcade-game-description{margin:0;color:#91a095;font:500 11px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace}
+.arcade-play-area{min-width:0}
+.arcade-game-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;color:#7e8c81;font:600 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.arcade-game-footer{margin-top:12px;color:#77857a;font:600 10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:center}
+.arcade-btn{border:1px solid rgba(183,255,74,.3);border-radius:10px;background:rgba(183,255,74,.07);color:var(--accent);padding:9px 12px;font:800 10px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;cursor:pointer}
+.arcade-btn:hover,.arcade-btn.active{background:rgba(183,255,74,.17);border-color:rgba(183,255,74,.7)}
+.arcade-btn:disabled{opacity:.45;cursor:default}
+.arcade-score-line{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;color:#9ca99f;font:700 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.game-2048-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:8px;background:#1b2824;border-radius:14px;max-width:440px;margin:auto;touch-action:pan-y}
+.tile-2048{display:grid;place-items:center;aspect-ratio:1;border-radius:9px;background:#293630;color:#b9c3ba;font:900 clamp(18px,5vw,32px)/1 ui-monospace,monospace}
+.tile-2048.v2{background:#e2edc8;color:#31402d}.tile-2048.v4{background:#c9e891;color:#263923}.tile-2048.v8{background:#a8de60;color:#203019}.tile-2048.v16{background:#8bcf50;color:#15290e}.tile-2048.v32,.tile-2048.v64{background:#57b878;color:#061c15}.tile-2048.v128,.tile-2048.v256,.tile-2048.v512{background:#47b8b8;color:#071d25}.tile-2048.v1024,.tile-2048.v2048{background:#b7ff4a;color:#10180a;font-size:clamp(15px,4vw,26px)}
+.memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;max-width:480px;margin:auto}
+.memory-card{min-width:0;aspect-ratio:1;border:1px solid rgba(183,255,74,.17);border-radius:12px;background:linear-gradient(145deg,#182420,#0d1217);color:#b7ff4a;font-size:clamp(23px,6vw,36px);font-weight:900;cursor:pointer}
+.memory-card.open{background:#243a2d;border-color:#9bda68}.memory-card.matched{background:rgba(183,255,74,.12);border-color:rgba(183,255,74,.45);opacity:.72}
+.mines-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;max-width:460px;margin:auto}
+.mine-cell{min-width:0;aspect-ratio:1;border:1px solid #3b4c43;border-radius:5px;background:#24352c;color:#d9e7da;font:900 clamp(11px,3vw,16px)/1 ui-monospace,monospace;cursor:pointer;padding:0}
+.mine-cell.revealed{background:#121d19;border-color:#26372d}.mine-cell.exploded{background:#712e36;border-color:#ff8290}.mine-cell[data-n="1"]{color:#72cfff}.mine-cell[data-n="2"]{color:#95eb70}.mine-cell[data-n="3"]{color:#ff9f9f}.mine-cell[data-n="4"]{color:#b5a1ff}
+.ttt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:min(100%,390px);margin:auto}
+.ttt-cell{aspect-ratio:1;border:1px solid rgba(183,255,74,.22);border-radius:13px;background:rgba(255,255,255,.025);color:#dfe9df;font:950 clamp(35px,10vw,65px)/1 ui-monospace,monospace;cursor:pointer}
+.ttt-cell.x{color:#b7ff4a}.ttt-cell.o{color:#75d6ff}.ttt-cell:disabled{cursor:default}
+.reaction-zone{display:grid;place-items:center;width:100%;min-height:210px;border:1px solid rgba(183,255,74,.23);border-radius:18px;background:#1b2128;color:#e9eee9;font:900 clamp(16px,4vw,23px)/1.3 ui-monospace,monospace;text-align:center;padding:18px;cursor:pointer}
+.reaction-zone.waiting{background:#6d343b;color:#fff}.reaction-zone.go{background:#75eb8b;color:#0d2817;border-color:#b7ff4a}.reaction-zone.early{background:#4c2630;color:#ff9cab}
+.simon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(100%,380px);margin:auto}
+.simon-pad{aspect-ratio:1;border:2px solid rgba(255,255,255,.12);border-radius:22px;opacity:.7;font:900 23px/1 ui-monospace,monospace;color:#08110c;cursor:pointer;transition:filter .1s,opacity .1s,transform .1s}
+.simon-pad.lime{background:#91dd43}.simon-pad.blue{background:#53bde7}.simon-pad.pink{background:#ef78b7}.simon-pad.amber{background:#f5bd55}.simon-pad.lit{opacity:1;filter:brightness(1.55);transform:scale(.97);box-shadow:0 0 25px currentColor}
+.whack-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;max-width:420px;margin:0 auto 14px}
+.whack-hole{aspect-ratio:1;border:1px solid rgba(183,255,74,.12);border-radius:50%;background:#19241f;color:#fff;font-size:clamp(25px,7vw,43px);cursor:pointer}
+.whack-hole.mole{background:rgba(183,255,74,.18);border-color:#b7ff4a;box-shadow:0 0 22px rgba(183,255,74,.16)}
+.arcade-canvas{display:block;width:100%;max-width:720px;height:auto;aspect-ratio:12/7;margin:auto;border:1px solid rgba(183,255,74,.2);border-radius:12px;background:#07100d;touch-action:none;user-select:none;-webkit-user-select:none}
+.flappy-canvas{max-width:420px;aspect-ratio:7/10;max-height:60vh}
+@media(max-width:700px){
+  .easter-game-select{max-height:132px;gap:6px;padding:10px}
+  .easter-game-tab{font-size:9px;padding:9px 10px}
+  .arcade-shell{padding:14px 12px}
+  .arcade-game-heading{margin-bottom:10px}
+  .arcade-game-tools{margin-top:11px}
+  .game-2048-grid{gap:5px;padding:5px}
+  .memory-grid{gap:6px}
+  .mine-cell{border-radius:4px}
+  .ttt-grid{gap:7px}
+  .reaction-zone{min-height:180px}
+  .simon-grid{gap:8px}
+}
