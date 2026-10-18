@@ -572,9 +572,17 @@ function launchEasterEgg(){
 
   function setDirection(x,y){
     if(!running || paused) return;
-    if(x===-direction.x && y===-direction.y) return;
+
+    // Oceniaj skręt względem ostatniego zaplanowanego kierunku,
+    // dzięki czemu szybkie gesty nie są blokowane przez poprzedni ruch.
     if(x===-nextDirection.x && y===-nextDirection.y) return;
+
     nextDirection={x,y};
+
+    // Przy wejściu od razu przyspiesz najbliższy krok — reakcja na
+    // klawisz lub gest jest niemal natychmiastowa, bez czekania całego ticka.
+    // Nie wykonujemy kroku w samym handlerze, więc pętla animacji pozostaje spójna.
+    moveAccumulator=Math.max(moveAccumulator, stepMs-24);
   }
 
   function onSnakeKey(e){
