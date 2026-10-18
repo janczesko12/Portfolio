@@ -635,7 +635,7 @@ function launchEasterEgg(){
 
   function onSnakeKey(e){
     const gameVisible=document.querySelector(".easter-game-window");
-    if(!gameVisible || !document.body.classList.contains("novydev-easter")) return;
+    if(!gameVisible || snakePanel.hidden || !document.body.classList.contains("novydev-easter")) return;
 
     const map={
       ArrowUp:{x:0,y:-1},KeyW:{x:0,y:-1},
