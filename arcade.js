@@ -371,6 +371,7 @@
         // Dodatkowe dekoracyjne chmurki i krzaki na pierwszym planie.
         for(let x=120;x<world;x+=520){ctx.fillStyle="#168d35";ctx.beginPath();ctx.ellipse(x,groundY-7,34,20,0,Math.PI,Math.PI*2);ctx.fill();ctx.fillRect(x-34,groundY-7,68,7);ctx.fillStyle="#54d45e";ctx.fillRect(x-15,groundY-20,4,4);ctx.fillRect(x+9,groundY-15,4,4);}
         coins.forEach(c=>drawCoin(c,t));mushrooms.forEach(drawMushroom);enemies.forEach(e=>drawGoomba(e,t));
+        drawHero(t);
         ctx.fillStyle="#fff";ctx.fillRect(5570,220,6,170);ctx.fillStyle="#e92b39";ctx.beginPath();ctx.moveTo(5576,226);ctx.lineTo(5626,240);ctx.lineTo(5576,254);ctx.closePath();ctx.fill();ctx.fillStyle="#dfdfdf";ctx.fillRect(5565,386,16,4);
         // Mały zamek za metą.
         ctx.fillStyle="#e9c9a0";ctx.fillRect(5705,330,80,60);ctx.fillRect(5712,313,17,17);ctx.fillRect(5758,313,17,17);ctx.fillStyle="#8e563a";ctx.fillRect(5736,358,18,32);ctx.fillStyle="#b15a39";ctx.fillRect(5720,342,8,8);ctx.fillRect(5760,342,8,8);
