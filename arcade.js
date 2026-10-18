@@ -181,14 +181,383 @@
     }
 
     function fishingGame(){
-      let money=0,caught=0,phase="idle",biteTimer=null,biteAt=0,fishName="",fishValue=0,rod=1;
-      const scene=make("div","fishing-scene"),sky=make("div","fishing-sky"),sun=make("div","fishing-sun"),water=make("div","fishing-water"),boat=make("div","fishing-boat","〰 〰 〰"),float=make("div","fishing-float","●"),shore=make("div","fishing-shore"),line=make("div","fishing-line"),stats=make("div","fishing-stats"),moneyEl=make("strong","","🪙 0"),caughtEl=make("strong","","🐟 0 zł"),rodEl=make("strong","","🎣 Wędka 1"),cast=button("ZARZUĆ WĘDKĘ","fishing-cast"),upgrade=button("ULEPSZ WĘDKĘ · 30 zł","fishing-upgrade");
-      sky.append(sun);water.append(boat,float,line);scene.append(sky,water,shore);put(scene);stats.append(moneyEl,caughtEl,rodEl);put(stats);const actions=make("div","fishing-actions");actions.append(cast,upgrade);put(actions);help("Zarzuć wędkę i kliknij ZŁÓW, gdy spławik zacznie świecić.");
-      const fish=["Płoć","Okoń","Karaś","Szczupak","Złoty karp"];
-      function update(){moneyEl.textContent="🪙 "+money+" zł";caughtEl.textContent="🐟 Złowione: "+caught;rodEl.textContent="🎣 Wędka "+rod;upgrade.disabled=money<30*rod||rod>=5;upgrade.textContent=rod>=5?"MAKS. WĘDKA":"ULEPSZ WĘDKĘ · "+(30*rod)+" zł";}
-      function resetPhase(){if(biteTimer)clearTimeout(biteTimer);biteTimer=null;phase="idle";float.classList.remove("biting");cast.disabled=false;cast.textContent="ZARZUĆ WĘDKĘ";say("Spokojna woda…");}
-      on(cast,"click",()=>{if(phase==="bite"){const delay=Date.now()-biteAt;const index=Math.min(fish.length-1,Math.floor(Math.random()*(rod+1)));fishName=fish[index];fishValue=(index+1)*8+rod*4;money+=fishValue;caught++;say("Złowiono: "+fishName+" · +"+fishValue+" zł");resetPhase();update();return;}if(phase!=="idle")return;phase="waiting";cast.disabled=true;cast.textContent="CZEKAJ NA BRANIE…";say("Cierpliwości…");biteTimer=setTimeout(()=>{phase="bite";biteAt=Date.now();float.classList.add("biting");cast.disabled=false;cast.textContent="ZŁÓW RYBĘ!";say("BRANIE! Kliknij szybko!");biteTimer=setTimeout(()=>{if(phase==="bite"){resetPhase();say("Ryba uciekła! Spróbuj ponownie.");}},2200+Math.random()*1600);},1400+Math.random()*3000);});
-      on(upgrade,"click",()=>{if(rod<5&&money>=30*rod){money-=30*rod;rod++;update();say("Wędka ulepszona do poziomu "+rod+"!");}});on(reset,"click",()=>{resetPhase();money=0;caught=0;rod=1;update();});update();
+      const catalog=[
+        {kind:"rod",id:"starter-rod",name:"Wędka startowa",icon:"🎣",price:0,power:0,desc:"Dobra na pierwsze połowy. Niewielki bonus do celowania."},
+        {kind:"rod",id:"bamboo-rod",name:"Wędka bambusowa",icon:"🎋",price:65,power:1,desc:"Lżejsza i czulsza. Szersze okno zacięcia."},
+        {kind:"rod",id:"carbon-rod",name:"Wędka węglowa",icon:"⚡",price:185,power:2,desc:"Sprężysta konstrukcja pomaga przy większych rybach."},
+        {kind:"rod",id:"pro-rod",name:"Wędka PRO",icon:"🏆",price:430,power:3,desc:"Sprzęt klasy turniejowej. Największa kontrola."},
+        {kind:"bait",id:"worm-bait",name:"Robaki",icon:"🪱",price:0,luck:0,wait:1,bonus:0,desc:"Klasyczna przynęta na spokojne połowy."},
+        {kind:"bait",id:"corn-bait",name:"Kukurydza",icon:"🌽",price:25,luck:.12,wait:.82,bonus:2,desc:"Szybciej przyciąga ryby spokojnego żeru."},
+        {kind:"bait",id:"spinner-bait",name:"Błystka",icon:"✨",price:75,luck:.28,wait:1.08,bonus:6,desc:"Lepsza szansa na drapieżniki i większy połów."},
+        {kind:"bait",id:"gold-bait",name:"Złota przynęta",icon:"🌟",price:165,luck:.62,wait:1.16,bonus:14,desc:"Rzadka przynęta zwiększająca szansę na okaz."},
+        {kind:"reel",id:"basic-reel",name:"Kołowrotek standard",icon:"⚙️",price:0,control:0,desc:"Podstawowy mechanizm na początek."},
+        {kind:"reel",id:"smooth-reel",name:"Kołowrotek płynny",icon:"🌀",price:90,control:1,desc:"Napięcie żyłki szybciej spada po udanym ruchu."},
+        {kind:"reel",id:"precision-reel",name:"Kołowrotek PRO",icon:"🔩",price:235,control:2,desc:"Większa precyzja oraz łatwiejsze holowanie."},
+        {kind:"line",id:"basic-line",name:"Żyłka standard",icon:"〰️",price:0,strength:100,desc:"Wytrzymałość na napięcie: 100."},
+        {kind:"line",id:"fluoro-line",name:"Żyłka fluorocarbon",icon:"💧",price:85,strength:128,desc:"Mocniejsza żyłka. Wytrzymałość: 128."},
+        {kind:"line",id:"braid-line",name:"Plecionka wzmocniona",icon:"🧵",price:210,strength:160,desc:"Do walki z naprawdę dużymi rybami. Wytrzymałość: 160."}
+      ];
+      const species=[
+        {name:"Płoć",emoji:"🐟",price:13,diff:1,weight:.34,rarity:1},
+        {name:"Okoń",emoji:"🐠",price:20,diff:1.15,weight:.29,rarity:1.2},
+        {name:"Leszcz",emoji:"🐟",price:25,diff:1.35,weight:.2,rarity:1.5},
+        {name:"Karaś",emoji:"🐡",price:31,diff:1.45,weight:.14,rarity:1.7},
+        {name:"Szczupak",emoji:"🐊",price:43,diff:1.9,weight:.09,rarity:2.4},
+        {name:"Jesior",emoji:"🐟",price:66,diff:2.35,weight:.045,rarity:3.2},
+        {name:"Złoty karp",emoji:"✨",price:100,diff:2.8,weight:.018,rarity:4}
+      ];
+      const scene=make("div","fishing-scene");
+      const sky=make("div","fishing-sky");
+      const sun=make("div","fishing-sun");
+      const cloudA=make("span","fishing-cloud fishing-cloud-a","☁");
+      const cloudB=make("span","fishing-cloud fishing-cloud-b","☁");
+      const hills=make("div","fishing-hills");
+      const farHill=make("span","fishing-hill fishing-hill-far");
+      const nearHill=make("span","fishing-hill fishing-hill-near");
+      const water=make("div","fishing-water");
+      const rippleA=make("span","fishing-ripple fishing-ripple-a");
+      const rippleB=make("span","fishing-ripple fishing-ripple-b");
+      const rippleC=make("span","fishing-ripple fishing-ripple-c");
+      const boat=make("div","fishing-boat","🛶");
+      const pole=make("div","fishing-pole");
+      const float=make("div","fishing-float","●");
+      const line=make("div","fishing-line");
+      const fishShadow=make("div","fishing-underwater-fish","🐟");
+      const shore=make("div","fishing-shore");
+      sky.append(sun,cloudA,cloudB,hills);
+      hills.append(farHill,nearHill);
+      water.append(rippleA,rippleB,rippleC,boat,pole,float,line,fishShadow);
+      scene.append(sky,water,shore);
+      put(scene);
+
+      const stats=make("div","fishing-stats");
+      const moneyEl=make("strong","","🪙 95 zł");
+      const caughtEl=make("strong","","🐟 Złowione: 0");
+      const rodEl=make("strong","","🎣 Wędka startowa");
+      const baitEl=make("strong","","🪱 Robaki");
+      stats.append(moneyEl,caughtEl,rodEl,baitEl);
+      put(stats);
+
+      const challenge=make("section","fishing-challenge");
+      challenge.hidden=true;
+      const challengeHeader=make("div","fishing-challenge-header");
+      const challengeTitle=make("strong","","BRANIE!");
+      const challengeHint=make("span","","Kliknij, gdy wskaźnik trafi w zielone pole.");
+      challengeHeader.append(challengeTitle,challengeHint);
+      const meter=make("div","fishing-meter-track");
+      const target=make("div","fishing-meter-target");
+      const needle=make("div","fishing-meter-needle");
+      meter.append(target,needle);
+      const meterLegend=make("div","fishing-meter-legend");
+      meterLegend.append(make("span","","ZA WCZEŚNIE"),make("span","","IDEALNIE"),make("span","","ZA PÓŹNO"));
+      const fightStats=make("div","fishing-fight-stats");
+      const tensionWrap=make("div","fishing-bar-block");
+      const tensionLabel=make("div","fishing-bar-label");
+      tensionLabel.append(make("span","","NAPIĘCIE ŻYŁKI"),make("strong","fishing-tension-number","0%"));
+      const tensionTrack=make("div","fishing-bar-track");
+      const tensionFill=make("div","fishing-bar-fill fishing-tension-fill");
+      tensionTrack.append(tensionFill);
+      tensionWrap.append(tensionLabel,tensionTrack);
+      const progressWrap=make("div","fishing-bar-block");
+      const progressLabel=make("div","fishing-bar-label");
+      progressLabel.append(make("span","","ZMĘCZENIE RYBY"),make("strong","fishing-progress-number","0%"));
+      const progressTrack=make("div","fishing-bar-track");
+      const progressFill=make("div","fishing-bar-fill fishing-progress-fill");
+      progressTrack.append(progressFill);
+      progressWrap.append(progressLabel,progressTrack);
+      fightStats.append(tensionWrap,progressWrap);
+      const challengeAction=button("ZACIĄGNIJ!","fishing-challenge-action");
+      challenge.append(challengeHeader,meter,meterLegend,fightStats,challengeAction);
+      put(challenge);
+
+      const actions=make("div","fishing-actions");
+      const cast=button("🎣  ZARZUĆ WĘDKĘ","fishing-cast");
+      const shopToggle=button("🛒  SKLEP WĘDKARSKI","fishing-shop-toggle");
+      actions.append(cast,shopToggle);
+      put(actions);
+
+      const shopPanel=make("section","fishing-shop");
+      shopPanel.hidden=true;
+      const shopHeader=make("div","fishing-shop-header");
+      const shopIntro=make("div","fishing-shop-intro");
+      shopIntro.append(make("strong","","SKLEP WĘDKARSKI"),make("span","","Zmień sprzęt i przygotuj się na większe okazy."));
+      const shopWallet=make("strong","fishing-shop-wallet","🪙 95 zł");
+      const shopClose=button("✕","fishing-shop-close");
+      shopClose.setAttribute("aria-label","Zamknij sklep");
+      shopHeader.append(shopIntro,shopWallet,shopClose);
+      const filters=make("div","fishing-shop-filters");
+      const filterDefs=[["all","CAŁY SKLEP"],["rod","WĘDKI"],["bait","PRZYNĘTY"],["reel","KOŁOWROTKI"],["line","ŻYŁKI"]];
+      filterDefs.forEach((f,i)=>{const b=button(f[1],"fishing-shop-filter"+(i===0?" active":""));b.dataset.shopFilter=f[0];filters.append(b);});
+      const shopGrid=make("div","fishing-shop-grid");
+      const shopFoot=make("div","fishing-shop-foot","Sprzęt zostaje z Tobą. Kupiony element możesz zakładać bez dodatkowych opłat.");
+      shopPanel.append(shopHeader,filters,shopGrid,shopFoot);
+      put(shopPanel);
+      help("Zarzuć wędkę. Gdy spławik zacznie podskakiwać, zaciągnij w odpowiednim momencie.");
+
+      let saved={money:95,caught:0,owned:{rod:["starter-rod"],bait:["worm-bait"],reel:["basic-reel"],line:["basic-line"]},gear:{rod:"starter-rod",bait:"worm-bait",reel:"basic-reel",line:"basic-line"}};
+      try{
+        const raw=localStorage.getItem("novydev-fishing-save");
+        if(raw){
+          const parsed=JSON.parse(raw);
+          if(Number.isFinite(parsed.money))saved.money=Math.max(0,Math.floor(parsed.money));
+          if(Number.isFinite(parsed.caught))saved.caught=Math.max(0,Math.floor(parsed.caught));
+          ["rod","bait","reel","line"].forEach(kind=>{
+            if(Array.isArray(parsed.owned?.[kind])){
+              const valid=parsed.owned[kind].filter(id=>catalog.some(it=>it.kind===kind&&it.id===id));
+              if(!valid.includes(kind==="rod"?"starter-rod":kind==="bait"?"worm-bait":kind==="reel"?"basic-reel":"basic-line"))valid.push(kind==="rod"?"starter-rod":kind==="bait"?"worm-bait":kind==="reel"?"basic-reel":"basic-line");
+              saved.owned[kind]=valid;
+            }
+            const wanted=parsed.gear?.[kind];
+            if(catalog.some(it=>it.kind===kind&&it.id===wanted)&&(saved.owned[kind]||[]).includes(wanted))saved.gear[kind]=wanted;
+          });
+        }
+      }catch{}
+      let money=saved.money,caught=saved.caught,owned=saved.owned,gear=saved.gear;
+      let phase="idle",fish=null,biteTimer=null,needlePct=0,targetCenter=50,targetWidth=24,miniStart=0,lastTensionAt=Date.now(),tension=0,progress=0,hookMisses=0,shopFilter="all",lastActionAt=0;
+
+      const item=(kind)=>catalog.find(it=>it.kind===kind&&it.id===gear[kind]);
+      const isOwned=(it)=>(owned[it.kind]||[]).includes(it.id);
+      function persist(){
+        try{localStorage.setItem("novydev-fishing-save",JSON.stringify({money,caught,owned,gear}));}catch{}
+      }
+      function renderShop(){
+        shopGrid.replaceChildren();
+        catalog.filter(it=>shopFilter==="all"||it.kind===shopFilter).forEach(it=>{
+          const isEquipped=gear[it.kind]===it.id;
+          const hasIt=isOwned(it);
+          const card=make("article","fishing-shop-card"+(isEquipped?" equipped":""));
+          const top=make("div","fishing-shop-card-top");
+          top.append(make("span","fishing-shop-item-icon",it.icon),make("span","fishing-shop-item-type",({rod:"WĘDKA",bait:"PRZYNĘTA",reel:"KOŁOWROTEK",line:"ŻYŁKA"})[it.kind]));
+          const name=make("strong","fishing-shop-item-name",it.name);
+          const desc=make("p","fishing-shop-item-desc",it.desc);
+          const foot=make("div","fishing-shop-card-foot");
+          const price=make("span","fishing-shop-price",it.price===0?"DARMOWE":"🪙 "+it.price+" zł");
+          const action=button(isEquipped?"✓ ZAŁOŻONE":hasIt?"ZAŁÓŻ":"KUP","fishing-shop-buy");
+          action.dataset.shopId=it.id;
+          action.disabled=isEquipped||(!hasIt&&money<it.price);
+          if(isEquipped)action.classList.add("is-equipped");
+          foot.append(price,action);
+          card.append(top,name,desc,foot);
+          shopGrid.append(card);
+        });
+        shopWallet.textContent="🪙 "+money+" zł";
+      }
+      function update(){
+        moneyEl.textContent="🪙 "+money+" zł";
+        caughtEl.textContent="🐟 Złowione: "+caught;
+        rodEl.textContent="🎣 "+item("rod").name;
+        baitEl.textContent=item("bait").icon+" "+item("bait").name;
+        shopWallet.textContent="🪙 "+money+" zł";
+        shopToggle.disabled=phase!=="idle";
+        shopToggle.classList.toggle("active",!shopPanel.hidden);
+        persist();
+        renderShop();
+      }
+      function hideChallenge(){
+        challenge.hidden=true;
+        fightStats.hidden=true;
+        challenge.classList.remove("is-hooking","is-fighting");
+      }
+      function clearRound(){
+        if(biteTimer!==null){clearTimeout(biteTimer);biteTimer=null;}
+        phase="idle";
+        fish=null;
+        hookMisses=0;
+        tension=0;
+        progress=0;
+        cast.disabled=false;
+        cast.textContent="🎣  ZARZUĆ WĘDKĘ";
+        shopToggle.disabled=false;
+        float.classList.remove("biting");
+        scene.classList.remove("fishing-casting","fishing-bite-active","fishing-fight-active");
+        hideChallenge();
+        updateBars();
+        update();
+      }
+      function showChallenge(type){
+        challenge.hidden=false;
+        challenge.classList.toggle("is-hooking",type==="hook");
+        challenge.classList.toggle("is-fighting",type==="fight");
+        fightStats.hidden=type!=="fight";
+        if(type==="hook"){
+          challengeTitle.textContent="BRANIE! ZACINAJ!";
+          challengeHint.textContent="Naciśnij, gdy biały wskaźnik wejdzie w zielone pole.";
+          challengeAction.textContent="🎯  ZACIĄGNIJ!";
+        }else{
+          challengeTitle.textContent="RYBA NA HACZYKU!";
+          challengeHint.textContent="Klikaj w zielonym polu, by holować. Nie zerwij żyłki!";
+          challengeAction.textContent="🎣  HOLUJ RYBĘ";
+        }
+      }
+      function updateBars(){
+        const max=item("line").strength;
+        tensionFill.style.width=Math.max(0,Math.min(100,tension/max*100))+"%";
+        tensionWrap.classList.toggle("danger",tension/max>.72);
+        tensionWrap.classList.toggle("critical",tension/max>.9);
+        progressFill.style.width=Math.max(0,Math.min(100,progress))+"%";
+        tensionLabel.lastElementChild.textContent=Math.round(Math.max(0,tension/max*100))+"%";
+        progressLabel.lastElementChild.textContent=Math.round(progress)+"%";
+      }
+      function computeTarget(){
+        const now=Date.now();
+        const elapsed=now-miniStart;
+        const period=phase==="hook"?1450:1120;
+        const cycle=(elapsed%period)/period;
+        needlePct=(cycle<.5?cycle*200:(1-cycle)*200);
+        const power=item("rod").power;
+        const control=item("reel").control;
+        if(phase==="hook")targetWidth=Math.max(17,23+power*2+control*1.5);
+        else targetWidth=Math.max(12,22-(fish?fish.diff:1)*3.5+power*2.3+control*2);
+        const sway=phase==="hook"?6:13;
+        targetCenter=50+Math.sin(now/(phase==="hook"?720:860))*sway;
+        targetCenter=Math.max(targetWidth/2+2,Math.min(98-targetWidth/2,targetCenter));
+        target.style.left=(targetCenter-targetWidth/2)+"%";
+        target.style.width=targetWidth+"%";
+        needle.style.left=needlePct+"%";
+      }
+      function chooseFish(){
+        const bait=item("bait");
+        const luck=bait.luck+item("rod").power*.065;
+        const weights=species.map(s=>s.weight/(1+Math.max(0,s.rarity-1)*.24)*(1+luck*s.rarity*1.8));
+        const total=weights.reduce((sum,n)=>sum+n,0);
+        let n=Math.random()*total;
+        for(let i=0;i<species.length;i++){n-=weights[i];if(n<=0)return species[i];}
+        return species[0];
+      }
+      function escapeFish(message){
+        const escaped=fish;
+        clearRound();
+        scene.classList.add("fishing-escape");
+        if(escaped)fishShadow.textContent=escaped.emoji;
+        say(message||"Ryba uciekła. Spróbuj ponownie!");
+        later(()=>{scene.classList.remove("fishing-escape");fishShadow.textContent="🐟";},1050);
+      }
+      function landFish(){
+        const landed=fish;
+        const weight=Number((.45+Math.random()*1.25+item("rod").power*.12).toFixed(1));
+        const gain=Math.round(landed.price*weight+item("rod").power*5+item("bait").bonus);
+        money+=gain;
+        caught++;
+        clearRound();
+        scene.classList.add("fishing-landed");
+        const catchFlash=make("div","fishing-catch-flash",landed.emoji+"  "+landed.name+" · "+weight+" kg");
+        scene.append(catchFlash);
+        say("Złowiono "+landed.name+" ("+weight+" kg) — +"+gain+" zł!");
+        later(()=>{catchFlash.remove();scene.classList.remove("fishing-landed");},1900);
+        update();
+      }
+      function actChallenge(){
+        if(phase!=="hook"&&phase!=="fight")return;
+        const now=Date.now();
+        if(now-lastActionAt<260)return;
+        lastActionAt=now;
+        const hit=Math.abs(needlePct-targetCenter)<=targetWidth/2;
+        if(phase==="hook"){
+          if(hit){
+            if(biteTimer!==null){clearTimeout(biteTimer);biteTimer=null;}
+            phase="fight";
+            miniStart=Date.now();
+            tension=24;
+            progress=0;
+            lastTensionAt=Date.now();
+            showChallenge("fight");
+            scene.classList.remove("fishing-bite-active");
+            scene.classList.add("fishing-fight-active");
+            say("Jest na haczyku! Prowadź rybę spokojnie.");
+            updateBars();
+          }else{
+            hookMisses++;
+            if(hookMisses>=3)escapeFish("Nie udało się zaciąć — ryba odpłynęła.");
+            else say("Pudło! Jeszcze "+(3-hookMisses)+" próby zacięcia.");
+          }
+          return;
+        }
+        if(hit){
+          const diff=fish?fish.diff:1;
+          progress=Math.min(100,progress+Math.max(14,30/diff+item("rod").power*3+item("reel").control*2));
+          tension+=7+diff*2.1;
+          say(progress>=100?"Ryba jest już blisko!": "Dobry ruch! Holujesz rybę…");
+        }else{
+          progress=Math.max(0,progress-6);
+          tension+=17+(fish?fish.diff:1)*3;
+          say("Nie trafiono w zielone pole — rośnie napięcie żyłki!");
+        }
+        updateBars();
+        if(tension>=item("line").strength){
+          escapeFish("TRACH! Żyłka pękła i ryba uciekła.");
+          return;
+        }
+        if(progress>=100)landFish();
+      }
+      function castLine(){
+        if(phase!=="idle")return;
+        shopPanel.hidden=true;
+        shopToggle.classList.remove("active");
+        phase="waiting";
+        cast.disabled=true;
+        shopToggle.disabled=true;
+        cast.textContent="🌊  CZEKAJ NA BRANIE…";
+        scene.classList.add("fishing-casting");
+        say("Wędka leci do wody… obserwuj spławik.");
+        update();
+        later(()=>scene.classList.remove("fishing-casting"),850);
+        const wait=(1900+Math.random()*3000)*item("bait").wait*(1-item("rod").power*.045);
+        biteTimer=later(()=>{
+          if(phase!=="waiting")return;
+          fish=chooseFish();
+          phase="hook";
+          miniStart=Date.now();
+          hookMisses=0;
+          float.classList.add("biting");
+          scene.classList.add("fishing-bite-active");
+          showChallenge("hook");
+          cast.textContent="🐟  BRANIE!";
+          say("BRANIE! Wskaźnik pędzi — zaciągnij w zielonym polu.");
+          biteTimer=later(()=>{if(phase==="hook")escapeFish("Za długo zwlekałeś — ryba uciekła!");},6800);
+        },wait);
+      }
+      function useItem(it){
+        if(isOwned(it)){
+          gear[it.kind]=it.id;
+          update();
+          say("Założono: "+it.name+".");
+          return;
+        }
+        if(money<it.price){say("Brakuje "+(it.price-money)+" zł na "+it.name+".");return;}
+        money-=it.price;
+        owned[it.kind].push(it.id);
+        gear[it.kind]=it.id;
+        update();
+        say("Kupiono i założono: "+it.name+"!");
+      }
+      function setFilter(filter){
+        shopFilter=filter;
+        [...filters.querySelectorAll("[data-shop-filter]")].forEach(b=>b.classList.toggle("active",b.dataset.shopFilter===filter));
+        renderShop();
+      }
+      on(cast,"click",castLine);
+      on(challengeAction,"click",actChallenge);
+      on(shopToggle,"click",()=>{if(phase!=="idle")return;shopPanel.hidden=!shopPanel.hidden;shopToggle.classList.toggle("active",!shopPanel.hidden);if(!shopPanel.hidden)renderShop();});
+      on(shopClose,"click",()=>{shopPanel.hidden=true;shopToggle.classList.remove("active");});
+      on(filters,"click",e=>{const b=e.target.closest("[data-shop-filter]");if(b)setFilter(b.dataset.shopFilter);});
+      on(shopGrid,"click",e=>{const b=e.target.closest("[data-shop-id]");if(!b)return;const it=catalog.find(it=>it.id===b.dataset.shopId);if(it)useItem(it);});
+      on(reset,"click",()=>{clearRound();shopPanel.hidden=true;shopToggle.classList.remove("active");say("Gotowy na następny rzut. Twój sprzęt i oszczędności zostały zachowane.");});
+      every(()=>{
+        if(phase==="hook"||phase==="fight"){
+          computeTarget();
+          if(phase==="fight"){
+            const now=Date.now();
+            const dt=Math.min(.12,(now-lastTensionAt)/1000);
+            lastTensionAt=now;
+            tension=Math.max(0,tension-(11+item("reel").control*3)*dt);
+            if(tension>=item("line").strength){escapeFish("Żyłka nie wytrzymała holowania!");return;}
+            updateBars();
+          }
+        }
+      },35);
+      update();
+      renderShop();
+      say("Gotowy na połów. Zarzuć wędkę, a potem wykaż się refleksem.");
     }
 
     function racerGame(){
