@@ -45,20 +45,44 @@
       const grid=make("div","game-2048-grid");grid.tabIndex=0;
       const line=make("div","arcade-score-line"),scoreText=make("span","","Wynik: 0"),bestText=make("span","","Rekord: 0");
       line.append(scoreText,bestText);put(line);put(grid);help("Strzałki / WASD lub przesuń palcem.");
-      function spawn(){const empty=[];board.forEach((v,i)=>{if(!v)empty.push(i);});if(!empty.length)return;board[empty[Math.floor(Math.random()*empty.length)]]=Math.random()<.9?2:4;}
-      function render(){grid.replaceChildren();board.forEach(v=>grid.append(make("div","tile-2048"+(v?" v"+Math.min(v,2048):""),v?String(v):"")));scoreText.textContent="Wynik: "+score;bestText.textContent="Rekord: "+Number(localStorage.getItem("novydev-2048-best")||0);}
+      function spawn(){const empty=[];board.forEach((v,i)=>{if(!v)empty.push(i);});if(!empty.length)return -1;const index=empty[Math.floor(Math.random()*empty.length)];board[index]=Math.random()<.9?2:4;return index;}
+      function render(animate=false,mergedIndices=[],spawnedIndex=-1){
+        const oldTiles=Array.from(grid.children).map((el,index)=>({value:Number(el.textContent)||0,index,rect:el.getBoundingClientRect()}));
+        grid.replaceChildren();
+        const newTiles=[];
+        board.forEach((v,index)=>{
+          const tile=make("div","tile-2048"+(v?" v"+Math.min(v,2048):"")+(animate&&mergedIndices.includes(index)?" tile-merge":"")+(animate&&spawnedIndex===index?" tile-spawn":""),v?String(v):"");
+          tile.dataset.index=String(index);grid.append(tile);newTiles.push({el:tile,value:v,index});
+        });
+        if(animate){
+          const used=new Set();
+          newTiles.forEach(tile=>{
+            if(!tile.value||mergedIndices.includes(tile.index)||spawnedIndex===tile.index)return;
+            const rect=tile.el.getBoundingClientRect();
+            const candidates=oldTiles.filter(old=>old.value===tile.value&&!used.has(old.index));
+            if(!candidates.length)return;
+            candidates.sort((x,y)=>((x.rect.left-rect.left)**2+(x.rect.top-rect.top)**2)-((y.rect.left-rect.left)**2+(y.rect.top-rect.top)**2));
+            const source=candidates[0];used.add(source.index);
+            const dx=source.rect.left-rect.left,dy=source.rect.top-rect.top;
+            if(Math.abs(dx)+Math.abs(dy)<1)return;
+            tile.el.style.transition="none";tile.el.style.transform=`translate(${dx}px,${dy}px)`;
+            requestAnimationFrame(()=>{if(!destroyed){tile.el.style.transition="transform 190ms cubic-bezier(.2,.8,.2,1)";tile.el.style.transform="translate(0,0)";}});
+          });
+        }
+        scoreText.textContent="Wynik: "+score;bestText.textContent="Rekord: "+Number(localStorage.getItem("novydev-2048-best")||0);
+      }
       function fresh(){board=Array(16).fill(0);score=0;ended=false;won=false;spawn();spawn();render();say("Połącz kafelki");}
       function canMove(){for(let r=0;r<4;r++)for(let c=0;c<4;c++){let i=r*4+c;if(c<3&&board[i]===board[i+1]||r<3&&board[i]===board[i+4])return true;}return false;}
       function move(dir){
-        if(ended)return;const before=board.join(",");
+        if(ended)return;const before=board.join(",");const mergedIndices=[];
         for(let lineNo=0;lineNo<4;lineNo++){
           let idx=[];
           for(let p=0;p<4;p++){let r,c;if(dir==="left"){r=lineNo;c=p;}else if(dir==="right"){r=lineNo;c=3-p;}else if(dir==="up"){r=p;c=lineNo;}else{r=3-p;c=lineNo;}idx.push(r*4+c);}
           let vals=idx.map(i=>board[i]).filter(Boolean);
           for(let i=0;i<vals.length-1;i++)if(vals[i]===vals[i+1]){vals[i]*=2;score+=vals[i];vals.splice(i+1,1);if(vals[i]===2048&&!won){won=true;say("2048! Możesz grać dalej.");}}
-          while(vals.length<4)vals.push(0);idx.forEach((n,i)=>board[n]=vals[i]);
+          while(vals.length<4)vals.push(0);let sourceVals=idx.map(i=>board[i]).filter(Boolean),write=0;for(let i=0;i<sourceVals.length-1;i++){if(sourceVals[i]===sourceVals[i+1]){mergedIndices.push(idx[write]);i++;}write++;}idx.forEach((n,i)=>board[n]=vals[i]);
         }
-        if(before===board.join(","))return;spawn();render();
+        if(before===board.join(","))return;const spawnedIndex=spawn();render(true,mergedIndices,spawnedIndex);
         let best=Number(localStorage.getItem("novydev-2048-best")||0);if(score>best)localStorage.setItem("novydev-2048-best",String(score));
         if(!board.includes(0)&&!canMove()){ended=true;say("Koniec gry — naciśnij OD NOWA.");}
       }
