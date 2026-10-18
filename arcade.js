@@ -561,13 +561,114 @@
     }
 
     function racerGame(){
-      const canvas=make("canvas","arcade-canvas racer-canvas");canvas.width=420;canvas.height=620;canvas.tabIndex=0;put(canvas);const ctx=canvas.getContext("2d");
-      let x=210,lane=1,traffic=[],score=0,best=Number(localStorage.getItem("novydev-racer-best")||0),speed=250,started=false,ended=false,last=0,spawn=0,keys=new Set();const laneX=[90,210,330];
-      function fresh(){x=210;lane=1;traffic=[];score=0;speed=250;started=false;ended=false;last=0;spawn=0;keys.clear();say("Dotknij, aby wystartować");draw();}
-      function draw(){const g=ctx.createLinearGradient(0,0,0,620);g.addColorStop(0,"#100b2b");g.addColorStop(1,"#050711");ctx.fillStyle=g;ctx.fillRect(0,0,420,620);ctx.fillStyle="#141a2d";ctx.fillRect(35,0,350,620);ctx.strokeStyle="#00eaff";ctx.lineWidth=3;ctx.strokeRect(35,0,350,620);ctx.strokeStyle="rgba(255,255,255,.35)";ctx.lineWidth=3;ctx.setLineDash([30,28]);ctx.lineDashOffset=-(score*2%58);ctx.beginPath();ctx.moveTo(151,0);ctx.lineTo(151,620);ctx.moveTo(269,0);ctx.lineTo(269,620);ctx.stroke();ctx.setLineDash([]);traffic.forEach(t=>car(t.x,t.y,t.color));car(x,520,"#ff3eaa",true);ctx.fillStyle="#fff";ctx.font="bold 15px ui-monospace,monospace";ctx.fillText("DIST "+Math.floor(score)+" m",15,25);ctx.fillText("BEST "+Math.floor(best)+" m",275,25);if(!started||ended){ctx.fillStyle="rgba(4,6,18,.82)";ctx.fillRect(45,245,330,120);ctx.textAlign="center";ctx.fillStyle="#00eaff";ctx.font="bold 22px ui-monospace,monospace";ctx.fillText(ended?"KOLIZJA!":"NEON RACER",210,286);ctx.fillStyle="#fff";ctx.font="12px ui-monospace,monospace";ctx.fillText(ended?"Wynik: "+Math.floor(score)+" m":"Dotknij / ← →, aby ruszyć",210,315);ctx.textAlign="left";}}
-      function car(cx,cy,color,hero=false){ctx.save();ctx.translate(cx,cy);ctx.shadowColor=color;ctx.shadowBlur=hero?18:8;ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-22,-39,44,78,9);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle="#101321";ctx.fillRect(-15,-25,30,19);ctx.fillRect(-15,10,30,15);ctx.fillStyle=hero?"#f8faff":"#ffd166";ctx.fillRect(-18,-33,9,5);ctx.fillRect(9,-33,9,5);ctx.fillStyle="#080a12";ctx.fillRect(-26,-24,5,18);ctx.fillRect(21,-24,5,18);ctx.fillRect(-26,14,5,18);ctx.fillRect(21,14,5,18);ctx.restore();}
-      function tick(t){if(destroyed)return;const dt=Math.min(.03,(t-(last||t))/1000);last=t;if(started&&!ended){if(keys.has("ArrowLeft")||keys.has("KeyA"))x-=300*dt;if(keys.has("ArrowRight")||keys.has("KeyD"))x+=300*dt;x=Math.max(65,Math.min(355,x));spawn+=dt;if(spawn>Math.max(.38,.9-score/1500)){spawn=0;traffic.push({x:laneX[Math.floor(Math.random()*3)],y:-60,color:["#ff4b6e","#a56bff","#ffb84d","#52ffb8"][Math.floor(Math.random()*4)]});}speed=Math.min(520,250+score*.18);traffic.forEach(a=>a.y+=speed*dt);traffic=traffic.filter(a=>a.y<700);traffic.forEach(a=>{if(Math.abs(a.x-x)<39&&Math.abs(a.y-520)<62)ended=true;});score+=dt*speed*.18;if(ended){best=Math.max(best,score);localStorage.setItem("novydev-racer-best",String(Math.floor(best)));say("Kolizja! Wynik: "+Math.floor(score)+" m");}}draw();raf=requestAnimationFrame(tick);}
-      const kd=e=>{if(["ArrowLeft","ArrowRight","KeyA","KeyD","Space"].includes(e.code)){e.preventDefault();if(!started||ended){fresh();started=true;say("Uważaj na ruch!");}if(e.code==="ArrowLeft"||e.code==="KeyA")x=Math.max(65,x-118);if(e.code==="ArrowRight"||e.code==="KeyD")x=Math.min(355,x+118);keys.add(e.code);}},ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);on(canvas,"pointerdown",e=>{canvas.focus();if(!started||ended){fresh();started=true;}const r=canvas.getBoundingClientRect();x=e.clientX<r.left+r.width/2?Math.max(65,x-118):Math.min(355,x+118);});on(reset,"click",()=>{fresh();started=true;});fresh();raf=requestAnimationFrame(tick);
+      const canvas=make("canvas","arcade-canvas racer-canvas");canvas.width=420;canvas.height=620;canvas.tabIndex=0;canvas.setAttribute("aria-label","Neon Racer — steruj autem i omijaj ruch uliczny");put(canvas);
+      const ctx=canvas.getContext("2d"),laneX=[90,210,330];
+      const cars=[
+        {id:"pink",name:"PINK PULSE",color:"#ff3eaa",price:0,desc:"Startowy neonowy samochód."},
+        {id:"cyan",name:"CYBER BLUE",color:"#00eaff",price:80,desc:"Chłodny błękit i mocna poświata."},
+        {id:"lime",name:"VOLT GREEN",color:"#b7ff4a",price:160,desc:"Jaskrawa zieleń na nocnej trasie."},
+        {id:"violet",name:"PURPLE HAZE",color:"#a56bff",price:280,desc:"Fioletowy lakier z neonowym blaskiem."},
+        {id:"gold",name:"GOLD RUSH",color:"#ffcf55",price:450,desc:"Złoty lakier dla mistrzów autostrady."}
+      ];
+      const bestValue=Number(localStorage.getItem("novydev-racer-best")||0);let best=Number.isFinite(bestValue)?Math.max(0,bestValue):0;
+      let stored={credits:0,owned:["pink"],selected:"pink"};
+      try{const raw=localStorage.getItem("novydev-racer-save");if(raw){const parsed=JSON.parse(raw);if(Number.isFinite(parsed.credits))stored.credits=Math.max(0,Math.floor(parsed.credits));if(Array.isArray(parsed.owned))stored.owned=parsed.owned.filter(id=>cars.some(c=>c.id===id));if(typeof parsed.selected==="string")stored.selected=parsed.selected;}}catch{}
+      let credits=stored.credits;const owned=[...new Set(["pink",...stored.owned])];
+      let activeCar=cars.find(c=>c.id===stored.selected&&owned.includes(c.id))||cars[0];
+      let x=210,targetX=210,traffic=[],pickups=[],particles=[],score=0,speed=250,started=false,ended=false,last=0,spawn=0,coinSpawn=.5,roadOffset=0,keys=new Set(),pointerDown=false;
+      const actions=make("div","racer-actions"),garageToggle=button("🚘  GARAŻ NEONOWY","arcade-btn racer-garage-toggle");
+      actions.append(garageToggle);put(actions);
+      const garage=make("section","racer-garage");garage.hidden=true;
+      const garageHeader=make("div","racer-garage-header"),garageIntro=make("div","racer-garage-intro");
+      garageIntro.append(make("strong","","GARAŻ NEONOWY"),make("span","","Odblokuj własny kolor auta za kredyty zebrane na trasie."));
+      const garageWallet=make("strong","racer-garage-wallet","🪙 "+credits),garageClose=button("✕","arcade-btn racer-garage-close");
+      garageClose.setAttribute("aria-label","Zamknij garaż");garageHeader.append(garageIntro,garageWallet,garageClose);
+      const garageGrid=make("div","racer-garage-grid"),garageFoot=make("p","racer-garage-foot","Zbieraj świecące żetony na drodze. Zakupione samochody zostają odblokowane.");
+      garage.append(garageHeader,garageGrid,garageFoot);put(garage);
+      function persist(){try{localStorage.setItem("novydev-racer-save",JSON.stringify({credits,owned,selected:activeCar.id}));localStorage.setItem("novydev-racer-best",String(Math.floor(best)));}catch{}}
+      function renderGarage(){
+        garageGrid.replaceChildren();
+        cars.forEach(item=>{
+          const hasCar=owned.includes(item.id),selected=activeCar.id===item.id;
+          const card=make("article","racer-car-card"+(selected?" selected":"")+(hasCar?"":" locked"));
+          const top=make("div","racer-car-card-top"),swatch=make("span","racer-car-swatch");
+          swatch.style.backgroundColor=item.color;swatch.style.boxShadow="0 0 16px "+item.color+"55";
+          const preview=make("span","racer-car-preview","🚘");preview.style.color=item.color;top.append(preview,swatch);
+          const name=make("strong","racer-car-name",item.name),desc=make("p","racer-car-desc",item.desc);
+          const action=button(selected?"✓ WYBRANO":hasCar?"WYBIERZ":"KUP · "+item.price+" 🪙","arcade-btn racer-garage-buy");
+          action.dataset.racerCar=item.id;action.disabled=selected;card.append(top,name,desc,action);garageGrid.append(card);
+        });
+        garageWallet.textContent="🪙 "+credits+" kredytów";
+      }
+      function fresh(){
+        x=210;targetX=210;traffic=[];pickups=[];particles=[];score=0;speed=250;started=false;ended=false;last=0;spawn=0;coinSpawn=.5;roadOffset=0;keys.clear();pointerDown=false;
+        garageToggle.disabled=false;draw();say("Dotknij, aby wystartować");
+      }
+      function burst(px,py,color,count){
+        for(let i=0;i<count;i++){const angle=Math.random()*Math.PI*2,force=25+Math.random()*145;particles.push({x:px,y:py,vx:Math.cos(angle)*force,vy:Math.sin(angle)*force,life:.35+Math.random()*.48,color,size:2+Math.random()*3});}
+      }
+      function car(cx,cy,color,hero=false,phase=0){
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(Math.sin(performance.now()/300+phase)*(hero ? 0.006 : 0.012));
+        ctx.shadowColor=color;ctx.shadowBlur=hero?22:10;ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(-22,-39,44,78,9);ctx.fill();
+        ctx.shadowBlur=0;ctx.fillStyle="#101321";ctx.beginPath();ctx.roundRect(-15,-25,30,19,5);ctx.fill();ctx.fillRect(-15,10,30,15);
+        ctx.fillStyle=hero?"#f8faff":"#ffd166";ctx.fillRect(-18,-33,9,5);ctx.fillRect(9,-33,9,5);
+        ctx.fillStyle=hero?"#ffef9a":"#ff536f";ctx.fillRect(-17,28,8,5);ctx.fillRect(9,28,8,5);
+        ctx.fillStyle="#080a12";ctx.fillRect(-26,-24,5,18);ctx.fillRect(21,-24,5,18);ctx.fillRect(-26,14,5,18);ctx.fillRect(21,14,5,18);
+        if(hero){ctx.globalAlpha=.17;ctx.fillStyle=color;ctx.fillRect(-12,42,24,38);}ctx.restore();
+      }
+      function drawPickup(c){
+        ctx.save();ctx.translate(c.x,c.y);ctx.rotate(Math.sin(c.phase)*.12);ctx.shadowColor="#ffcf55";ctx.shadowBlur=20;ctx.fillStyle="#ffcf55";ctx.beginPath();ctx.arc(0,0,13+Math.sin(c.phase)*1.4,0,Math.PI*2);ctx.fill();
+        ctx.shadowBlur=0;ctx.strokeStyle="#fff2b5";ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.stroke();ctx.fillStyle="#60400c";ctx.font="bold 14px ui-monospace,monospace";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("+",0,.5);ctx.restore();
+      }
+      function draw(){
+        const g=ctx.createLinearGradient(0,0,0,620);g.addColorStop(0,"#100b2b");g.addColorStop(1,"#050711");ctx.fillStyle=g;ctx.fillRect(0,0,420,620);
+        ctx.fillStyle="#141a2d";ctx.fillRect(35,0,350,620);
+        for(let i=0;i<14;i++){const y=(i*54+roadOffset*1.15)%660-30;ctx.fillStyle=i%2?"rgba(0,234,255,.16)":"rgba(255,62,170,.18)";ctx.fillRect(43,y,5,20);ctx.fillRect(372,y,5,20);}
+        ctx.strokeStyle="#00eaff";ctx.lineWidth=3;ctx.strokeRect(35,0,350,620);
+        ctx.strokeStyle="rgba(255,255,255,.38)";ctx.lineWidth=3;ctx.setLineDash([30,28]);ctx.lineDashOffset=-(roadOffset%58);
+        ctx.beginPath();ctx.moveTo(151,0);ctx.lineTo(151,620);ctx.moveTo(269,0);ctx.lineTo(269,620);ctx.stroke();ctx.setLineDash([]);
+        pickups.forEach(drawPickup);traffic.forEach(t=>car(t.x,t.y,t.color,false,t.phase));
+        if(started&&!ended){ctx.save();ctx.globalAlpha=.22;ctx.strokeStyle=activeCar.color;ctx.lineWidth=2;for(let i=0;i<4;i++){const yy=490+i*23+(roadOffset%23);ctx.beginPath();ctx.moveTo(x-13,yy);ctx.lineTo(x-13,yy+12);ctx.moveTo(x+13,yy);ctx.lineTo(x+13,yy+12);ctx.stroke();}ctx.restore();}
+        particles.forEach(p=>{ctx.save();ctx.globalAlpha=Math.max(0,Math.min(1,p.life/.5));ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();ctx.restore();});
+        car(x,520,activeCar.color,true);
+        ctx.textBaseline="alphabetic";ctx.textAlign="left";ctx.fillStyle="#fff";ctx.font="bold 13px ui-monospace,monospace";ctx.fillText("DIST "+Math.floor(score)+" m",13,24);ctx.fillText("BEST "+Math.floor(best)+" m",269,24);
+        ctx.fillStyle="#ffcf55";ctx.fillText("CREDITS "+credits,14,45);
+        if(!started||ended){ctx.fillStyle="rgba(4,6,18,.84)";ctx.fillRect(45,238,330,142);ctx.textAlign="center";ctx.fillStyle=ended?"#ff6b8d":"#00eaff";ctx.font="bold 23px ui-monospace,monospace";ctx.fillText(ended?"KOLIZJA!":"NEON RACER",210,278);ctx.fillStyle="#fff";ctx.font="12px ui-monospace,monospace";ctx.fillText(ended?"Wynik: "+Math.floor(score)+" m":"Dotknij / ← →, aby ruszyć",210,308);ctx.fillStyle="#b8c2d4";ctx.font="11px ui-monospace,monospace";ctx.fillText(ended?"Naciśnij, aby spróbować ponownie":"Zbieraj złote żetony · omijaj auta",210,333);ctx.textAlign="left";}
+      }
+      function beginRun(){fresh();started=true;garage.hidden=true;garageToggle.classList.remove("active");garageToggle.disabled=true;say("Uważaj na ruch! Zbieraj złote żetony.");}
+      function steerToPointer(e){const rect=canvas.getBoundingClientRect(),px=(e.clientX-rect.left)/Math.max(1,rect.width)*canvas.width;targetX=Math.max(67,Math.min(353,px));}
+      function tick(t){
+        if(destroyed)return;const dt=Math.min(.04,(t-(last||t))/1000);last=t;
+        if(started&&!ended){
+          const steer=(keys.has("ArrowLeft")||keys.has("KeyA")?-1:0)+(keys.has("ArrowRight")||keys.has("KeyD")?1:0);
+          targetX=Math.max(67,Math.min(353,targetX+steer*390*dt));x+=(targetX-x)*(1-Math.exp(-dt*10));spawn+=dt;
+          if(spawn>Math.max(.48,.9-score/2600)){spawn=0;traffic.push({x:laneX[Math.floor(Math.random()*3)],y:-70,color:["#ff4b6e","#a56bff","#ffb84d","#52ffb8"][Math.floor(Math.random()*4)],factor:.78+Math.random()*.34,phase:Math.random()*8});}
+          coinSpawn+=dt;if(coinSpawn>1.45){coinSpawn=0;pickups.push({x:laneX[Math.floor(Math.random()*3)],y:-35,value:10,phase:Math.random()*Math.PI*2});}
+          speed=Math.min(560,250+score*.15);roadOffset+=speed*dt;traffic.forEach(a=>a.y+=speed*(a.factor||1)*dt);traffic=traffic.filter(a=>a.y<690);
+          let collected=false;const remaining=[];
+          pickups.forEach(c=>{c.y+=speed*dt;c.phase+=dt*5;if(Math.abs(c.x-x)<31&&Math.abs(c.y-520)<34){credits+=c.value;burst(c.x,c.y,"#ffcf55",10);say("+"+c.value+" kredytów! Świetny przejazd.");collected=true;}else if(c.y<690)remaining.push(c);});
+          pickups=remaining;if(collected){persist();garageWallet.textContent="🪙 "+credits+" kredytów";}
+          score+=dt*speed*.18;let crashed=false;
+          for(const a of traffic){if(Math.abs(a.x-x)<40&&Math.abs(a.y-520)<65){ended=true;crashed=true;break;}}
+          if(crashed){best=Math.max(best,score);persist();burst(x,520,activeCar.color,24);garageToggle.disabled=false;say("Kolizja! Wynik: "+Math.floor(score)+" m. Spróbuj ponownie.");}
+        }
+        particles.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=90*dt;p.life-=dt;});particles=particles.filter(p=>p.life>0);
+        draw();raf=requestAnimationFrame(tick);
+      }
+      const kd=e=>{if(!["ArrowLeft","ArrowRight","KeyA","KeyD","Space"].includes(e.code))return;e.preventDefault();if(!garage.hidden)return;if(!started||ended)beginRun();if(e.code==="ArrowLeft"||e.code==="KeyA")keys.add(e.code);if(e.code==="ArrowRight"||e.code==="KeyD")keys.add(e.code);};
+      const ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);
+      on(canvas,"pointerdown",e=>{if(!garage.hidden)return;canvas.focus();if(!started||ended)beginRun();pointerDown=true;steerToPointer(e);});
+      on(canvas,"pointermove",e=>{if(pointerDown&&!garage.hidden)steerToPointer(e);});
+      const endPointer=()=>{pointerDown=false;};on(window,"pointerup",endPointer);
+      on(garageToggle,"click",()=>{if(started&&!ended)return;garage.hidden=!garage.hidden;garageToggle.classList.toggle("active",!garage.hidden);if(!garage.hidden){renderGarage();say("Wybierz lakier w garażu.");}else say("Gotowy do wyścigu.");});
+      on(garageClose,"click",()=>{garage.hidden=true;garageToggle.classList.remove("active");say("Gotowy do wyścigu.");});
+      on(garageGrid,"click",e=>{
+        const b=e.target.closest("[data-racer-car]");if(!b)return;const item=cars.find(c=>c.id===b.dataset.racerCar);if(!item)return;
+        if(!owned.includes(item.id)){if(credits<item.price){say("Potrzebujesz jeszcze "+(item.price-credits)+" kredytów.");return;}credits-=item.price;owned.push(item.id);activeCar=item;persist();renderGarage();say("Odblokowano "+item.name+"!");}
+        else{activeCar=item;persist();renderGarage();say("Wybrano "+item.name+".");}
+      });
+      on(reset,"click",()=>{fresh();garage.hidden=true;garageToggle.classList.remove("active");say("Nowy wyścig gotowy.");});
+      fresh();renderGarage();help("Steruj strzałkami / A–D lub dotykaj i przeciągaj po drodze. Złote żetony dają kredyty na nowe lakiery. Rekord i garaż zapisują się na urządzeniu.");raf=requestAnimationFrame(tick);
     }
 
     function invadersGame(){
