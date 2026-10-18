@@ -67,8 +67,8 @@ const portfolio = {
       title:{pl:"KinoStream",en:"KinoStream"},
       year:2026,
       status:{pl:"W rozwoju",en:"In development"},
-      description:{pl:"Aplikacja do odkrywania filmów z nowoczesnym katalogiem, wyszukiwaniem i filtrowaniem. Projekt wykorzystuje bazę Firebase do przechowywania danych o filmach i przygotowuje miejsce na kolejne tytuły.",en:"A movie discovery app with a modern catalog, search and filtering. The project uses Firebase to store movie data and makes it easy to add new titles."},
-      features:{pl:["Katalog filmów z wyszukiwarką","Filtrowanie i sortowanie według gatunków","Oceny Filmweb — preferowane tytuły od 6,5/10","Lista ulubionych filmów","Dane filmów pobierane z Firebase Firestore"],en:["Movie catalog with search","Genre filtering and sorting","Filmweb ratings — prioritizing titles rated 6.5/10 or higher","Favorites list","Movie data loaded from Firebase Firestore"]},
+      description:{pl:"Aplikacja do odkrywania filmów z nowoczesnym katalogiem, wyszukiwaniem i filtrowaniem. Projekt wykorzystuje bazę Firebase do przechowywania danych o filmach. Aplikacja i panel administratora umożliwiają wygodne przechodzenie między sobą — z panelu można otworzyć aplikację, a z aplikacji wrócić do panelu admina.",en:"A movie discovery app with a modern catalog, search and filtering. It uses Firebase to store movie data. The app and admin panel provide convenient two-way navigation: open the app from the admin panel and return to the admin panel from the app."},
+      features:{pl:["Katalog filmów z wyszukiwarką","Filtrowanie i sortowanie według gatunków","Oceny Filmweb — preferowane tytuły od 6,5/10","Lista ulubionych filmów","Dane filmów pobierane z Firebase Firestore","Dwukierunkowa nawigacja między aplikacją a panelem administratora"],en:["Movie catalog with search","Genre filtering and sorting","Filmweb ratings — prioritizing titles rated 6.5/10 or higher","Favorites list","Movie data loaded from Firebase Firestore","Two-way navigation between the app and the admin panel"]},
       tags:["Android","Kotlin","Firebase","Firestore","Movies"],
       link:"https://github.com/janczesko12/KinoStream"
     },
