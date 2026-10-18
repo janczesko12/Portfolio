@@ -325,7 +325,7 @@ function launchEasterEgg(){
   document.body.classList.add("novydev-easter");
 
   const oldOverlay=document.querySelector(".easter-overlay");
-  if(oldOverlay) oldOverlay.remove();
+  if(oldOverlay) return; // Nie uruchamiaj drugiej instancji gier w tle.
 
   const overlay=document.createElement("div");
   overlay.className="easter-overlay";
@@ -770,6 +770,8 @@ function launchEasterEgg(){
     gameFrame=null;
     breakoutInstance?.destroy();
     breakoutInstance=null;
+    arcadeInstance?.destroy();
+    arcadeInstance=null;
     window.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
     document.body.classList.remove("novydev-easter");
