@@ -390,3 +390,53 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
   .timeline-projects{grid-template-columns:1fr}
   .timeline-item{padding:15px}
 }
+
+
+/* Responsive sizing and scrolling for the Snake Easter egg */
+.easter-overlay{
+  box-sizing:border-box;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.easter-game-window{
+  box-sizing:border-box;
+  width:min(600px, calc(100vw - 32px));
+  max-height:calc(100vh - 32px);
+  max-height:calc(100dvh - 32px);
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+.snake-stage{
+  min-width:0;
+  width:100%;
+  box-sizing:border-box;
+}
+#snake-canvas{
+  width:min(100%, 420px);
+  max-width:100%;
+  height:auto;
+  box-sizing:border-box;
+  touch-action:manipulation;
+}
+@media(max-width:700px){
+  .easter-overlay{padding:12px}
+  .easter-game-window{
+    width:calc(100vw - 24px);
+    max-height:calc(100vh - 24px);
+    max-height:calc(100dvh - 24px);
+    border-radius:16px;
+  }
+  .snake-header{gap:8px;padding:12px}
+  .snake-title{font-size:clamp(11px, 3.5vw, 14px)}
+  .snake-score{font-size:9px;white-space:nowrap}
+  .snake-score strong{font-size:16px}
+  .snake-stage{padding:10px}
+  #snake-canvas{width:min(100%, 420px)}
+}
+@media(max-height:620px) and (orientation:landscape){
+  .easter-overlay{place-items:start center}
+  .easter-game-window{margin:auto}
+}
