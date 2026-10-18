@@ -50,18 +50,20 @@
     function buildLevel() {
       bricks = [];
       const columns = 12;
-      const rows = Math.min(9, 3 + Math.floor((level - 1) / 2));
+      const rows = Math.min(10, 3 + Math.floor((level - 1) / 2));
       const gap = 8, left = 38, top = 72, brickH = 22;
       const brickW = (W - left * 2 - gap * (columns - 1)) / columns;
+
+      paddle.w = Math.max(64, 150 - Math.floor((level - 1) * 1.8));
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < columns; col++) {
           // Układ zmienia się z poziomu na poziom, ale każda plansza pozostaje grywalna.
           const pattern = (row * 7 + col * 3 + level) % 17;
           if (pattern === 0 && row > 0 && level % 3 !== 0) continue;
-          const maxHp = Math.min(4, 1 + Math.floor((level - 1) / 5));
-          const hp = Math.min(maxHp, 1 + ((row + col + level) % maxHp === 0 ? 1 : 0) +
-            (level > 8 && (row + col) % 7 === 0 ? 1 : 0));
+          const maxHp = Math.min(8, 1 + Math.floor((level - 1) / 4));
+          const hp = Math.min(maxHp, 1 + Math.floor((level - 1) / 10) +
+            ((row + col + level) % maxHp === 0 ? 1 : 0));
           bricks.push({
             x: left + col * (brickW + gap),
             y: top + row * (brickH + gap),
@@ -86,7 +88,7 @@
     }
 
     function launchBall() {
-      const speed = Math.min(430, 280 + level * 4);
+      const speed = Math.min(620, 270 + level * 5);
       ball.stuck = false;
       ball.vx = (Math.random() * 2 - 1) * speed * 0.52;
       if (Math.abs(ball.vx) < 75) ball.vx = ball.vx < 0 ? -75 : 75;
@@ -164,7 +166,7 @@
           ball.x >= paddle.x - paddle.w / 2 &&
           ball.x <= paddle.x + paddle.w / 2) {
         const offset = (ball.x - paddle.x) / (paddle.w / 2);
-        const speed = Math.min(520, Math.max(280, Math.hypot(ball.vx, ball.vy) + 5));
+        const speed = Math.min(700, Math.max(280, Math.hypot(ball.vx, ball.vy) + 5));
         const angle = offset * 1.05;
         ball.vx = Math.sin(angle) * speed;
         ball.vy = -Math.cos(angle) * speed;
