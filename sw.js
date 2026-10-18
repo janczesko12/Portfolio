@@ -1,4 +1,4 @@
-const CACHE = "novydev-v7";
+const CACHE = "novydev-v8";
 const ASSETS = ["/","/index.html","/style.css","/script.js","/favicon.svg","/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
