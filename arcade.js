@@ -401,15 +401,15 @@
       function computeTarget(){
         const now=Date.now();
         const elapsed=now-miniStart;
-        const period=phase==="hook"?1450:1120;
+        const period=phase==="hook"?1450:1650;
         const cycle=(elapsed%period)/period;
         needlePct=(cycle<.5?cycle*200:(1-cycle)*200);
         const power=item("rod").power;
         const control=item("reel").control;
         if(phase==="hook")targetWidth=Math.max(17,23+power*2+control*1.5);
         else targetWidth=Math.max(12,22-(fish?fish.diff:1)*3.5+power*2.3+control*2);
-        const sway=phase==="hook"?6:13;
-        targetCenter=50+Math.sin(now/(phase==="hook"?720:860))*sway;
+        const sway=phase==="hook"?6:10;
+        targetCenter=50+Math.sin(now/(phase==="hook"?720:1100))*sway;
         targetCenter=Math.max(targetWidth/2+2,Math.min(98-targetWidth/2,targetCenter));
         target.style.left=(targetCenter-targetWidth/2)+"%";
         target.style.width=targetWidth+"%";
