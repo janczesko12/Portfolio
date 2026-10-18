@@ -200,8 +200,6 @@
       addSolid(3790,groundY-78,64,78,"pipe");row(3984,3,292,"brick");question(4016,292,"coin");
       row(4144,3,228,"brick");question(4176,228,"coin");addSolid(4620,groundY-56,64,56,"pipe");
       row(4824,4,292,"brick");question(4856,292,"coin");question(5000,258,"coin");row(5032,3,258,"brick");
-      row(5200,292,0,"brick"); // placeholder removed below
-      solids.splice(solids.length-1,1);
       row(5200,3,292,"brick");question(5232,292,"coin");
       // Klasyczne schodki prowadzące do flagi.
       row(5384,1,358,"brick");row(5416,2,326,"brick");row(5448,3,294,"brick");row(5480,4,262,"brick");
