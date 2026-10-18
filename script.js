@@ -390,7 +390,11 @@ function launchEasterEgg(){
   let score=0;
   let running=false;
   let paused=false;
-  let gameTimer=null;
+  let gameFrame=null;
+  let lastFrameTime=0;
+  let moveAccumulator=0;
+  const stepMs=105;
+  let previousSnake=[];
 
   function randomFood(){
     let next;
@@ -401,10 +405,14 @@ function launchEasterEgg(){
   }
 
   function resetGame(showStart=true){
-    clearInterval(gameTimer);
+    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+    gameFrame=null;
+    lastFrameTime=0;
+    moveAccumulator=0;
     snake=[
       {x:10,y:11},{x:9,y:11},{x:8,y:11},{x:7,y:11}
     ];
+    previousSnake=snake.map(part=>({...part}));
     direction={x:1,y:0};
     nextDirection={x:1,y:0};
     score=0;
@@ -424,7 +432,7 @@ function launchEasterEgg(){
     }
   }
 
-  function draw(){
+  function draw(progress=1){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle="#071008";
     ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -446,22 +454,38 @@ function launchEasterEgg(){
     ctx.shadowBlur=0;
 
     snake.forEach((part,index)=>{
+      const prev=previousSnake[index] || part;
+      let dx=part.x-prev.x;
+      let dy=part.y-prev.y;
+      // Interpoluj po najkrótszej drodze, także przy przechodzeniu przez ściany.
+      if(dx>size/2) dx-=size;
+      if(dx< -size/2) dx+=size;
+      if(dy>size/2) dy-=size;
+      if(dy< -size/2) dy+=size;
+      const px=((prev.x+dx*progress)%size+size)%size;
+      const py=((prev.y+dy*progress)%size+size)%size;
       const pad=index===0?2.5:3.5;
+      const x=px*cell+pad;
+      const y=py*cell+pad;
       ctx.fillStyle=index===0?"#d7ff91":"#7fd52f";
-      ctx.fillRect(part.x*cell+pad,part.y*cell+pad,cell-pad*2,cell-pad*2);
+      ctx.shadowColor=index===0?"rgba(215,255,145,.9)":"rgba(127,213,47,.45)";
+      ctx.shadowBlur=index===0?12:5;
+      ctx.fillRect(x,y,cell-pad*2,cell-pad*2);
+      ctx.shadowBlur=0;
       if(index===0){
         ctx.fillStyle="#0b0d0a";
         const eye=cell*.13;
         const ox=direction.x===0?cell*.3:(direction.x>0?cell*.63:cell*.25);
         const oy=direction.y===0?cell*.3:(direction.y>0?cell*.63:cell*.25);
-        ctx.beginPath();ctx.arc(part.x*cell+ox,part.y*cell+oy,eye,0,Math.PI*2);ctx.fill();
+        ctx.beginPath();ctx.arc(x+ox-pad,y+oy-pad,eye,0,Math.PI*2);ctx.fill();
       }
     });
   }
 
   function gameOver(){
     running=false;
-    clearInterval(gameTimer);
+    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+    gameFrame=null;
     message.classList.remove("hidden");
     message.querySelector("strong").textContent="GAME OVER";
     message.querySelector("span").textContent=`Wynik: ${score}`;
@@ -493,21 +517,48 @@ function launchEasterEgg(){
     }else{
       snake.pop();
     }
-    draw();
+  }
+
+  function gameLoop(timestamp){
+    if(!running) return;
+    if(paused){
+      lastFrameTime=timestamp;
+      draw(1);
+      gameFrame=requestAnimationFrame(gameLoop);
+      return;
+    }
+    if(!lastFrameTime) lastFrameTime=timestamp;
+    const elapsed=Math.min(timestamp-lastFrameTime,50);
+    lastFrameTime=timestamp;
+    moveAccumulator+=elapsed;
+
+    while(moveAccumulator>=stepMs && running && !paused){
+      previousSnake=snake.map(part=>({...part}));
+      tick();
+      moveAccumulator-=stepMs;
+    }
+    if(running){
+      draw(Math.min(moveAccumulator/stepMs,1));
+      gameFrame=requestAnimationFrame(gameLoop);
+    }
   }
 
   function startGame(){
     resetGame(false);
     running=true;
     paused=false;
+    lastFrameTime=0;
+    moveAccumulator=0;
+    previousSnake=snake.map(part=>({...part}));
     message.classList.add("hidden");
-    clearInterval(gameTimer);
-    gameTimer=setInterval(tick,115);
+    gameFrame=requestAnimationFrame(gameLoop);
   }
 
   function togglePause(){
     if(!running) return;
     paused=!paused;
+    moveAccumulator=0;
+    lastFrameTime=0;
     pauseBtn.textContent=paused?"WZNÓW":"PAUZA";
     if(paused){
       message.classList.remove("hidden");
@@ -597,7 +648,8 @@ function launchEasterEgg(){
 
   window.clearTimeout(window.novydevEasterTimer);
   window.novydevEasterTimer=window.setTimeout(()=>{
-    clearInterval(gameTimer);
+    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+    gameFrame=null;
     window.removeEventListener("keydown",onSnakeKey,true);
     overlay.classList.remove("visible");
     document.body.classList.remove("novydev-easter");
