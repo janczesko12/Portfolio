@@ -657,9 +657,36 @@
       }
       const kd=e=>{if(!["ArrowLeft","ArrowRight","KeyA","KeyD","Space"].includes(e.code))return;e.preventDefault();if(!garage.hidden)return;if(!started||ended)beginRun();if(e.code==="ArrowLeft"||e.code==="KeyA")keys.add(e.code);if(e.code==="ArrowRight"||e.code==="KeyD")keys.add(e.code);};
       const ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);
-      on(canvas,"pointerdown",e=>{if(!garage.hidden)return;e.preventDefault();canvas.focus();if(!started||ended)beginRun();pointerDown=true;try{canvas.setPointerCapture(e.pointerId);}catch{}steerToPointer(e);});
-      on(canvas,"pointermove",e=>{if(pointerDown&&!garage.hidden){e.preventDefault();steerToPointer(e);}});
-      const endPointer=e=>{pointerDown=false;try{if(e&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}catch{}};on(canvas,"pointerup",endPointer);on(canvas,"pointercancel",endPointer);on(window,"pointerup",endPointer);
+      // Dotyk obsługujemy natywnie, bo na telefonach przeciąganie ma działać
+      // przez cały gest, a nie tylko w miejscu pierwszego dotknięcia.
+      function startDrag(e){
+        if(!garage.hidden)return;
+        if(e.cancelable)e.preventDefault();
+        canvas.focus({preventScroll:true});
+        if(!started||ended)beginRun();
+        pointerDown=true;
+        if(e.pointerId!==undefined){try{canvas.setPointerCapture(e.pointerId);}catch{}}
+        steerToPointer(e);
+      }
+      function moveDrag(e){
+        if(!pointerDown||!garage.hidden)return;
+        if(e.cancelable)e.preventDefault();
+        steerToPointer(e);
+      }
+      function stopDrag(e){
+        pointerDown=false;
+        try{if(e&&e.pointerId!==undefined&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}catch{}
+      }
+      on(canvas,"pointerdown",startDrag,{passive:false});
+      on(canvas,"pointermove",moveDrag,{passive:false});
+      on(canvas,"pointerup",stopDrag);
+      on(canvas,"pointercancel",stopDrag);
+      on(window,"pointerup",stopDrag);
+      // Fallback dla Safari/iOS i przeglądarek, które przerywają Pointer Events.
+      on(canvas,"touchstart",e=>{if(!garage.hidden)return;if(e.cancelable)e.preventDefault();startDrag(e.touches[0]);},{passive:false});
+      on(canvas,"touchmove",e=>{if(!pointerDown||!garage.hidden)return;if(e.cancelable)e.preventDefault();moveDrag(e.touches[0]);},{passive:false});
+      on(canvas,"touchend",stopDrag,{passive:false});
+      on(canvas,"touchcancel",stopDrag,{passive:false});
       on(garageToggle,"click",()=>{if(started&&!ended)return;garage.hidden=!garage.hidden;garageToggle.classList.toggle("active",!garage.hidden);if(!garage.hidden){renderGarage();say("Wybierz lakier w garażu.");}else say("Gotowy do wyścigu.");});
       on(garageClose,"click",()=>{garage.hidden=true;garageToggle.classList.remove("active");say("Gotowy do wyścigu.");});
       on(garageGrid,"click",e=>{
