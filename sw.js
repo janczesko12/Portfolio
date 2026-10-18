@@ -1,5 +1,5 @@
-const CACHE = "novydev-v10";
-const ASSETS = ["/","/index.html","/style.css","/script.js","/breakout.js","/favicon.svg","/manifest.webmanifest"];
+const CACHE = "novydev-v11";
+const ASSETS = ["/","/index.html","/style.css","/script.js","/breakout.js","/arcade.js","/favicon.svg","/manifest.webmanifest"];
 
 self.addEventListener("install", event => {
   event.waitUntil(
