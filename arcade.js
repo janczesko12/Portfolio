@@ -659,6 +659,7 @@
       const ku=e=>keys.delete(e.code);on(window,"keydown",kd,true);on(window,"keyup",ku,true);
       // Dotyk obsługujemy natywnie, bo na telefonach przeciąganie ma działać
       // przez cały gest, a nie tylko w miejscu pierwszego dotknięcia.
+      let activeTouchId=null;
       function startDrag(e){
         if(!garage.hidden)return;
         if(e.cancelable)e.preventDefault();
@@ -677,16 +678,43 @@
         pointerDown=false;
         try{if(e&&e.pointerId!==undefined&&canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}catch{}
       }
-      on(canvas,"pointerdown",startDrag,{passive:false});
-      on(canvas,"pointermove",moveDrag,{passive:false});
-      on(canvas,"pointerup",stopDrag);
-      on(canvas,"pointercancel",stopDrag);
-      on(window,"pointerup",stopDrag);
-      // Fallback dla Safari/iOS i przeglądarek, które przerywają Pointer Events.
-      on(canvas,"touchstart",e=>{if(!garage.hidden)return;if(e.cancelable)e.preventDefault();startDrag(e.touches[0]);},{passive:false});
-      on(canvas,"touchmove",e=>{if(!pointerDown||!garage.hidden)return;if(e.cancelable)e.preventDefault();moveDrag(e.touches[0]);},{passive:false});
-      on(canvas,"touchend",stopDrag,{passive:false});
-      on(canvas,"touchcancel",stopDrag,{passive:false});
+      // Pointer Events obsługują mysz. Dotyk ma osobną ścieżkę Touch Events,
+      // ponieważ na iOS zdarzenia pointer potrafią zakończyć gest jak zwykłe kliknięcie.
+      on(canvas,"pointerdown",e=>{if(e.pointerType==="touch"||e.pointerType==="pen")return;startDrag(e);},{passive:false});
+      on(canvas,"pointermove",e=>{if(e.pointerType==="touch"||e.pointerType==="pen")return;moveDrag(e);},{passive:false});
+      on(canvas,"pointerup",e=>{if(e.pointerType!=="touch"&&e.pointerType!=="pen")stopDrag(e);});
+      on(canvas,"pointercancel",e=>{if(e.pointerType!=="touch"&&e.pointerType!=="pen")stopDrag(e);});
+      on(window,"pointerup",e=>{if(e.pointerType!=="touch"&&e.pointerType!=="pen")stopDrag(e);});
+      function findActiveTouch(list){
+        for(let i=0;i<list.length;i++)if(list[i].identifier===activeTouchId)return list[i];
+        return null;
+      }
+      function touchStart(e){
+        if(!garage.hidden||activeTouchId!==null)return;
+        if(e.cancelable)e.preventDefault();
+        const t=e.changedTouches[0];if(!t)return;
+        activeTouchId=t.identifier;
+        canvas.focus({preventScroll:true});
+        if(!started||ended)beginRun();
+        pointerDown=true;
+        steerToPointer(t);
+      }
+      function touchMove(e){
+        if(activeTouchId===null||!pointerDown||!garage.hidden)return;
+        const t=findActiveTouch(e.touches);if(!t)return;
+        if(e.cancelable)e.preventDefault();
+        steerToPointer(t);
+      }
+      function touchEnd(e){
+        if(activeTouchId===null)return;
+        if(!findActiveTouch(e.changedTouches))return;
+        if(e.cancelable)e.preventDefault();
+        activeTouchId=null;pointerDown=false;
+      }
+      on(canvas,"touchstart",touchStart,{passive:false});
+      on(window,"touchmove",touchMove,{passive:false});
+      on(window,"touchend",touchEnd,{passive:false});
+      on(window,"touchcancel",touchEnd,{passive:false});
       on(garageToggle,"click",()=>{if(started&&!ended)return;garage.hidden=!garage.hidden;garageToggle.classList.toggle("active",!garage.hidden);if(!garage.hidden){renderGarage();say("Wybierz lakier w garażu.");}else say("Gotowy do wyścigu.");});
       on(garageClose,"click",()=>{garage.hidden=true;garageToggle.classList.remove("active");say("Gotowy do wyścigu.");});
       on(garageGrid,"click",e=>{
