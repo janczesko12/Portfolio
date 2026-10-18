@@ -338,19 +338,36 @@ function launchEasterEgg(){
         <b>ACCESS GRANTED</b>
         <button type="button" class="easter-exit" id="secret-mode-exit" aria-label="Wyjdź z Secret Mode" title="Wyjdź z Secret Mode (Esc)">WYJDŹ ✕</button>
       </div>
-      <div class="easter-game-select" role="tablist" aria-label="Wybierz grę">
-        <button type="button" class="easter-game-tab active" id="snake-game-tab" role="tab" aria-selected="true" aria-controls="snake-game-panel">🐍 SNAKE</button>
-        <button type="button" class="easter-game-tab" id="breakout-game-tab" role="tab" aria-selected="false" aria-controls="breakout-game-panel">🧱 BLOCK BREAKER</button>
-        <button type="button" class="easter-game-tab" id="game-2048-tab" data-arcade-game="2048" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🔢 2048</button>
-        <button type="button" class="easter-game-tab" id="game-memory-tab" data-arcade-game="memory" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🃏 MEMORY</button>
-        <button type="button" class="easter-game-tab" id="game-mines-tab" data-arcade-game="mines" role="tab" aria-selected="false" aria-controls="arcade-games-panel">💣 SAPER</button>
-        <button type="button" class="easter-game-tab" id="game-pong-tab" data-arcade-game="pong" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🏓 PONG</button>
-        <button type="button" class="easter-game-tab" id="game-flappy-tab" data-arcade-game="flappy" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🐤 FLAPPY</button>
-        <button type="button" class="easter-game-tab" id="game-ttt-tab" data-arcade-game="tictactoe" role="tab" aria-selected="false" aria-controls="arcade-games-panel">⭕ KÓŁKO I KRZYŻYK</button>
-        <button type="button" class="easter-game-tab" id="game-reaction-tab" data-arcade-game="reaction" role="tab" aria-selected="false" aria-controls="arcade-games-panel">⚡ REFLEKS</button>
-        <button type="button" class="easter-game-tab" id="game-simon-tab" data-arcade-game="simon" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🎨 SIMON</button>
-        <button type="button" class="easter-game-tab" id="game-whack-tab" data-arcade-game="whack" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🐹 WHACK-A-MOLE</button>
-      </div>
+      <section class="arcade-library" aria-label="Biblioteka gier">
+        <div class="arcade-library-heading">
+          <div><span class="arcade-library-kicker">NOVYDEV ARCADE</span><strong>Wybierz swoją grę</strong><small>15 gier • zapisz rekord • graj na telefonie lub PC</small></div>
+          <span class="arcade-library-count">15 <i>GIER</i></span>
+        </div>
+        <div class="arcade-categories" role="group" aria-label="Kategorie gier">
+          <button type="button" class="arcade-category active" data-game-filter="all">✦ Wszystkie</button>
+          <button type="button" class="arcade-category" data-game-filter="action">⚡ Akcja</button>
+          <button type="button" class="arcade-category" data-game-filter="arcade">🕹️ Arcade</button>
+          <button type="button" class="arcade-category" data-game-filter="relax">🌊 Na luzie</button>
+          <button type="button" class="arcade-category" data-game-filter="logic">🧠 Logiczne</button>
+        </div>
+        <div class="easter-game-select" role="tablist" aria-label="Wybierz grę">
+          <button type="button" class="easter-game-tab active" data-arcade-game="snake" data-category="arcade" role="tab" aria-selected="true" aria-controls="snake-game-panel"><span class="game-card-icon">🐍</span><span class="game-card-copy"><strong>SNAKE</strong><small>Klasyczny wąż</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="breakout" data-category="arcade" role="tab" aria-selected="false" aria-controls="breakout-game-panel"><span class="game-card-icon">🧱</span><span class="game-card-copy"><strong>BLOCK BREAKER</strong><small>Rozbijaj bloki</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="mario" data-category="action" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🍄</span><span class="game-card-copy"><strong>MARIO RUN</strong><small>Skacz i zbieraj monety</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="fishing" data-category="relax" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🎣</span><span class="game-card-copy"><strong>FISHING SIMULATOR</strong><small>Łów ryby i ulepszaj sprzęt</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="racer" data-category="action" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🏎️</span><span class="game-card-copy"><strong>NEON RACER</strong><small>Neonowy wyścig</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="invaders" data-category="action" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">👾</span><span class="game-card-copy"><strong>SPACE INVADERS</strong><small>Obroń Ziemię</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="2048" data-category="logic" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🔢</span><span class="game-card-copy"><strong>2048</strong><small>Łącz liczby</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="memory" data-category="logic" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🃏</span><span class="game-card-copy"><strong>MEMORY</strong><small>Znajdź pary</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="mines" data-category="logic" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">💣</span><span class="game-card-copy"><strong>SAPER</strong><small>Unikaj min</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="pong" data-category="arcade" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🏓</span><span class="game-card-copy"><strong>PONG</strong><small>Odbij piłkę</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="flappy" data-category="arcade" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🐤</span><span class="game-card-copy"><strong>FLAPPY</strong><small>Leć między rurami</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="tictactoe" data-category="logic" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">⭕</span><span class="game-card-copy"><strong>KÓŁKO I KRZYŻYK</strong><small>Gra dla dwóch osób</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="reaction" data-category="arcade" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">⚡</span><span class="game-card-copy"><strong>TEST REFLEKSU</strong><small>Sprawdź swój czas</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="simon" data-category="logic" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🎨</span><span class="game-card-copy"><strong>SIMON SAYS</strong><small>Zapamiętaj sekwencję</small></span><span class="game-card-arrow">↗</span></button>
+          <button type="button" class="easter-game-tab" data-arcade-game="whack" data-category="arcade" role="tab" aria-selected="false" aria-controls="arcade-games-panel"><span class="game-card-icon">🐹</span><span class="game-card-copy"><strong>WHACK-A-MOLE</strong><small>Trafiaj w cele</small></span><span class="game-card-arrow">↗</span></button>
+        </div>
+      </section>
       <div id="snake-game-panel" class="easter-game-panel" role="tabpanel" aria-labelledby="snake-game-tab">
         <div class="snake-header">
           <div>
@@ -429,6 +446,13 @@ function launchEasterEgg(){
   const breakoutTab=overlay.querySelector("#breakout-game-tab");
   const arcadePanel=overlay.querySelector("#arcade-games-panel");
   const arcadeTabs=[...overlay.querySelectorAll("[data-arcade-game]")];
+  const gameFilters=[...overlay.querySelectorAll("[data-game-filter]")];
+  const gameCards=[...overlay.querySelectorAll("[data-arcade-game]")];
+  gameFilters.forEach(filter=>filter.addEventListener("click",()=>{
+    const category=filter.dataset.gameFilter;
+    gameFilters.forEach(item=>item.classList.toggle("active",item===filter));
+    gameCards.forEach(card=>{card.hidden=category!=="all"&&card.dataset.category!==category;});
+  }));
   let breakoutInstance=null;
   let arcadeInstance=null;
 
@@ -740,7 +764,7 @@ function launchEasterEgg(){
   function selectGame(game){
     const isSnake=game==="snake";
     const isBreakout=game==="breakout";
-    const arcadeKey=game.startsWith("arcade:")?game.slice(7):null;
+    const arcadeKey=!isSnake&&!isBreakout?game:null;
     snakePanel.hidden=!isSnake;
     breakoutPanel.hidden=!isBreakout;
     arcadePanel.hidden=!arcadeKey;
@@ -750,7 +774,7 @@ function launchEasterEgg(){
     snakeTab.setAttribute("aria-selected",String(isSnake));
     breakoutTab.setAttribute("aria-selected",String(isBreakout));
     arcadeTabs.forEach(tab=>{
-      const active=tab.dataset.arcadeGame===arcadeKey;
+      const active=tab.dataset.arcadeGame===game;
       tab.classList.toggle("active",active);
       tab.setAttribute("aria-selected",String(active));
     });
@@ -782,9 +806,7 @@ function launchEasterEgg(){
     }
   }
 
-  snakeTab.addEventListener("click",()=>selectGame("snake"));
-  breakoutTab.addEventListener("click",()=>selectGame("breakout"));
-  arcadeTabs.forEach(tab=>tab.addEventListener("click",()=>selectGame("arcade:"+tab.dataset.arcadeGame)));
+  arcadeTabs.forEach(tab=>tab.addEventListener("click",()=>selectGame(tab.dataset.arcadeGame)));
 
   canvas.tabIndex=0;
   resetGame(true);
