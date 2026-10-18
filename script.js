@@ -336,6 +336,7 @@ function launchEasterEgg(){
         <span class="easter-lights"><i></i><i></i><i></i></span>
         <span>novydev://secret-mode</span>
         <b>ACCESS GRANTED</b>
+        <button type="button" class="easter-exit" id="secret-mode-exit" aria-label="Wyjdź z Secret Mode" title="Wyjdź z Secret Mode (Esc)">WYJDŹ ✕</button>
       </div>
       <div class="easter-game-select" role="tablist" aria-label="Wybierz grę">
         <button type="button" class="easter-game-tab active" id="snake-game-tab" role="tab" aria-selected="true" aria-controls="snake-game-panel">🐍 SNAKE</button>
@@ -646,9 +647,37 @@ function launchEasterEgg(){
     forceMoveOnNextFrame=true;
   }
 
+  function closeSecretMode(){
+    if(!overlay.isConnected) return;
+    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+    gameFrame=null;
+    running=false;
+    paused=false;
+    breakoutInstance?.destroy();
+    breakoutInstance=null;
+    arcadeInstance?.destroy();
+    arcadeInstance=null;
+    window.removeEventListener("keydown",onSnakeKey,true);
+    window.clearTimeout(window.novydevEasterTimer);
+    window.novydevEasterTimer=null;
+    document.body.classList.remove("novydev-easter");
+    overlay.classList.remove("visible");
+    window.setTimeout(()=>overlay.remove(),250);
+  }
+
+  const exitButton=overlay.querySelector("#secret-mode-exit");
+  exitButton.addEventListener("click",closeSecretMode);
+
   function onSnakeKey(e){
+    if(e.code==="Escape"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeSecretMode();
+      return;
+    }
     const gameVisible=document.querySelector(".easter-game-window");
-    if(!gameVisible || snakePanel.hidden || !document.body.classList.contains("novydev-easter")) return;
+    if(!gameVisible || !document.body.classList.contains("novydev-easter")) return;
+    if(snakePanel.hidden) return;
 
     const map={
       ArrowUp:{x:0,y:-1},KeyW:{x:0,y:-1},
@@ -764,19 +793,9 @@ function launchEasterEgg(){
 
   window.setTimeout(()=>particles.remove(),2300);
 
+  // Secret Mode nie zamyka się automatycznie — wyjdź przyciskiem WYJDŹ lub klawiszem Escape.
   window.clearTimeout(window.novydevEasterTimer);
-  window.novydevEasterTimer=window.setTimeout(()=>{
-    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
-    gameFrame=null;
-    breakoutInstance?.destroy();
-    breakoutInstance=null;
-    arcadeInstance?.destroy();
-    arcadeInstance=null;
-    window.removeEventListener("keydown",onSnakeKey,true);
-    overlay.classList.remove("visible");
-    document.body.classList.remove("novydev-easter");
-    setTimeout(()=>overlay.remove(),400);
-  },180000);
+  window.novydevEasterTimer=null;
 }
 
 
