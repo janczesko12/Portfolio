@@ -766,3 +766,93 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
   .fishing-meter-track{height:25px}
   .fishing-meter-legend{font-size:7px}
 }
+
+
+/* Mario Adventure — dotykowe sterowanie, duże przyciski na telefonie */
+.mario-canvas {
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  image-rendering: pixelated;
+  border: 2px solid rgba(12, 31, 68, .45);
+  border-radius: 8px;
+  background: #5c94fc;
+}
+.mario-touch-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(100%, 720px);
+  margin: 12px auto 0;
+  padding: 0 2px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.mario-move-controls,
+.mario-action-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mario-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  min-height: 64px;
+  padding: 0 12px;
+  border: 2px solid rgba(255,255,255,.7);
+  border-radius: 17px;
+  background: linear-gradient(180deg, #f7f8fa, #c8d5e5);
+  box-shadow: 0 5px 0 #71849b, 0 7px 12px rgba(0,0,0,.22);
+  color: #16243a;
+  font: 950 30px/1 system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform .06s ease, box-shadow .06s ease, background .06s ease;
+}
+.mario-control.is-pressed,
+.mario-control:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #71849b, 0 2px 5px rgba(0,0,0,.2);
+  background: #aebed2;
+}
+.mario-jump {
+  min-width: 78px;
+  background: linear-gradient(180deg, #fff08a, #ffbf31);
+  box-shadow: 0 5px 0 #b4751d, 0 7px 12px rgba(0,0,0,.22);
+  color: #753c11;
+}
+.mario-jump.is-pressed,
+.mario-jump:active {
+  background: #ffd15a;
+  box-shadow: 0 1px 0 #b4751d, 0 2px 5px rgba(0,0,0,.2);
+}
+.mario-run {
+  min-width: 62px;
+  background: linear-gradient(180deg, #ff9188, #f04442);
+  box-shadow: 0 5px 0 #9e2928, 0 7px 12px rgba(0,0,0,.22);
+  color: #fff;
+}
+.mario-run.is-pressed,
+.mario-run:active {
+  background: #ed5952;
+  box-shadow: 0 1px 0 #9e2928, 0 2px 5px rgba(0,0,0,.2);
+}
+@media (max-width: 480px) {
+  .mario-touch-controls { gap: 7px; margin-top: 10px; }
+  .mario-move-controls, .mario-action-controls { gap: 7px; }
+  .mario-control { min-width: 57px; min-height: 61px; padding: 0 8px; border-radius: 15px; font-size: 27px; }
+  .mario-jump { min-width: 72px; }
+  .mario-run { min-width: 57px; }
+}
+@media (max-width: 360px) {
+  .mario-touch-controls { gap: 4px; }
+  .mario-move-controls, .mario-action-controls { gap: 5px; }
+  .mario-control { min-width: 52px; min-height: 57px; font-size: 24px; padding: 0 6px; }
+  .mario-jump { min-width: 64px; }
+  .mario-run { min-width: 51px; }
+}
