@@ -223,7 +223,7 @@ function updateEasterHint(){
     (touchDevice && compactTouchLayout);
 
   combo.textContent = isPhone
-    ? "Kliknij 5× M"
+    ? "Kliknij 5× N"
     : "↑ ↑ ↓ ↓ ← → ← → B A";
 }
 
@@ -594,7 +594,7 @@ function launchEasterEgg(){
 }
 
 
-/* Mobile Easter Egg: tap the M logo 5x */
+/* Mobile Easter Egg: tap the N logo 5x */
 const mobileEasterTarget=document.querySelector(".brand-mark");
 let mobileTapCount=0;
 let mobileTapTimer=null;
@@ -604,8 +604,8 @@ function resetMobileEaster(){
   clearTimeout(mobileTapTimer);
 }
 
-mobileEasterTarget?.addEventListener("pointerup",(event)=>{
-  if(event.pointerType==="mouse") return;
+mobileEasterTarget?.addEventListener("click",(event)=>{
+  if(!((navigator.maxTouchPoints > 0 || ("ontouchstart" in window)) && window.matchMedia("(pointer: coarse)").matches)) return;
 
   mobileTapCount++;
 
