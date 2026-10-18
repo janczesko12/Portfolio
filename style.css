@@ -440,3 +440,9 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
   .easter-overlay{place-items:start center}
   .easter-game-window{margin:auto}
 }
+
+
+/* Snake: sterowanie gestami na planszy */
+#snake-canvas{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.snake-swipe-hint{margin:10px 0 0;color:#9da99e;text-align:center;font:600 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.snake-dpad{display:none!important}
