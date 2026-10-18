@@ -346,10 +346,7 @@ function launchEasterEgg(){
       </div>
       <div class="snake-stage">
         <canvas id="snake-canvas" width="420" height="420" aria-label="Gra Snake"></canvas>
-        <div class="snake-dpad" aria-label="Sterowanie Snake">
-          <button type="button" data-snake-dir="up" aria-label="Góra">↑</button>
-          <div><button type="button" data-snake-dir="left" aria-label="Lewo">←</button><button type="button" data-snake-dir="down" aria-label="Dół">↓</button><button type="button" data-snake-dir="right" aria-label="Prawo">→</button></div>
-        </div>
+        <p class="snake-swipe-hint">Przesuń palcem po planszy, aby sterować wężem</p>
         <div class="snake-message" id="snake-message">
           <strong>START</strong>
           <span>Strzałki / WASD</span>
@@ -420,7 +417,7 @@ function launchEasterEgg(){
     if(showStart){
       message.classList.remove("hidden");
       message.querySelector("strong").textContent="START";
-      message.querySelector("span").textContent="Strzałki / WASD";
+      message.querySelector("span").textContent="Przesuń palcem lub użyj strzałek";
       startBtn.textContent="GRAJ";
     }else{
       message.classList.add("hidden");
@@ -554,19 +551,32 @@ function launchEasterEgg(){
 
   window.addEventListener("keydown",onSnakeKey,true);
 
-  overlay.querySelectorAll("[data-snake-dir]").forEach(button=>{
-    button.addEventListener("pointerdown",e=>{
-      e.preventDefault();
-      const dir=button.dataset.snakeDir;
-      const map={
-        up:{x:0,y:-1},down:{x:0,y:1},
-        left:{x:-1,y:0},right:{x:1,y:0}
-      };
-      setDirection(map[dir].x,map[dir].y);
-      canvas.focus();
-    });
+  // Sterowanie gestem: przesuń palcem po planszy w wybranym kierunku.
+  // touch-action:none zapobiega przewijaniu strony podczas gry.
+  canvas.style.touchAction="none";
+  let swipeStart=null;
+  canvas.addEventListener("pointerdown",event=>{
+    if(event.pointerType==="mouse" && event.button!==0) return;
+    event.preventDefault();
+    swipeStart={x:event.clientX,y:event.clientY};
+    try{canvas.setPointerCapture(event.pointerId);}catch{}
   });
-
+  canvas.addEventListener("pointerup",event=>{
+    if(!swipeStart) return;
+    event.preventDefault();
+    const dx=event.clientX-swipeStart.x;
+    const dy=event.clientY-swipeStart.y;
+    swipeStart=null;
+    const threshold=18;
+    if(Math.max(Math.abs(dx),Math.abs(dy))<threshold) return;
+    if(Math.abs(dx)>Math.abs(dy)){
+      setDirection(dx>0?1:-1,0);
+    }else{
+      setDirection(0,dy>0?1:-1);
+    }
+    canvas.focus();
+  });
+  canvas.addEventListener("pointercancel",()=>{swipeStart=null;});
   overlay.addEventListener("pointerdown",()=>canvas.focus());
   startBtn.addEventListener("click",()=>{
     if(!running || message.querySelector("strong").textContent==="GAME OVER") startGame();
