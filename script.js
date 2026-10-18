@@ -472,13 +472,15 @@ function launchEasterEgg(){
   function tick(){
     if(!running || paused) return;
     direction=nextDirection;
+    // Przechodzenie przez ściany: po wyjściu z jednej strony
+    // wąż pojawia się po przeciwnej stronie planszy.
     const head={
-      x:snake[0].x+direction.x,
-      y:snake[0].y+direction.y
+      x:(snake[0].x+direction.x+size)%size,
+      y:(snake[0].y+direction.y+size)%size
     };
 
-    if(head.x<0 || head.x>=size || head.y<0 || head.y>=size ||
-       snake.some((part,index)=>index>0 && part.x===head.x && part.y===head.y)){
+    // Kolizja z własnym ciałem nadal kończy grę.
+    if(snake.some((part,index)=>index>0 && part.x===head.x && part.y===head.y)){
       gameOver();
       return;
     }
