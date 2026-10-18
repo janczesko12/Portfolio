@@ -636,12 +636,12 @@
         if(!started||ended){ctx.fillStyle="rgba(4,6,18,.84)";ctx.fillRect(45,238,330,142);ctx.textAlign="center";ctx.fillStyle=ended?"#ff6b8d":"#00eaff";ctx.font="bold 23px ui-monospace,monospace";ctx.fillText(ended?"KOLIZJA!":"NEON RACER",210,278);ctx.fillStyle="#fff";ctx.font="12px ui-monospace,monospace";ctx.fillText(ended?"Wynik: "+Math.floor(score)+" m":"Dotknij lub użyj A/D · ← →",210,308);ctx.fillStyle="#b8c2d4";ctx.font="11px ui-monospace,monospace";ctx.fillText(ended?"Naciśnij, aby spróbować ponownie":"Zbieraj złote żetony · omijaj auta",210,333);ctx.textAlign="left";}
       }
       function beginRun(){fresh();started=true;garage.hidden=true;garageToggle.classList.remove("active");garageToggle.disabled=true;say("Uważaj na ruch! Zbieraj złote żetony.");}
-      function steerToPointer(e){const rect=canvas.getBoundingClientRect(),px=(e.clientX-rect.left)/Math.max(1,rect.width)*canvas.width;targetX=Math.max(67,Math.min(353,px));}
+      function steerToPointer(e){const rect=canvas.getBoundingClientRect(),px=(e.clientX-rect.left)/Math.max(1,rect.width)*canvas.width;targetX=x=Math.max(67,Math.min(353,px));}
       function tick(t){
         if(destroyed)return;const dt=Math.min(.04,(t-(last||t))/1000);last=t;
         if(started&&!ended){
           const steer=(keys.has("ArrowLeft")||keys.has("KeyA")?-1:0)+(keys.has("ArrowRight")||keys.has("KeyD")?1:0);
-          targetX=Math.max(67,Math.min(353,targetX+steer*460*dt));x+=(targetX-x)*(1-Math.exp(-dt*12));spawn+=dt;
+          if(steer){x=Math.max(67,Math.min(353,x+steer*460*dt));targetX=x;}spawn+=dt;
           if(spawn>Math.max(.48,.9-score/2600)){spawn=0;traffic.push({x:66+Math.random()*288,y:-70,color:["#ff4b6e","#a56bff","#ffb84d","#52ffb8"][Math.floor(Math.random()*4)],factor:.78+Math.random()*.34,phase:Math.random()*8});}
           coinSpawn+=dt;if(coinSpawn>1.45){coinSpawn=0;pickups.push({x:72+Math.random()*276,y:-35,value:10,phase:Math.random()*Math.PI*2});}
           speed=Math.min(560,250+score*.15);roadOffset+=speed*dt;traffic.forEach(a=>a.y+=speed*(a.factor||1)*dt);traffic=traffic.filter(a=>a.y<690);
