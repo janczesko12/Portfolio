@@ -203,7 +203,7 @@
         {name:"Leszcz",emoji:"🐟",price:25,diff:1.35,weight:.2,rarity:1.5},
         {name:"Karaś",emoji:"🐡",price:31,diff:1.45,weight:.14,rarity:1.7},
         {name:"Szczupak",emoji:"🐊",price:43,diff:1.9,weight:.09,rarity:2.4},
-        {name:"Jesior",emoji:"🐟",price:66,diff:2.35,weight:.045,rarity:3.2},
+        {name:"Jesiotr",emoji:"🐟",price:66,diff:2.35,weight:.045,rarity:3.2},
         {name:"Złoty karp",emoji:"✨",price:100,diff:2.8,weight:.018,rarity:4}
       ];
       const scene=make("div","fishing-scene");
