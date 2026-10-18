@@ -393,6 +393,7 @@ function launchEasterEgg(){
   let gameFrame=null;
   let lastFrameTime=0;
   let moveAccumulator=0;
+  let forceMoveOnNextFrame=false;
   const stepMs=105;
   let previousSnake=[];
 
@@ -409,6 +410,7 @@ function launchEasterEgg(){
     gameFrame=null;
     lastFrameTime=0;
     moveAccumulator=0;
+    forceMoveOnNextFrame=false;
     snake=[
       {x:10,y:11},{x:9,y:11},{x:8,y:11},{x:7,y:11}
     ];
@@ -532,10 +534,19 @@ function launchEasterEgg(){
     lastFrameTime=timestamp;
     moveAccumulator+=elapsed;
 
-    while(moveAccumulator>=stepMs && running && !paused){
+    // Sterowanie tylko zapisuje intencję. Pętla symulacji wykonuje
+    // wymuszony krok na najbliższej klatce, niezależnie od animacji.
+    if(forceMoveOnNextFrame && running && !paused){
       previousSnake=snake.map(part=>({...part}));
       tick();
-      moveAccumulator-=stepMs;
+      forceMoveOnNextFrame=false;
+      moveAccumulator=0;
+    }else{
+      while(moveAccumulator>=stepMs && running && !paused){
+        previousSnake=snake.map(part=>({...part}));
+        tick();
+        moveAccumulator-=stepMs;
+      }
     }
     if(running){
       draw(Math.min(moveAccumulator/stepMs,1));
@@ -577,12 +588,12 @@ function launchEasterEgg(){
     // dzięki czemu szybkie gesty nie są blokowane przez poprzedni ruch.
     if(x===-nextDirection.x && y===-nextDirection.y) return;
 
+    if(x===nextDirection.x && y===nextDirection.y) return;
     nextDirection={x,y};
 
-    // Przy wejściu od razu przyspiesz najbliższy krok — reakcja na
-    // klawisz lub gest jest niemal natychmiastowa, bez czekania całego ticka.
-    // Nie wykonujemy kroku w samym handlerze, więc pętla animacji pozostaje spójna.
-    moveAccumulator=Math.max(moveAccumulator, stepMs-24);
+    // Nie czekaj na koniec cyklu ruchu. Handler klawiatury/gestu tylko
+    // zapisuje kierunek i zleca krok na najbliższej klatce animacji.
+    forceMoveOnNextFrame=true;
   }
 
   function onSnakeKey(e){
