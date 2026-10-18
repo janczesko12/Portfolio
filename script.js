@@ -340,6 +340,15 @@ function launchEasterEgg(){
       <div class="easter-game-select" role="tablist" aria-label="Wybierz grę">
         <button type="button" class="easter-game-tab active" id="snake-game-tab" role="tab" aria-selected="true" aria-controls="snake-game-panel">🐍 SNAKE</button>
         <button type="button" class="easter-game-tab" id="breakout-game-tab" role="tab" aria-selected="false" aria-controls="breakout-game-panel">🧱 BLOCK BREAKER</button>
+        <button type="button" class="easter-game-tab" id="game-2048-tab" data-arcade-game="2048" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🔢 2048</button>
+        <button type="button" class="easter-game-tab" id="game-memory-tab" data-arcade-game="memory" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🃏 MEMORY</button>
+        <button type="button" class="easter-game-tab" id="game-mines-tab" data-arcade-game="mines" role="tab" aria-selected="false" aria-controls="arcade-games-panel">💣 SAPER</button>
+        <button type="button" class="easter-game-tab" id="game-pong-tab" data-arcade-game="pong" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🏓 PONG</button>
+        <button type="button" class="easter-game-tab" id="game-flappy-tab" data-arcade-game="flappy" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🐤 FLAPPY</button>
+        <button type="button" class="easter-game-tab" id="game-ttt-tab" data-arcade-game="tictactoe" role="tab" aria-selected="false" aria-controls="arcade-games-panel">⭕ KÓŁKO I KRZYŻYK</button>
+        <button type="button" class="easter-game-tab" id="game-reaction-tab" data-arcade-game="reaction" role="tab" aria-selected="false" aria-controls="arcade-games-panel">⚡ REFLEKS</button>
+        <button type="button" class="easter-game-tab" id="game-simon-tab" data-arcade-game="simon" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🎨 SIMON</button>
+        <button type="button" class="easter-game-tab" id="game-whack-tab" data-arcade-game="whack" role="tab" aria-selected="false" aria-controls="arcade-games-panel">🐹 WHACK-A-MOLE</button>
       </div>
       <div id="snake-game-panel" class="easter-game-panel" role="tabpanel" aria-labelledby="snake-game-tab">
         <div class="snake-header">
@@ -389,6 +398,7 @@ function launchEasterEgg(){
           <div><button type="button" id="breakout-pause" class="snake-btn snake-small">PAUZA</button><button type="button" id="breakout-reset" class="snake-btn snake-small">RESET</button></div>
         </div>
       </div>
+      <div id="arcade-games-panel" class="easter-game-panel" role="tabpanel" aria-label="Dodatkowe minigry" hidden></div>
     </div>
     <div class="easter-particles" aria-hidden="true"></div>`;
 
@@ -416,7 +426,10 @@ function launchEasterEgg(){
   const breakoutPanel=overlay.querySelector("#breakout-game-panel");
   const snakeTab=overlay.querySelector("#snake-game-tab");
   const breakoutTab=overlay.querySelector("#breakout-game-tab");
+  const arcadePanel=overlay.querySelector("#arcade-games-panel");
+  const arcadeTabs=[...overlay.querySelectorAll("[data-arcade-game]")];
   let breakoutInstance=null;
+  let arcadeInstance=null;
 
   const size=21;
   const cell=canvas.width/size;
@@ -686,7 +699,7 @@ function launchEasterEgg(){
     canvas.focus();
   });
   canvas.addEventListener("pointercancel",()=>{swipeStart=null;});
-  overlay.addEventListener("pointerdown",()=>canvas.focus());
+  overlay.addEventListener("pointerdown",()=>{if(!snakePanel.hidden)canvas.focus();});
   startBtn.addEventListener("click",()=>{
     if(!running || message.querySelector("strong").textContent==="GAME OVER") startGame();
     else togglePause();
@@ -696,33 +709,53 @@ function launchEasterEgg(){
   restartBtn.addEventListener("click",()=>resetGame(true));
 
   function selectGame(game){
+    const isSnake=game==="snake";
     const isBreakout=game==="breakout";
-    snakePanel.hidden=isBreakout;
+    const arcadeKey=game.startsWith("arcade:")?game.slice(7):null;
+    snakePanel.hidden=!isSnake;
     breakoutPanel.hidden=!isBreakout;
-    snakeTab.classList.toggle("active",!isBreakout);
-    breakoutTab.classList.toggle("active",isBreakout);
-    snakeTab.setAttribute("aria-selected",String(!isBreakout));
-    breakoutTab.setAttribute("aria-selected",String(isBreakout));
+    arcadePanel.hidden=!arcadeKey;
 
-    if(isBreakout){
-      if(gameFrame!==null) cancelAnimationFrame(gameFrame);
-      gameFrame=null;
-      running=false;
-      paused=false;
-      if(!breakoutInstance && typeof window.createBreakoutGame==="function"){
+    snakeTab.classList.toggle("active",isSnake);
+    breakoutTab.classList.toggle("active",isBreakout);
+    snakeTab.setAttribute("aria-selected",String(isSnake));
+    breakoutTab.setAttribute("aria-selected",String(isBreakout));
+    arcadeTabs.forEach(tab=>{
+      const active=tab.dataset.arcadeGame===arcadeKey;
+      tab.classList.toggle("active",active);
+      tab.setAttribute("aria-selected",String(active));
+    });
+
+    // Zatrzymaj poprzednią grę, żeby nie działała w tle.
+    if(gameFrame!==null) cancelAnimationFrame(gameFrame);
+    gameFrame=null;
+    running=false;
+    paused=false;
+    breakoutInstance?.destroy();
+    breakoutInstance=null;
+    arcadeInstance?.destroy();
+    arcadeInstance=null;
+
+    if(isSnake){
+      resetGame(true);
+      canvas.focus();
+    }else if(isBreakout){
+      if(typeof window.createBreakoutGame==="function"){
         breakoutInstance=window.createBreakoutGame(breakoutPanel);
       }
       breakoutPanel.querySelector("#breakout-canvas")?.focus();
-    }else{
-      breakoutInstance?.destroy();
-      breakoutInstance=null;
-      resetGame(true);
-      canvas.focus();
+    }else if(arcadeKey){
+      if(typeof window.createArcadeGame==="function"){
+        arcadeInstance=window.createArcadeGame(arcadePanel,arcadeKey);
+      }else{
+        arcadePanel.textContent="Nie udało się załadować gier. Odśwież stronę.";
+      }
     }
   }
 
   snakeTab.addEventListener("click",()=>selectGame("snake"));
   breakoutTab.addEventListener("click",()=>selectGame("breakout"));
+  arcadeTabs.forEach(tab=>tab.addEventListener("click",()=>selectGame("arcade:"+tab.dataset.arcadeGame)));
 
   canvas.tabIndex=0;
   resetGame(true);
