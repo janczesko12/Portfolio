@@ -15,6 +15,22 @@ const db = getFirestore(app);
 const grid = document.querySelector("#apps-grid");
 const status = document.querySelector("#apps-status");
 
+// Public fallback keeps KinoStream available on the website even before it is
+// added to the Firestore catalogue. The URL points to the rolling GitHub Release.
+const kinoStreamFallback = {
+  id: "kinostream-public-release",
+  name: "KinoStream",
+  description: "Wyszukuj filmy i seriale oraz sprawdzaj ich oceny, dostępność na platformach streamingowych i nowości VOD. Aplikacja na Androida.",
+  platform: "Android",
+  version: "Najnowsza wersja",
+  sortOrder: 0,
+  imageUrl: "",
+  downloadUrl: "https://github.com/janczesko12/KinoStream/releases/download/latest/app-release.apk",
+  websiteUrl: "https://github.com/janczesko12/KinoStream/releases/latest",
+  buttonLabel: "Pobierz APK",
+  published: true
+};
+
 function safeUrl(value) {
   try { const url = new URL(value); return ["https:", "http:"].includes(url.protocol) ? url.href : ""; }
   catch { return ""; }
@@ -45,16 +61,18 @@ function renderCard(item) {
 }
 try {
   const snapshot = await getDocs(query(collection(db, "applications"), where("published", "==", true)));
-  const apps = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0));
-  grid.replaceChildren();
-  if (!apps.length) {
-    status.textContent = "Lista aplikacji jest gotowa. Wkrótce pojawią się tutaj pierwsze pozycje.";
-    const empty = document.createElement("div"); empty.className = "app-empty"; empty.textContent = "Brak opublikowanych aplikacji."; grid.append(empty);
-  } else {
-    status.textContent = apps.length + (apps.length === 1 ? " aplikacja" : " aplikacje");
-    apps.forEach(item => grid.append(renderCard(item)));
+  const apps = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  // Prefer the Firestore-managed entry when the administrator has already added KinoStream.
+  if (!apps.some(item => (item.name || "").trim().toLowerCase() === "kinostream")) {
+    apps.push(kinoStreamFallback);
   }
+  apps.sort((a,b) => (Number(a.sortOrder) || 0) - (Number(b.sortOrder) || 0));
+  grid.replaceChildren();
+  status.textContent = apps.length + (apps.length === 1 ? " aplikacja" : " aplikacje");
+  apps.forEach(item => grid.append(renderCard(item)));
 } catch (error) {
   console.error(error);
-  status.textContent = "Nie udało się pobrać listy. Konfiguracja Firebase lub reguły Firestore wymagają sprawdzenia.";
+  // A Firestore hiccup must not prevent visitors from downloading KinoStream.
+  grid.replaceChildren(renderCard(kinoStreamFallback));
+  status.textContent = "KinoStream jest dostępny do pobrania. Katalog pozostałych aplikacji chwilowo nie odpowiada.";
 }
