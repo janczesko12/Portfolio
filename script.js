@@ -63,6 +63,16 @@ const portfolio = {
       link:"https://github.com/janczesko12/Wydatki"
     },
     {
+      icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="13" y="7" width="38" height="50" rx="5" fill="none" stroke="currentColor" stroke-width="4"/><path d="M21 7V4h22v3" fill="none" stroke="currentColor" stroke-width="4"/><path d="m25 22 15 10-15 10V22Z" fill="currentColor"/></svg>`,
+      title:{pl:"KinoStream",en:"KinoStream"},
+      year:2026,
+      status:{pl:"W rozwoju",en:"In development"},
+      description:{pl:"Aplikacja do odkrywania filmów z nowoczesnym katalogiem, wyszukiwaniem i filtrowaniem. Projekt wykorzystuje bazę Firebase do przechowywania danych o filmach i przygotowuje miejsce na kolejne tytuły.",en:"A movie discovery app with a modern catalog, search and filtering. The project uses Firebase to store movie data and makes it easy to add new titles."},
+      features:{pl:["Katalog filmów z wyszukiwarką","Filtrowanie i sortowanie według gatunków","Oceny Filmweb — preferowane tytuły od 6,5/10","Lista ulubionych filmów","Dane filmów pobierane z Firebase Firestore"],en:["Movie catalog with search","Genre filtering and sorting","Filmweb ratings — prioritizing titles rated 6.5/10 or higher","Favorites list","Movie data loaded from Firebase Firestore"]},
+      tags:["Android","Kotlin","Firebase","Firestore","Movies"],
+      link:"https://github.com/janczesko12/KinoStream"
+    },
+    {
       icon:`<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 31a20 20 0 0 1 24 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M14 23a29 29 0 0 1 36 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" opacity=".65"/><circle cx="32" cy="43" r="6" fill="currentColor"/><path d="M32 49v7" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>`,
       title:{pl:"Smart Gaming Setup",en:"Smart Gaming Setup"},
       year:2026,
