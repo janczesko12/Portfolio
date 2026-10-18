@@ -287,6 +287,8 @@
       function update(dt){
         elapsed+=dt;
         if(player.invulnerable>0)player.invulnerable=Math.max(0,player.invulnerable-dt);
+        const oldBottom=player.y+player.h;
+        const wasFalling=player.vy>0;
         moveAndCollide(dt);
         for(const c of coins){
           if(c.taken)continue;
@@ -299,7 +301,7 @@
           const support=solids.filter(s=>s.type==="ground"&&e.x+e.w>s.x&&e.x<s.x+s.w).find(s=>s.y>=groundY);
           e.y=(support?support.y:groundY)-e.h;
           if(overlap(player,e)){
-            if(player.vy>80&&player.y+player.h-e.y<18){e.alive=false;player.vy=-370;score+=200;say("+200 • świetny skok!");}
+            if(wasFalling&&oldBottom<=e.y+17&&player.y+player.h>=e.y-2){e.alive=false;player.vy=-370;player.onGround=false;score+=200;say("+200 • świetny skok!");}
             else if(player.invulnerable<=0)loseLife();
           }
         }
