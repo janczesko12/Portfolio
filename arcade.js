@@ -1069,11 +1069,38 @@
       let mouseDown=false,mouseLocked=false,lastShot=0;
       let lastSuccessfulFrameAt=performance.now(),lastFrameError="",lastInputMoveAt=performance.now();
       let zBuffer=new Float32Array(W);
-      // Fala startowa ustawia boty w otwartym korytarzu, aby od razu były widoczne.
-      const starts=[
-        {x:13.6,y:7.5},{x:12.3,y:7.5},{x:11.0,y:7.5},
-        {x:9.7,y:7.5},{x:8.4,y:7.5},{x:13.5,y:5.5},{x:13.5,y:9.5}
-      ];
+      // Wybieraj boty z wielu otwartych pól mapy zamiast układać je w jednej linii.
+      function findSpawnPoints(count){
+        const candidates=[];
+        for(let y=1;y<MH-1;y++)for(let x=1;x<MW-1;x++){
+          const point={x:x+.5,y:y+.5};
+          if(blocked(point.x,point.y,.2))continue;
+          if(Math.hypot(point.x-player.x,point.y-player.y)<3.2)continue;
+          candidates.push(point);
+        }
+        for(let i=candidates.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [candidates[i],candidates[j]]=[candidates[j],candidates[i]];
+        }
+        const chosen=[];
+        for(const point of candidates){
+          if(chosen.every(other=>Math.hypot(point.x-other.x,point.y-other.y)>=1.45)){
+            chosen.push(point);
+            if(chosen.length===count)break;
+          }
+        }
+        // A densely packed map may not have enough well-separated cells; fill the
+        // remainder with any other open cells rather than falling back to a line.
+        if(chosen.length<count){
+          for(const point of candidates){
+            if(!chosen.some(other=>other.x===point.x&&other.y===point.y)){
+              chosen.push(point);
+              if(chosen.length===count)break;
+            }
+          }
+        }
+        return chosen;
+      }
       function blocked(x,y,r){
         return isWall(x-r,y-r)||isWall(x+r,y-r)||isWall(x-r,y+r)||isWall(x+r,y+r);
       }
@@ -1115,15 +1142,14 @@
         spawnBots(5);say("RUNDA 1 • 5 BOTÓW");draw();
       }
       function spawnBots(count){
-        bots=[];
-        for(let i=0;i<count;i++){
-          const s=starts[i%starts.length];
-          bots.push({x:s.x,y:s.y,hp:100,alive:true,speed:.65+Math.random()*.22,
-            fire:1+Math.random()*1.5,strafe:Math.random()<.5?-1:1,hit:0});
-        }
+        bots=findSpawnPoints(count).map(s=>({x:s.x,y:s.y,hp:100,alive:true,
+          speed:.65+Math.random()*.22,fire:1+Math.random()*1.5,
+          strafe:Math.random()<.5?-1:1,hit:0}));
       }
       function reload(){
-        if(reloading||ammo===12||reserve<=0||ended)return;
+        if(ended||reloading)return;
+        if(ammo===12){say("Magazynek pełny.");return;}
+        if(reserve<=0){say("Brak amunicji w zapasie.");return;}
         reloading=true;reloadEnds=performance.now()+1050;say("Przeładowanie…");
       }
       let previousMouseX=null;
@@ -1378,7 +1404,10 @@
         shoot();
       };
       const pointerup=e=>{if(e.button===0)mouseDown=false;};
-      on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
+      // Słuchaj na dokumencie, aby R działało także po otwarciu panelu overlayu
+      // i po utracie fokusu przez canvas; canvas jest dodatkowym fallbackiem.
+      on(document,"keydown",keydown,true);on(document,"keyup",keyup,true);
+      on(canvas,"keydown",keydown);on(canvas,"keyup",keyup);
       // Niezależny ruch gracza działa także wtedy, gdy animacja klatkowa zgłosi błąd.
       every(()=>{
         if(!player)return;
