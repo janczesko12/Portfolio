@@ -1068,9 +1068,10 @@
       let reloading=false,reloadEnds=0,ended=false,won=false,last=0,flashUntil=0,recoil=0,damageFlash=0,walkBob=0;
       let mouseDown=false,mouseLocked=false,lastShot=0;
       let zBuffer=new Float32Array(W);
+      // Fala startowa ustawia boty w otwartym korytarzu, aby od razu były widoczne.
       const starts=[
-        {x:13.5,y:2.5},{x:13.5,y:13.5},{x:2.5,y:13.5},
-        {x:8.5,y:13.5},{x:13.5,y:8.5},{x:5.5,y:9.5},{x:10.5,y:5.5}
+        {x:13.6,y:7.5},{x:12.3,y:7.5},{x:11.0,y:7.5},
+        {x:9.7,y:7.5},{x:8.4,y:7.5},{x:13.5,y:5.5},{x:13.5,y:9.5}
       ];
       function blocked(x,y,r){
         return isWall(x-r,y-r)||isWall(x+r,y-r)||isWall(x-r,y+r)||isWall(x+r,y+r);
@@ -1106,7 +1107,7 @@
         return {distance:Math.max(.001,dist),side,gx,gy,dx,dy};
       }
       function resetGame(){
-        player={x:2.5,y:2.5,angle:0};
+        player={x:2.5,y:7.5,angle:0};previousMouseX=null;
         keys.clear();bullets=[];health=100;ammo=12;reserve=72;score=0;round=1;
         reloading=false;reloadEnds=0;ended=false;won=false;last=0;
         flashUntil=0;recoil=0;damageFlash=0;walkBob=0;mouseDown=false;
@@ -1124,14 +1125,19 @@
         if(reloading||ammo===12||reserve<=0||ended)return;
         reloading=true;reloadEnds=performance.now()+1050;say("Przeładowanie…");
       }
+      let previousMouseX=null;
       function aimByMouse(e){
+        if(!player)return;
         if(document.pointerLockElement===canvas){
-          player.angle+=e.movementX*.0027;
-          player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));
-        }else if(canvas.matches(":hover")){
-          player.angle+=e.movementX*.0027;
-          player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));
+          player.angle+=Number(e.movementX||0)*.0032;
+        }else{
+          const rect=canvas.getBoundingClientRect();
+          const overCanvas=e.clientX>=rect.left&&e.clientX<=rect.right&&e.clientY>=rect.top&&e.clientY<=rect.bottom;
+          if(!overCanvas){previousMouseX=null;return;}
+          if(previousMouseX!==null)player.angle+=(e.clientX-previousMouseX)*.006;
+          previousMouseX=e.clientX;
         }
+        player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));
       }
       function shoot(){
         if(ended||reloading)return;
@@ -1357,11 +1363,10 @@
       };
       const pointerup=e=>{if(e.button===0)mouseDown=false;};
       on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
-      on(window,"mousemove",e=>{
-        if(document.pointerLockElement===canvas||canvas.matches(":hover")){
-          aimByMouse(e);
-        }
-      });
+      on(window,"mousemove",aimByMouse);
+      // Kursor działa również bez Pointer Lock (np. wewnątrz osadzonej strony).
+      on(canvas,"mouseenter",e=>{previousMouseX=e.clientX;});
+      on(canvas,"mouseleave",()=>{previousMouseX=null;});
       on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);
       on(canvas,"pointercancel",()=>{mouseDown=false;});
       on(canvas,"contextmenu",e=>e.preventDefault());
