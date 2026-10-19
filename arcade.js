@@ -1132,9 +1132,10 @@
         if(!player||e.buttons===2)return;
         // Jeden centralny handler obsługuje Pointer Lock i zwykłe ruchy myszy.
         if(document.pointerLockElement===canvas){
-          player.angle+=Number(e.movementX||0)*.0045;
+          player.angle+=Number(e.movementX||e.webkitMovementX||e.mozMovementX||0)*.0045;
           previousMouseX=null;
           normalizeAngle();
+          if(performance.now()-lastSuccessfulFrameAt>120)safeDraw();
           return;
         }
         const rect=canvas.getBoundingClientRect();
