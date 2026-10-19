@@ -1065,7 +1065,7 @@
       const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
       const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
       let player,bots,keys=new Set(),bullets=[],health,ammo,reserve,score,round;
-      let reloading=false,reloadEnds=0,ended=false,won=false,last=0,flashUntil=0,recoil=0,damageFlash=0,walkBob=0;
+      let reloading=false,reloadEnds=0,reloadTimer=null,ended=false,won=false,last=0,flashUntil=0,recoil=0,damageFlash=0,walkBob=0;
       let mouseDown=false,mouseLocked=false,lastShot=0;
       let lastSuccessfulFrameAt=performance.now(),lastFrameError="",lastInputMoveAt=performance.now();
       let zBuffer=new Float32Array(W);
@@ -1137,6 +1137,7 @@
       function resetGame(){
         player={x:2.5,y:7.5,angle:0};previousMouseX=null;
         keys.clear();bullets=[];health=100;ammo=12;reserve=72;score=0;round=1;
+        if(reloadTimer){clearTimeout(reloadTimer);reloadTimer=null;}
         reloading=false;reloadEnds=0;ended=false;won=false;last=0;
         flashUntil=0;recoil=0;damageFlash=0;walkBob=0;mouseDown=false;
         spawnBots(5);say("RUNDA 1 • 5 BOTÓW");draw();
@@ -1146,11 +1147,19 @@
           speed:.65+Math.random()*.22,fire:1+Math.random()*1.5,
           strafe:Math.random()<.5?-1:1,hit:0}));
       }
+      function finishReload(){
+        if(!reloading)return;
+        const amount=Math.min(12-ammo,reserve);
+        ammo+=amount;reserve-=amount;reloading=false;reloadEnds=0;
+        say("Przeładowano.");
+      }
       function reload(){
         if(ended||reloading)return;
         if(ammo===12){say("Magazynek pełny.");return;}
         if(reserve<=0){say("Brak amunicji w zapasie.");return;}
         reloading=true;reloadEnds=performance.now()+1050;say("Przeładowanie…");
+        // Zakończ niezależnie od kolejnej klatki renderowania lub chwilowej utraty fokusu.
+        reloadTimer=later(()=>{reloadTimer=null;finishReload();},1050);
       }
       let previousMouseX=null;
       function normalizeAngle(){player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));}
@@ -1329,9 +1338,6 @@
         try{
         const dt=Math.min(.035,(t-(last||t))/1000);last=t;
         if(!ended){
-          if(reloading&&performance.now()>=reloadEnds){
-            const amount=Math.min(12-ammo,reserve);ammo+=amount;reserve-=amount;reloading=false;say("Przeładowano.");
-          }
           if(mouseDown)shoot();
           bullets.forEach(b=>{b.life-=dt;});
           bullets=bullets.filter(b=>b.life>0);
