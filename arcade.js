@@ -1127,21 +1127,21 @@
       }
       let previousMouseX=null;
       function normalizeAngle(){player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));}
-      function aimByLockedMouse(e){
-        if(!player||document.pointerLockElement!==canvas)return;
-        // Pointer Lock reports relative movement, not the cursor's screen position.
-        player.angle+=Number(e.movementX||0)*.0045;
-        normalizeAngle();
-      }
-      function aimByFallbackPointer(e){
-        if(!player||document.pointerLockElement===canvas||e.pointerType==="touch")return;
+      function rotateFromMouse(e){
+        if(!player||e.buttons===2)return;
+        // Jeden centralny handler obsługuje Pointer Lock i zwykłe ruchy myszy.
+        if(document.pointerLockElement===canvas){
+          player.angle+=Number(e.movementX||0)*.0045;
+          previousMouseX=null;
+          normalizeAngle();
+          return;
+        }
         const rect=canvas.getBoundingClientRect();
-        if(!rect.width||!rect.height)return;
         const inside=e.clientX>=rect.left&&e.clientX<=rect.right&&e.clientY>=rect.top&&e.clientY<=rect.bottom;
         if(!inside){previousMouseX=null;return;}
         if(previousMouseX!==null){
           const delta=e.clientX-previousMouseX;
-          player.angle+=clamp(delta,-45,45)*.009;
+          if(Math.abs(delta)>0)player.angle+=clamp(delta,-80,80)*.012;
           normalizeAngle();
         }
         previousMouseX=e.clientX;
@@ -1374,9 +1374,8 @@
       };
       const pointerup=e=>{if(e.button===0)mouseDown=false;};
       on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
-      // Separate Pointer Lock handling from normal pointer movement.
-      on(document,"mousemove",aimByLockedMouse);
-      on(canvas,"pointermove",aimByFallbackPointer);
+      // Nasłuch w capture zapobiega utracie zdarzenia po drodze przez nakładki strony.
+      on(document,"mousemove",rotateFromMouse,true);
       on(canvas,"mouseenter",e=>{previousMouseX=e.clientX;});
       on(canvas,"mouseleave",()=>{previousMouseX=null;});
       on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);
