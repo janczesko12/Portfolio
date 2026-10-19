@@ -1012,6 +1012,14 @@
       const canvas=make("canvas","arcade-canvas tactical-canvas");canvas.width=960;canvas.height=600;canvas.tabIndex=0;put(canvas);
       const ctx=canvas.getContext("2d");
       if(window.matchMedia("(pointer: coarse)").matches||window.innerWidth<760){canvas.hidden=true;const note=make("div","tactical-pc-only");note.innerHTML="<strong>TACTICAL STRIKE — TYLKO PC</strong><p>Ta gra wymaga klawiatury i myszy. Otwórz stronę na komputerze, aby zagrać z botami.</p>";put(note);say("Gra dostępna tylko na PC");help("WASD • celowanie myszą • LPM strzał • R przeładowanie.");return;}
+      const fullscreenButton=button("⛶ PEŁNY EKRAN","snake-btn snake-small tactical-fullscreen");
+      tools.insertBefore(fullscreenButton,reset);
+      on(fullscreenButton,"click",()=>{
+        if(document.fullscreenElement===canvas){document.exitFullscreen?.().catch?.(()=>say("Nie udało się wyjść z pełnego ekranu"));return;}
+        if(!canvas.requestFullscreen){say("Pełny ekran nie jest obsługiwany przez przeglądarkę");return;}
+        canvas.requestFullscreen().then(()=>{canvas.focus();}).catch(()=>say("Nie udało się uruchomić pełnego ekranu"));
+      });
+      on(document,"fullscreenchange",()=>{fullscreenButton.textContent=document.fullscreenElement===canvas?"⤢ WYJDŹ Z PEŁNEGO EKRANU":"⛶ PEŁNY EKRAN";if(document.fullscreenElement===canvas)canvas.focus();});
       const W=960,H=600,world={w:1600,h:1100};
       const walls=[{x:250,y:180,w:150,h:42},{x:510,y:115,w:42,h:170},{x:700,y:210,w:190,h:42},{x:1070,y:130,w:42,h:180},{x:1250,y:250,w:170,h:42},{x:170,y:420,w:42,h:180},{x:390,y:470,w:210,h:42},{x:720,y:420,w:42,h:190},{x:890,y:470,w:190,h:42},{x:1270,y:440,w:42,h:200},{x:280,y:760,w:190,h:42},{x:560,y:790,w:42,h:170},{x:780,y:760,w:200,h:42},{x:1080,y:800,w:42,h:170},{x:1280,y:770,w:180,h:42}];
       let player,bots,bullets,enemyBullets,keys=new Set(),mouse={x:W/2,y:H/2,down:false},score=0,round=1,health=100,ammo=12,reserve=60,reloading=false,reloadEnd=0,last=0,ended=false,won=false,damageFlash=0;
@@ -1053,10 +1061,15 @@
         }
         draw();raf=requestAnimationFrame(t);
       }
-      const keydown=e=>{if(["KeyW","KeyA","KeyS","KeyD","KeyR"].includes(e.code)){e.preventDefault();keys.add(e.code);if(e.code==="KeyR")reload();}},keyup=e=>keys.delete(e.code);
-      const pointermove=e=>{const r=canvas.getBoundingClientRect();mouse.clientX=e.clientX;mouse.clientY=e.clientY;mouse.x=(e.clientX-r.left)*W/r.width;mouse.y=(e.clientY-r.top)*H/r.height;};
-      const pointerdown=e=>{canvas.focus();if(e.button===0){mouse.down=true;if(ended){fresh();return;}shoot();}},pointerup=e=>{if(e.button===0)mouse.down=false;};
-      on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);on(canvas,"pointermove",pointermove);on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);on(canvas,"contextmenu",e=>e.preventDefault());on(reset,"click",fresh);
+      const keyCodes={KeyW:"KeyW",KeyA:"KeyA",KeyS:"KeyS",KeyD:"KeyD",KeyR:"KeyR"};
+      const keydown=e=>{const code=keyCodes[e.code]||(typeof e.key==="string"?({"w":"KeyW","a":"KeyA","s":"KeyS","d":"KeyD","r":"KeyR"}[e.key.toLowerCase()]):null);if(!code)return;e.preventDefault();keys.add(code);if(code==="KeyR"&&!e.repeat)reload();};
+      const keyup=e=>{const code=keyCodes[e.code]||(typeof e.key==="string"?({"w":"KeyW","a":"KeyA","s":"KeyS","d":"KeyD","r":"KeyR"}[e.key.toLowerCase()]):null);if(code)keys.delete(code);};
+      const pointermove=e=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;mouse.clientX=e.clientX;mouse.clientY=e.clientY;mouse.x=(e.clientX-r.left)*W/r.width;mouse.y=(e.clientY-r.top)*H/r.height;};
+      const pointerdown=e=>{pointermove(e);canvas.focus();if(e.button===0){try{canvas.setPointerCapture(e.pointerId);}catch{}mouse.down=true;if(ended){fresh();return;}shoot();}};
+      const pointerup=e=>{if(e.button===0)mouse.down=false;};
+      on(window,"keydown",keydown,true);on(document,"keydown",keydown,true);on(window,"keyup",keyup,true);on(document,"keyup",keyup,true);
+      on(canvas,"pointermove",pointermove);on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);on(canvas,"pointercancel",()=>{mouse.down=false;});on(canvas,"contextmenu",e=>e.preventDefault());
+      on(window,"blur",()=>{keys.clear();mouse.down=false;});on(reset,"click",fresh);
       fresh();help("PC only: WASD — ruch • mysz — celowanie • lewy przycisk myszy — strzał • R — przeładowanie. Eliminuj boty i przetrwaj 3 rundy.");raf=requestAnimationFrame(tick);
     }
 
