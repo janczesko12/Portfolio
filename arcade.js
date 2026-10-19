@@ -1381,17 +1381,19 @@
       on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
       // Niezależny ruch gracza działa także wtedy, gdy animacja klatkowa zgłosi błąd.
       every(()=>{
-        if(!player||ended)return;
+        if(!player)return;
         const now=performance.now(),dt=Math.min(.04,Math.max(0,(now-lastInputMoveAt)/1000));
         lastInputMoveAt=now;
         const forward=(keys.has("KeyW")?1:0)-(keys.has("KeyS")?1:0);
         const strafe=(keys.has("KeyD")?1:0)-(keys.has("KeyA")?1:0);
-        if(!forward&&!strafe)return;
-        const mag=Math.hypot(forward,strafe)||1;
-        const speed=2.5*dt;
-        const dx=(Math.cos(player.angle)*forward+Math.cos(player.angle+Math.PI/2)*strafe)/mag*speed;
-        const dy=(Math.sin(player.angle)*forward+Math.sin(player.angle+Math.PI/2)*strafe)/mag*speed;
-        moveEntity(player,dx,dy,.19);walkBob+=dt*10;
+        if(!ended&&(forward||strafe)){
+          const mag=Math.hypot(forward,strafe)||1;
+          const speed=2.5*dt;
+          const dx=(Math.cos(player.angle)*forward+Math.cos(player.angle+Math.PI/2)*strafe)/mag*speed;
+          const dy=(Math.sin(player.angle)*forward+Math.sin(player.angle+Math.PI/2)*strafe)/mag*speed;
+          moveEntity(player,dx,dy,.19);walkBob+=dt*10;
+        }
+        // Watchdog redraws even if no movement key is held.
         if(performance.now()-lastSuccessfulFrameAt>120)safeDraw();
       },16);
       // Nasłuch w capture zapobiega utracie zdarzenia po drodze przez nakładki strony.
