@@ -1334,9 +1334,9 @@
         if(ended){
           ctx.fillStyle="rgba(2,7,10,.78)";ctx.fillRect(0,0,W,H);
           ctx.textAlign="center";ctx.fillStyle=won?"#7affd9":"#ff6c72";
-          ctx.font="900 34px ui-monospace,monospace";ctx.fillText(won?"SEKTOR OCZYSZCZONY":"OPERATOR DOWN",W/2,H/2-16);
+          ctx.font="900 34px ui-monospace,monospace";ctx.fillText(won?"WYGRANA!":"OPERATOR DOWN",W/2,H/2-16);
           ctx.fillStyle="#e7f6f4";ctx.font="800 15px ui-monospace,monospace";
-          ctx.fillText("Eliminacje: "+score+" • kliknij OD NOWA",W/2,H/2+20);ctx.textAlign="left";
+          ctx.fillText(won?"ZACZNIJ JESZCZE RAZ":"Eliminacje: "+score+" • kliknij OD NOWA",W/2,H/2+20);ctx.textAlign="left";
         }
       }
       function safeDraw(){
