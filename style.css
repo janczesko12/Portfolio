@@ -869,11 +869,11 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
 .tactical-pc-only{max-width:720px;margin:18px auto;padding:28px 22px;border:1px solid rgba(95,218,195,.32);border-radius:14px;background:linear-gradient(145deg,#13272b,#0b151a);text-align:center;color:#cde5e0}
 .tactical-pc-only strong{color:#7affd9;font:950 16px/1.4 ui-monospace,monospace;letter-spacing:.08em}
 .tactical-pc-only p{max-width:480px;margin:12px auto 0;color:#9ab5b5;font-size:13px;line-height:1.7}
-@media(max-width:759px){.tactical-canvas{display:none}}
+@media(max-width:759px) and (pointer:coarse){.tactical-canvas{display:none}}
 
 
 /* Tactical Strike — niezawodne sterowanie i pełny ekran */
 .tactical-fullscreen{white-space:nowrap;flex:0 0 auto;border-color:rgba(95,218,195,.35);color:#9af6df;}
 .tactical-fullscreen:hover{background:rgba(95,218,195,.12);}
-.tactical-canvas:fullscreen{width:min(100vw,160vh);height:auto;max-width:none;max-height:100vh;aspect-ratio:8/5;object-fit:contain;box-sizing:border-box;border:0;border-radius:0;background:#17252a;}
+.tactical-canvas:fullscreen{width:min(100vw,160vh);height:min(100vh,62.5vw);max-width:none;max-height:none;aspect-ratio:8/5;object-fit:contain;box-sizing:border-box;border:0;border-radius:0;background:#10191e;cursor:none;}
 .tactical-canvas:fullscreen::backdrop{background:#10191e;}
