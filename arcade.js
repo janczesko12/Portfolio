@@ -1066,7 +1066,7 @@
       const angleDiff=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
       let player,bots,keys=new Set(),bullets=[],health,ammo,reserve,score,round;
       let reloading=false,reloadEnds=0,reloadTimer=null,ended=false,won=false,last=0,flashUntil=0,recoil=0,damageFlash=0,walkBob=0;
-      let mouseDown=false,mouseLocked=false,lastShot=0;
+      let mouseDown=false,mouseLocked=false,lastShot=0,weaponSwayX=0,weaponSwayY=0;
       let lastSuccessfulFrameAt=performance.now(),lastFrameError="",lastInputMoveAt=performance.now();
       let zBuffer=new Float32Array(W);
       // Wybieraj boty z wielu otwartych pól mapy zamiast układać je w jednej linii.
@@ -1139,7 +1139,7 @@
         keys.clear();bullets=[];health=100;ammo=12;reserve=72;score=0;round=1;
         if(reloadTimer){clearTimeout(reloadTimer);reloadTimer=null;}
         reloading=false;reloadEnds=0;ended=false;won=false;last=0;
-        flashUntil=0;recoil=0;damageFlash=0;walkBob=0;mouseDown=false;
+        flashUntil=0;recoil=0;damageFlash=0;walkBob=0;mouseDown=false;lastShot=0;weaponSwayX=0;weaponSwayY=0;
         spawnBots(5);say("RUNDA 1 • 5 BOTÓW");draw();
       }
       function spawnBots(count){
@@ -1167,7 +1167,9 @@
         if(!player||e.buttons===2)return;
         // Jeden centralny handler obsługuje Pointer Lock i zwykłe ruchy myszy.
         if(document.pointerLockElement){
-          player.angle+=Number(e.movementX||e.webkitMovementX||e.mozMovementX||0)*.0045;
+          const movement=Number(e.movementX||e.webkitMovementX||e.mozMovementX||0);
+          player.angle+=movement*.0045;
+          weaponSwayX=clamp(weaponSwayX+movement*.16,-22,22);weaponSwayY=clamp(weaponSwayY+Math.abs(movement)*.025,0,8);
           previousMouseX=null;
           normalizeAngle();
           if(performance.now()-lastSuccessfulFrameAt>120)safeDraw();
@@ -1178,7 +1180,7 @@
         if(!inside){previousMouseX=null;return;}
         if(previousMouseX!==null){
           const delta=e.clientX-previousMouseX;
-          if(Math.abs(delta)>0)player.angle+=clamp(delta,-80,80)*.012;
+          if(Math.abs(delta)>0){player.angle+=clamp(delta,-80,80)*.012;weaponSwayX=clamp(weaponSwayX+delta*.16,-22,22);weaponSwayY=clamp(weaponSwayY+Math.abs(delta)*.025,0,8);}
           normalizeAngle();
         }
         previousMouseX=e.clientX;
@@ -1267,8 +1269,15 @@
         });
       }
       function drawWeapon(t){
-        const kick=recoil*12,bob=Math.sin(walkBob)*3;
-        ctx.save();ctx.translate(W*.68,H*.90+bob+kick);
+        const now=performance.now();
+        const kick=recoil*16,bob=Math.sin(walkBob)*3;
+        const reloadProgress=reloading?clamp(1-(reloadEnds-now)/1050,0,1):0;
+        const reloadDrop=Math.sin(reloadProgress*Math.PI)*72;
+        const reloadTilt=Math.sin(reloadProgress*Math.PI)*.16;
+        weaponSwayX*=.82;weaponSwayY*=.82;
+        const weaponX=W*.60+weaponSwayX,weaponY=H*.79+bob+weaponSwayY+kick+reloadDrop;
+        ctx.save();ctx.translate(weaponX,weaponY);ctx.rotate(reloadTilt);
+        // Viewmodel w stylu CS: niżej, bliżej środka i z widocznymi rękami.
         ctx.fillStyle="#26323a";ctx.beginPath();ctx.moveTo(-100,-18);ctx.lineTo(-62,-45);ctx.lineTo(-28,-40);ctx.lineTo(-10,-9);ctx.lineTo(-95,-3);ctx.closePath();ctx.fill();
         ctx.fillStyle="#ba8e73";ctx.beginPath();ctx.moveTo(-68,-12);ctx.lineTo(-42,-58);ctx.lineTo(-14,-50);ctx.lineTo(10,-9);ctx.closePath();ctx.fill();
         ctx.fillStyle="#131a20";ctx.fillRect(-12,-64,125,35);
@@ -1281,8 +1290,8 @@
         ctx.fillStyle="#69777b";ctx.fillRect(-1,-31,11,3);
         ctx.fillStyle="#b9876a";ctx.fillRect(24,-28,38,15);
         ctx.restore();
-        if(performance.now()<flashUntil){
-          ctx.save();ctx.translate(W*.68+145,H*.90+bob+kick-48);
+        if(now<flashUntil){
+          ctx.save();ctx.translate(weaponX+145,weaponY-48);
           ctx.fillStyle="#fff5c4";ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(19,-8);ctx.lineTo(13,0);ctx.lineTo(24,8);ctx.lineTo(4,7);ctx.closePath();ctx.fill();
           ctx.fillStyle="#ffb04f";ctx.beginPath();ctx.arc(3,0,8,0,Math.PI*2);ctx.fill();ctx.restore();
         }
@@ -1435,8 +1444,8 @@
       on(document,"mousemove",rotateFromMouse,true);
       on(canvas,"mouseenter",e=>{previousMouseX=e.clientX;});
       on(canvas,"mouseleave",()=>{previousMouseX=null;});
-      on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);
-      on(canvas,"pointercancel",()=>{mouseDown=false;});
+      on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);on(document,"pointerup",pointerup);
+      on(canvas,"pointercancel",()=>{mouseDown=false;});on(document,"mouseup",()=>{mouseDown=false;});
       on(canvas,"contextmenu",e=>e.preventDefault());
       on(window,"blur",()=>{keys.clear();mouseDown=false;});
       on(document,"pointerlockchange",()=>{
