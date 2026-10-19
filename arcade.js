@@ -1126,18 +1126,25 @@
         reloading=true;reloadEnds=performance.now()+1050;say("Przeładowanie…");
       }
       let previousMouseX=null;
-      function aimByMouse(e){
-        if(!player)return;
-        if(document.pointerLockElement===canvas){
-          player.angle+=Number(e.movementX||0)*.0032;
-        }else{
-          const rect=canvas.getBoundingClientRect();
-          const overCanvas=e.clientX>=rect.left&&e.clientX<=rect.right&&e.clientY>=rect.top&&e.clientY<=rect.bottom;
-          if(!overCanvas){previousMouseX=null;return;}
-          if(previousMouseX!==null)player.angle+=(e.clientX-previousMouseX)*.006;
-          previousMouseX=e.clientX;
+      function normalizeAngle(){player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));}
+      function aimByLockedMouse(e){
+        if(!player||document.pointerLockElement!==canvas)return;
+        // Pointer Lock reports relative movement, not the cursor's screen position.
+        player.angle+=Number(e.movementX||0)*.0045;
+        normalizeAngle();
+      }
+      function aimByFallbackPointer(e){
+        if(!player||document.pointerLockElement===canvas||e.pointerType==="touch")return;
+        const rect=canvas.getBoundingClientRect();
+        if(!rect.width||!rect.height)return;
+        const inside=e.clientX>=rect.left&&e.clientX<=rect.right&&e.clientY>=rect.top&&e.clientY<=rect.bottom;
+        if(!inside){previousMouseX=null;return;}
+        if(previousMouseX!==null){
+          const delta=e.clientX-previousMouseX;
+          player.angle+=clamp(delta,-45,45)*.009;
+          normalizeAngle();
         }
-        player.angle=Math.atan2(Math.sin(player.angle),Math.cos(player.angle));
+        previousMouseX=e.clientX;
       }
       function shoot(){
         if(ended||reloading)return;
@@ -1350,12 +1357,16 @@
       const pointerdown=e=>{
         if(e.button!==0)return;
         e.preventDefault();
+        previousMouseX=e.clientX;
         canvas.focus();
         if(document.pointerLockElement!==canvas){
           try{
-            const req=canvas.requestPointerLock?.();
-            if(req&&typeof req.catch==="function")req.catch(()=>{mouseLocked=false;say("Poruszaj myszą nad planszą, aby obrócić widok.");});
-          }catch{say("Poruszaj myszą nad planszą, aby obrócić widok.");}
+            const request=canvas.requestPointerLock;
+            if(typeof request==="function"){
+              const result=request.call(canvas);
+              if(result&&typeof result.catch==="function")result.catch(()=>{mouseLocked=false;say("Mysz działa bez blokady — przesuwaj ją nad planszą.");});
+            }
+          }catch{mouseLocked=false;say("Mysz działa bez blokady — przesuwaj ją nad planszą.");}
         }
         mouseDown=true;
         if(ended){resetGame();return;}
@@ -1363,8 +1374,9 @@
       };
       const pointerup=e=>{if(e.button===0)mouseDown=false;};
       on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
-      on(window,"mousemove",aimByMouse);
-      // Kursor działa również bez Pointer Lock (np. wewnątrz osadzonej strony).
+      // Separate Pointer Lock handling from normal pointer movement.
+      on(document,"mousemove",aimByLockedMouse);
+      on(canvas,"pointermove",aimByFallbackPointer);
       on(canvas,"mouseenter",e=>{previousMouseX=e.clientX;});
       on(canvas,"mouseleave",()=>{previousMouseX=null;});
       on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);
@@ -1373,7 +1385,8 @@
       on(window,"blur",()=>{keys.clear();mouseDown=false;});
       on(document,"pointerlockchange",()=>{
         mouseLocked=document.pointerLockElement===canvas;
-        say(mouseLocked?"MYSZ AKTYWNA • WASD RUCH • LPM STRZAŁ":"Kliknij planszę, aby aktywować mysz");
+        previousMouseX=null;
+        say(mouseLocked?"MYSZ AKTYWNA • WASD RUCH • LPM STRZAŁ":"Mysz odblokowana — ruszaj kursorem po planszy, aby obracać");
       });
       on(reset,"click",resetGame);
       resetGame();
