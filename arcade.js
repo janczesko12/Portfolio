@@ -1372,9 +1372,10 @@
               if(health<=0){health=0;ended=true;won=false;say("Koniec rundy — naciśnij OD NOWA.");}
             }
           });
-          if(!bots.some(b=>b.alive)){
-            if(round>=3){ended=true;won=true;say("Wygrana! Sektor oczyszczony.");}
-            else{round++;health=Math.min(100,health+25);ammo=12;reserve=Math.min(120,reserve+24);spawnBots(5+round);say("RUNDA "+round+" • "+(5+round)+" BOTÓW");}
+          if(score>=5){
+            ended=true;won=true;say("Wygrana! Zabiłeś 5 botów.");
+          }else if(!bots.some(b=>b.alive)){
+            round++;health=Math.min(100,health+25);ammo=12;reserve=Math.min(120,reserve+24);spawnBots(5+round);say("RUNDA "+round+" • "+(5+round)+" BOTÓW");
           }
           damageFlash=Math.max(0,damageFlash-dt);
         }
