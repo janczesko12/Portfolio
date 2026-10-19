@@ -702,7 +702,7 @@ function launchEasterEgg(){
     }
     const gameVisible=document.querySelector(".easter-game-window");
     if(!gameVisible || !document.body.classList.contains("novydev-easter")) return;
-    if(snakePanel.hidden) return;
+    if(!snakeTab.classList.contains("active")) return;
 
     const map={
       ArrowUp:{x:0,y:-1},KeyW:{x:0,y:-1},
