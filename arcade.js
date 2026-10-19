@@ -1131,7 +1131,7 @@
       function rotateFromMouse(e){
         if(!player||e.buttons===2)return;
         // Jeden centralny handler obsługuje Pointer Lock i zwykłe ruchy myszy.
-        if(document.pointerLockElement===canvas){
+        if(document.pointerLockElement){
           player.angle+=Number(e.movementX||e.webkitMovementX||e.mozMovementX||0)*.0045;
           previousMouseX=null;
           normalizeAngle();
@@ -1364,7 +1364,7 @@
         e.preventDefault();
         previousMouseX=e.clientX;
         canvas.focus();
-        if(document.pointerLockElement!==canvas){
+        if(!document.pointerLockElement){
           try{
             const request=canvas.requestPointerLock;
             if(typeof request==="function"){
