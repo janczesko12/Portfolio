@@ -1048,11 +1048,20 @@
         if(ended){ctx.fillStyle="rgba(3,8,12,.78)";ctx.fillRect(0,0,W,H);ctx.textAlign="center";ctx.fillStyle=won?"#7affd9":"#ff6c72";ctx.font="900 42px ui-monospace,monospace";ctx.fillText(won?"SEKTOR OCZYSZCZONY":"OPERATOR DOWN",W/2,H/2-22);ctx.fillStyle="#e7f6f4";ctx.font="800 17px ui-monospace,monospace";ctx.fillText("ELIMINACJE: "+score+" • KLIKNIJ OD NOWA",W/2,H/2+20);ctx.textAlign="left";}
       }
       function tick(t){
-        if(destroyed)return;const dt=Math.min(.035,(t-(last||t))/1000);last=t;const rect=canvas.getBoundingClientRect();if(rect.width&&mouse.clientX!==undefined){mouse.x=clamp((mouse.clientX-rect.left)*W/rect.width,0,W);mouse.y=clamp((mouse.clientY-rect.top)*H/rect.height,0,H);}
+        if(destroyed)return;
+        const dt=Math.min(.035,(t-(last||t))/1000);last=t;
+        const rect=canvas.getBoundingClientRect();
+        if(rect.width&&rect.height&&mouse.clientX!==undefined){
+          mouse.x=clamp((mouse.clientX-rect.left)*W/rect.width,0,W);
+          mouse.y=clamp((mouse.clientY-rect.top)*H/rect.height,0,H);
+        }
+        // Celowanie aktualizuje się również po śmierci i w trybie pełnoekranowym.
+        const cam=screen();
+        player.angle=Math.atan2((mouse.y+cam.y)-player.y,(mouse.x+cam.x)-player.x);
         if(!ended){
           if(reloading&&performance.now()>=reloadEnd){const amount=Math.min(12-ammo,reserve);ammo+=amount;reserve-=amount;reloading=false;say("Przeładowano.");}
           let dx=(keys.has("KeyD")?1:0)-(keys.has("KeyA")?1:0),dy=(keys.has("KeyS")?1:0)-(keys.has("KeyW")?1:0);if(dx&&dy){dx*=.707;dy*=.707;}moveEntity(player,dx*235*dt,dy*235*dt,17);
-          const cam=screen();player.angle=Math.atan2((mouse.y+cam.y)-player.y,(mouse.x+cam.x)-player.x);if(mouse.down)shoot();
+          if(mouse.down)shoot();
           bullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(walls.some(w=>hitBox(b.x,b.y,2,w)))b.life=-1;const target=bots.find(v=>v.alive&&Math.hypot(v.x-b.x,v.y-b.y)<20);if(target){target.hp-=34;target.hit=.1;b.life=-1;if(target.hp<=0){target.alive=false;score++;}}});bullets=bullets.filter(b=>b.life>0);
           enemyBullets.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;if(walls.some(w=>hitBox(b.x,b.y,2,w)))b.life=-1;if(Math.hypot(player.x-b.x,player.y-b.y)<19){health-=12;b.life=-1;damageFlash=.9;if(health<=0){health=0;ended=true;won=false;}}});enemyBullets=enemyBullets.filter(b=>b.life>0);
           bots.forEach(b=>{if(!b.alive)return;b.hit=Math.max(0,b.hit-dt);const angle=Math.atan2(player.y-b.y,player.x-b.x),dist=Math.hypot(player.x-b.x,player.y-b.y);if(dist>205){const pace=b.speed*(dist<350?.65:1);moveEntity(b,Math.cos(angle)*pace*dt,Math.sin(angle)*pace*dt,17);}else{const side=angle+Math.PI/2*b.strafe;moveEntity(b,Math.cos(side)*b.speed*.35*dt,Math.sin(side)*b.speed*.35*dt,17);}b.fire+=dt;if(dist<560&&b.fire>1.35+Math.random()*.35){b.fire=0;const a=Math.atan2(player.y-b.y,player.x-b.x)+(Math.random()-.5)*.14;enemyBullets.push({x:b.x+Math.cos(a)*20,y:b.y+Math.sin(a)*20,vx:Math.cos(a)*285,vy:Math.sin(a)*285,life:2.8});}});
@@ -1067,9 +1076,18 @@
       const pointermove=e=>{const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;mouse.clientX=e.clientX;mouse.clientY=e.clientY;mouse.x=(e.clientX-r.left)*W/r.width;mouse.y=(e.clientY-r.top)*H/r.height;};
       const pointerdown=e=>{pointermove(e);canvas.focus();if(e.button===0){try{canvas.setPointerCapture(e.pointerId);}catch{}mouse.down=true;if(ended){fresh();return;}shoot();}};
       const pointerup=e=>{if(e.button===0)mouse.down=false;};
-      on(window,"keydown",keydown,true);on(document,"keydown",keydown,true);on(window,"keyup",keyup,true);on(document,"keyup",keyup,true);
-      on(canvas,"pointermove",pointermove);on(canvas,"pointerdown",pointerdown);on(window,"pointerup",pointerup);on(canvas,"pointercancel",()=>{mouse.down=false;});on(canvas,"contextmenu",e=>e.preventDefault());
-      on(window,"blur",()=>{keys.clear();mouse.down=false;});on(reset,"click",fresh);
+      on(window,"keydown",keydown,true);
+      on(window,"keyup",keyup,true);
+      // Śledź kursor również poza canvasem, np. w trybie pełnoekranowym.
+      on(canvas,"pointermove",pointermove);
+      on(window,"pointermove",pointermove);
+      on(window,"mousemove",pointermove);
+      on(canvas,"pointerdown",pointerdown);
+      on(window,"pointerup",pointerup);
+      on(canvas,"pointercancel",()=>{mouse.down=false;});
+      on(canvas,"contextmenu",e=>e.preventDefault());
+      on(window,"blur",()=>{keys.clear();mouse.down=false;});
+      on(reset,"click",fresh);
       fresh();help("PC only: WASD — ruch • mysz — celowanie • lewy przycisk myszy — strzał • R — przeładowanie. Eliminuj boty i przetrwaj 3 rundy.");raf=requestAnimationFrame(tick);
     }
 
