@@ -1190,16 +1190,16 @@
       function drawBots(){
         const sorted=bots.filter(b=>b.alive).map(b=>{
           const dx=b.x-player.x,dy=b.y-player.y,dist=Math.hypot(dx,dy);
-          return {...b,dist,rel:angleDiff(Math.atan2(dy,dx),player.angle)};
-        }).sort((a,b)=>b.dist-a.dist);
+          const rel=angleDiff(Math.atan2(dy,dx),player.angle);return {...b,dist,rel,depth:dist*Math.cos(rel)};
+        }).sort((a,b)=>b.depth-a.depth);
         sorted.forEach(b=>{
           if(Math.abs(b.rel)>FOV*.75||b.dist<.2)return;
           const sx=W/2+(Math.tan(b.rel)/Math.tan(FOV/2))*(W/2);
-          const size=clamp(H/b.dist*.76,12,H*1.8);
+          const size=clamp(H/Math.max(.2,b.depth)*.76,12,H*1.8);
           const sw=size*.38,sh=size*.78,feet=H*.51+size*.12;
           const left=Math.round(sx-sw/2),top=feet-sh;
           const centre=clamp(Math.round(sx),0,W-1);
-          if(b.dist>zBuffer[centre]+.15)return;
+          if(b.depth>zBuffer[centre]+.15)return;
           ctx.fillStyle="rgba(0,0,0,.35)";
           ctx.beginPath();ctx.ellipse(sx,feet,sw*.7,size*.09,0,0,Math.PI*2);ctx.fill();
           // Nogi, kamizelka, głowa i broń — sprite jest rysowany i animowany w każdej klatce.
@@ -1213,14 +1213,6 @@
           ctx.fillStyle="#111820";ctx.fillRect(left+sw*.57,top+sh*.44,sw*.74,sh*.07);
           ctx.fillStyle="#090f12";ctx.fillRect(sx-sw*.6,top-7,sw*1.2,4);
           ctx.fillStyle="#ff5b58";ctx.fillRect(sx-sw*.6,top-7,sw*1.2*Math.max(0,b.hp/100),4);
-          ctx.fillStyle="rgba(12,18,22,.55)";ctx.fillRect(left,top,sw,sh);
-          // Rozjaśnij sylwetkę po nałożeniu przezroczystego cienia.
-          ctx.globalCompositeOperation="source-over";
-          ctx.fillStyle=b.hit>0?"#fff":"#b84c4c";ctx.fillRect(left+sw*.06,top+sh*.36,sw*.88,sh*.42);
-          ctx.fillStyle="#d6b49a";ctx.fillRect(sx-sw*.22,top+sh*.08,sw*.44,sh*.27);
-          ctx.fillStyle="#20272d";ctx.fillRect(sx-sw*.28,top+sh*.055,sw*.56,sh*.11);
-          ctx.fillStyle="#20262c";ctx.fillRect(left+sw*.14,feet-sh*.26,sw*.25,sh*.28);ctx.fillRect(left+sw*.57,feet-sh*.26,sw*.25,sh*.28);
-          ctx.fillStyle="#111820";ctx.fillRect(left+sw*.57,top+sh*.44,sw*.74,sh*.07);
         });
       }
       function drawWeapon(t){
