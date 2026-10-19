@@ -1067,6 +1067,7 @@
       let player,bots,keys=new Set(),bullets=[],health,ammo,reserve,score,round;
       let reloading=false,reloadEnds=0,ended=false,won=false,last=0,flashUntil=0,recoil=0,damageFlash=0,walkBob=0;
       let mouseDown=false,mouseLocked=false,lastShot=0;
+      let lastSuccessfulFrameAt=performance.now(),lastFrameError="",lastInputMoveAt=performance.now();
       let zBuffer=new Float32Array(W);
       // Fala startowa ustawia boty w otwartym korytarzu, aby od razu były widoczne.
       const starts=[
@@ -1145,6 +1146,7 @@
           normalizeAngle();
         }
         previousMouseX=e.clientX;
+        if(performance.now()-lastSuccessfulFrameAt>120)safeDraw();
       }
       function shoot(){
         if(ended||reloading)return;
@@ -1292,18 +1294,14 @@
           ctx.fillText("Eliminacje: "+score+" • kliknij OD NOWA",W/2,H/2+20);ctx.textAlign="left";
         }
       }
+      function safeDraw(){
+        try{draw();}catch(error){say("BŁĄD RYSOWANIA: "+String(error&&error.message||error).slice(0,70));}
+      }
       function tick(t){
         if(destroyed)return;
+        try{
         const dt=Math.min(.035,(t-(last||t))/1000);last=t;
         if(!ended){
-          const forward=(keys.has("KeyW")?1:0)-(keys.has("KeyS")?1:0);
-          const strafe=(keys.has("KeyD")?1:0)-(keys.has("KeyA")?1:0);
-          const mag=Math.hypot(forward,strafe)||1;
-          const speed=2.5*dt;
-          const dx=(Math.cos(player.angle)*forward+Math.cos(player.angle+Math.PI/2)*strafe)/mag*speed;
-          const dy=(Math.sin(player.angle)*forward+Math.sin(player.angle+Math.PI/2)*strafe)/mag*speed;
-          moveEntity(player,dx,dy,.19);
-          if(forward||strafe)walkBob+=dt*10;
           if(reloading&&performance.now()>=reloadEnds){
             const amount=Math.min(12-ammo,reserve);ammo+=amount;reserve-=amount;reloading=false;say("Przeładowano.");
           }
@@ -1338,7 +1336,13 @@
           }
           damageFlash=Math.max(0,damageFlash-dt);
         }
-        draw();raf=requestAnimationFrame(t);
+        draw();
+        lastSuccessfulFrameAt=performance.now();lastFrameError="";
+        }catch(error){
+          const message=String(error&&error.message||error);
+          if(message!==lastFrameError){lastFrameError=message;say("BŁĄD PĘTLI GRY: "+message.slice(0,75));}
+        }
+        raf=requestAnimationFrame(t);
       }
       const getCode=e=>{
         if(["KeyW","KeyA","KeyS","KeyD","KeyR"].includes(e.code))return e.code;
@@ -1374,6 +1378,21 @@
       };
       const pointerup=e=>{if(e.button===0)mouseDown=false;};
       on(window,"keydown",keydown,true);on(window,"keyup",keyup,true);
+      // Niezależny ruch gracza działa także wtedy, gdy animacja klatkowa zgłosi błąd.
+      every(()=>{
+        if(!player||ended)return;
+        const now=performance.now(),dt=Math.min(.04,Math.max(0,(now-lastInputMoveAt)/1000));
+        lastInputMoveAt=now;
+        const forward=(keys.has("KeyW")?1:0)-(keys.has("KeyS")?1:0);
+        const strafe=(keys.has("KeyD")?1:0)-(keys.has("KeyA")?1:0);
+        if(!forward&&!strafe)return;
+        const mag=Math.hypot(forward,strafe)||1;
+        const speed=2.5*dt;
+        const dx=(Math.cos(player.angle)*forward+Math.cos(player.angle+Math.PI/2)*strafe)/mag*speed;
+        const dy=(Math.sin(player.angle)*forward+Math.sin(player.angle+Math.PI/2)*strafe)/mag*speed;
+        moveEntity(player,dx,dy,.19);walkBob+=dt*10;
+        if(performance.now()-lastSuccessfulFrameAt>120)safeDraw();
+      },16);
       // Nasłuch w capture zapobiega utracie zdarzenia po drodze przez nakładki strony.
       on(document,"mousemove",rotateFromMouse,true);
       on(canvas,"mouseenter",e=>{previousMouseX=e.clientX;});
