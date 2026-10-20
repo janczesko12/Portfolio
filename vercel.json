@@ -1,3 +1,18 @@
+
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/gra",
+      "destination": "https://huntly-game.web.app/"
+    },
+    {
+      "source": "/gra/",
+      "destination": "https://huntly-game.web.app/"
+    },
+    {
+      "source": "/gra/:path*",
+      "destination": "https://huntly-game.web.app/:path*"
+    }
+  ]
 }
