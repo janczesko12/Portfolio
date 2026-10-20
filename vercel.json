@@ -1,3 +1,21 @@
 {
-  "cleanUrls": true
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/gra",
+      "destination": "/gra/",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/gra/",
+      "destination": "https://huntly-game.web.app/"
+    },
+    {
+      "source": "/gra/:path*",
+      "destination": "https://huntly-game.web.app/:path*"
+    }
+  ]
 }
