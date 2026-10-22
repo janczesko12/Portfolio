@@ -11,11 +11,11 @@
   "rewrites": [
     {
       "source": "/gra/",
-      "destination": "https://huntly-game.web.app/"
+      "destination": "https://huntly-janczesko12s-projects.vercel.app/"
     },
     {
       "source": "/gra/:path*",
-      "destination": "https://huntly-game.web.app/:path*"
+      "destination": "https://huntly-janczesko12s-projects.vercel.app/:path*"
     }
   ]
 }
