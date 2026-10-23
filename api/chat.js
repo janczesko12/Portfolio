@@ -104,9 +104,8 @@ module.exports = async function handler(req, res) {
     return json(res, 400, { error: "Wyślij wiadomość użytkownika." });
   }
 
-  try {
-    const model = String(process.env.GEMINI_CHAT_MODEL || "gemini-3.8-flash").trim();
-    const response = await fetch(
+  async function askGemini(model, useGoogleSearch) {
+    return fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/" +
         encodeURIComponent(model) +
         ":generateContent",
@@ -119,7 +118,7 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: INSTRUCTIONS }] },
           contents,
-          tools: [{ googleSearch: {} }],
+          ...(useGoogleSearch ? { tools: [{ googleSearch: {} }] } : {}),
           generationConfig: {
             temperature: 0.7,
             maxOutputTokens: 700
@@ -127,15 +126,42 @@ module.exports = async function handler(req, res) {
         })
       }
     );
+  }
 
-    const data = await response.json().catch(() => ({}));
+  try {
+    const model = String(process.env.GEMINI_CHAT_MODEL || "gemini-3.8-flash").trim();
+    let response = await askGemini(model, model !== "gemini-3.5-flash-lite");
+    let data = await response.json().catch(() => ({}));
+
+    // If the main model or its search-grounding quota is exhausted, retry once
+    // with a lighter model and no search tool to avoid that separate quota.
+    if (response.status === 429 && model !== "gemini-3.5-flash-lite") {
+      console.warn("NovyDev Gemini primary model quota reached; retrying with flash-lite.");
+      response = await askGemini("gemini-3.5-flash-lite", false);
+      data = await response.json().catch(() => ({}));
+    }
+
     if (!response.ok) {
       const providerCode = data.error && data.error.status ? data.error.status : "unknown";
+      const providerMessage = String(data.error && data.error.message ? data.error.message : "").toLowerCase();
       console.error("NovyDev Gemini error:", response.status, providerCode);
-      return json(res, response.status === 429 ? 429 : 502, {
-        error: response.status === 429
-          ? "Asystent chwilowo osiągnął limit zapytań. Spróbuj później."
-          : "Nie udało się uzyskać odpowiedzi z Google Gemini. Sprawdź konfigurację klucza i spróbuj ponownie."
+
+      if (response.status === 429 || providerCode === "RESOURCE_EXHAUSTED") {
+        return json(res, 429, {
+          error: providerMessage.includes("billing") || providerMessage.includes("paid")
+            ? "Google Gemini zgłasza problem z limitem lub rozliczeniami. Sprawdź Google AI Studio → Usage & Billing i ustawienia limitów projektu."
+            : "Google Gemini wyczerpał dostępny limit API, nawet dla lżejszego modelu. Sprawdź limity i dostępność modelu w Google AI Studio → Usage & Billing. To limit konta Google, nie strony NovyDev."
+        });
+      }
+
+      if (response.status === 401 || response.status === 403) {
+        return json(res, 502, {
+          error: "Google Gemini odrzucił klucz API. Sprawdź GEMINI_API_KEY oraz czy klucz należy do projektu z włączonym Gemini API."
+        });
+      }
+
+      return json(res, 502, {
+        error: "Nie udało się uzyskać odpowiedzi z Google Gemini. Sprawdź konfigurację klucza i spróbuj ponownie."
       });
     }
 
