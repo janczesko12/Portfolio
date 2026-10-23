@@ -1,10 +1,15 @@
-const ALLOWED_ORIGINS = new Set(["https://novydev.pl", "https://www.novydev.pl", "https://mythoria.pl", "https://www.mythoria.pl"]);
+const ALLOWED_ORIGINS = new Set([
+  "https://novydev.pl",
+  "https://www.novydev.pl",
+  "https://mythoria.pl",
+  "https://www.mythoria.pl"
+]);
 const requests = globalThis.__novydevChatRequests || (globalThis.__novydevChatRequests = new Map());
 
 const INSTRUCTIONS = [
   "You are NovyDev AI, the friendly multilingual AI assistant embedded in the public NovyDev portfolio website.",
   "Answer normally and helpfully about general topics, programming, software, AI, web/mobile development, projects, learning, and everyday questions. Reply in the same language as the latest user message; switch languages naturally when asked.",
-  "Be honest about uncertainty and distinguish verified facts from guesses. Use web search for current facts when helpful. Never claim to be the website owner or to share ChatGPT's private memory, account, or conversation history.",
+  "Be honest about uncertainty and distinguish verified facts from guesses. Use Google Search grounding for current facts when helpful. Never claim to be the website owner or to share ChatGPT's private memory, account, or conversation history.",
   "Public portfolio context: NovyDev is a developer portfolio showcasing AI Agent (Python, online/local model fallback), ListaZakupów (Kotlin/Compose/Firebase), JanBot (Python/Discord), Computer Vision/ALPR (OpenCV/OCR/Flask), Roblox game projects, Wydatki (expense app with Firebase), and KinoStream (movie discovery app in development). Technologies mentioned on the site include Python, Kotlin, JavaScript, HTML/CSS, SQL, PowerShell, Git, GitHub, Docker, Firebase, Roblox Studio and VS Code.",
   "Public contact: janczesko12@gmail.com. GitHub: https://github.com/janczesko12. Website: https://novydev.pl.",
   "Keep most answers concise but provide detailed explanations or code when requested. Format code with Markdown fences. Never invent project features, progress, contact details, or private facts. If asked about the owner's private conversations or anything not in public portfolio context, explain that you don't have access to it.",
@@ -31,16 +36,20 @@ function isRateLimited(ip) {
   return entry.count > 8;
 }
 
-function getOutputText(data) {
-  if (typeof data.output_text === "string" && data.output_text.trim()) return data.output_text.trim();
-  const parts = [];
-  for (const item of (Array.isArray(data.output) ? data.output : [])) {
-    if (item.type !== "message" || !Array.isArray(item.content)) continue;
-    for (const content of item.content) {
-      if (content.type === "output_text" && typeof content.text === "string") parts.push(content.text);
-    }
+function getGeminiText(data) {
+  const candidates = Array.isArray(data.candidates) ? data.candidates : [];
+  for (const candidate of candidates) {
+    const parts = candidate && candidate.content && Array.isArray(candidate.content.parts)
+      ? candidate.content.parts
+      : [];
+    const text = parts
+      .filter(part => typeof part.text === "string")
+      .map(part => part.text)
+      .join("\n")
+      .trim();
+    if (text) return text;
   }
-  return parts.join("\n").trim();
+  return "";
 }
 
 module.exports = async function handler(req, res) {
@@ -51,64 +60,97 @@ module.exports = async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return json(res, 405, { error: "Use POST." });
   }
-  if (!origin || !ALLOWED_ORIGINS.has(origin)) return json(res, 403, { error: "Origin not allowed." });
+  if (!origin || !ALLOWED_ORIGINS.has(origin)) {
+    return json(res, 403, { error: "Origin not allowed." });
+  }
 
   const body = req.body && typeof req.body === "object" ? req.body : {};
   if (String(body.company || "").trim()) return json(res, 200, { reply: "Thanks!" });
 
   const ip = String(req.headers["x-forwarded-for"] || "unknown").split(",")[0].trim();
-  if (isRateLimited(ip)) return json(res, 429, { error: "Za dużo wiadomości w krótkim czasie. Spróbuj za chwilę." });
+  if (isRateLimited(ip)) {
+    return json(res, 429, { error: "Za dużo wiadomości w krótkim czasie. Spróbuj za chwilę." });
+  }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return json(res, 503, { error: "Asystent AI wymaga jeszcze ustawienia klucza OPENAI_API_KEY w zmiennych środowiskowych Vercel." });
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return json(res, 503, {
+      error: "Asystent wymaga jeszcze klucza GEMINI_API_KEY w zmiennych środowiskowych Vercel."
+    });
   }
 
   const inputMessages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
   if (!inputMessages.length) return json(res, 400, { error: "Napisz wiadomość." });
 
-  const messages = [];
+  const contents = [];
   for (const item of inputMessages) {
-    if (!item || !["user", "assistant"].includes(item.role) || typeof item.content !== "string") continue;
+    if (!item || !["user", "assistant"].includes(item.role) || typeof item.content !== "string") {
+      continue;
+    }
     const content = item.content.trim();
-    if (!content || content.length > 3000) return json(res, 400, { error: "Wiadomość jest pusta lub za długa (maksymalnie 3000 znaków)." });
-    messages.push({ role: item.role, content });
+    if (!content || content.length > 3000) {
+      return json(res, 400, { error: "Wiadomość jest pusta lub za długa (maksymalnie 3000 znaków)." });
+    }
+    contents.push({
+      role: item.role === "assistant" ? "model" : "user",
+      parts: [{ text: content }]
+    });
   }
-  if (!messages.length || messages[messages.length - 1].role !== "user") {
+
+  // Gemini conversation contents should begin with a user turn.
+  while (contents.length && contents[0].role !== "user") contents.shift();
+
+  if (!contents.length || contents[contents.length - 1].role !== "user") {
     return json(res, 400, { error: "Wyślij wiadomość użytkownika." });
   }
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + process.env.OPENAI_API_KEY,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_CHAT_MODEL || "gpt-6-luna",
-        instructions: INSTRUCTIONS,
-        input: messages,
-        tools: [{ type: "web_search" }],
-        max_output_tokens: 700,
-        store: false
-      })
-    });
+    const model = String(process.env.GEMINI_CHAT_MODEL || "gemini-3.8-flash").trim();
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+        encodeURIComponent(model) +
+        ":generateContent",
+      {
+        method: "POST",
+        headers: {
+          "x-goog-api-key": apiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: INSTRUCTIONS }] },
+          contents,
+          tools: [{ googleSearch: {} }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 700
+          }
+        })
+      }
+    );
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
-      console.error("NovyDev chat provider error:", response.status, data.error && data.error.code ? data.error.code : "unknown");
+      const providerCode = data.error && data.error.status ? data.error.status : "unknown";
+      console.error("NovyDev Gemini error:", response.status, providerCode);
       return json(res, response.status === 429 ? 429 : 502, {
         error: response.status === 429
           ? "Asystent chwilowo osiągnął limit zapytań. Spróbuj później."
-          : "Nie udało się uzyskać odpowiedzi AI. Spróbuj za chwilę."
+          : "Nie udało się uzyskać odpowiedzi z Google Gemini. Sprawdź konfigurację klucza i spróbuj ponownie."
       });
     }
 
-    const reply = getOutputText(data);
-    if (!reply) return json(res, 502, { error: "Asystent nie zwrócił tekstowej odpowiedzi. Spróbuj ponownie." });
+    const reply = getGeminiText(data);
+    if (!reply) {
+      const reason = data.promptFeedback && data.promptFeedback.blockReason
+        ? data.promptFeedback.blockReason
+        : "no_text";
+      console.error("NovyDev Gemini returned no text:", reason);
+      return json(res, 502, { error: "Gemini nie zwrócił odpowiedzi tekstowej. Spróbuj ponownie." });
+    }
+
     return json(res, 200, { reply });
   } catch (error) {
-    console.error("NovyDev chat request failed:", error && error.name ? error.name : "network_error");
-    return json(res, 502, { error: "Nie mogę teraz połączyć się z AI. Spróbuj ponownie za chwilę." });
+    console.error("NovyDev Gemini request failed:", error && error.name ? error.name : "network_error");
+    return json(res, 502, { error: "Nie mogę teraz połączyć się z Google Gemini. Spróbuj ponownie za chwilę." });
   }
 };
