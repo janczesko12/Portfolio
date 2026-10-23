@@ -107,6 +107,9 @@
 
   function translateUi() {
     toggle.setAttribute("aria-label", tr("open"));
+    root.querySelector("[data-ai-chat-label]").textContent = getLanguage() === "en" ? "AI Assistant" : "Asystent AI";
+    root.querySelector(".ai-chat-new").setAttribute("aria-label", getLanguage() === "en" ? "New conversation" : "Nowa rozmowa");
+    root.querySelector(".ai-chat-new").setAttribute("title", getLanguage() === "en" ? "New conversation" : "Nowa rozmowa");
     closeButton.setAttribute("aria-label", tr("close"));
     root.querySelector(".ai-chat-title").textContent = tr("title");
     root.querySelector(".ai-chat-subtitle").textContent = tr("online");
