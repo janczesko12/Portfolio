@@ -16,6 +16,7 @@ const db = getFirestore(app);
 const form = document.querySelector("#newsletter-form");
 const emailInput = document.querySelector("#newsletter-email");
 const consentInput = document.querySelector("#newsletter-consent");
+const honeypotInput = document.querySelector("#newsletter-company");
 const submitButton = form?.querySelector(".newsletter-submit");
 const message = document.querySelector("#newsletter-message");
 
@@ -35,6 +36,12 @@ async function hashEmail(email) {
 
 form?.addEventListener("submit", async event => {
   event.preventDefault();
+  // A hidden honeypot filters out basic automated form submissions.
+  if (String(honeypotInput?.value || "").trim()) {
+    form.reset();
+    showMessage(document.documentElement.lang === "en" ? "Thanks for your interest!" : "Dziękuję za zainteresowanie.", "success");
+    return;
+  }
   const email = String(emailInput?.value || "").trim().toLowerCase();
 
   if (!emailInput?.validity.valid || email.length < 5 || email.length > 254) {
