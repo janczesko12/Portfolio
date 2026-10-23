@@ -271,14 +271,45 @@
     </section>
   </div>
 
-  <footer class="footer">
+
+  <aside id="novydev-ai" aria-label="NovyDev AI chat">
+    <section class="ai-chat-panel" aria-label="NovyDev AI" aria-hidden="true">
+      <header class="ai-chat-header">
+        <div class="ai-chat-avatar" aria-hidden="true">N<span style="font-size:9px;vertical-align:top;">AI</span></div>
+        <div class="ai-chat-head-copy">
+          <div class="ai-chat-title">NovyDev AI</div>
+          <div class="ai-chat-subtitle"><span class="ai-chat-live-dot"></span>Asystent AI · wiele języków</div>
+        </div>
+        <button class="ai-chat-icon-button ai-chat-new" type="button" aria-label="Nowa rozmowa" title="Nowa rozmowa">↻</button>
+        <button class="ai-chat-icon-button ai-chat-close" type="button" aria-label="Zamknij czat">×</button>
+      </header>
+      <div class="ai-chat-messages" aria-live="polite" aria-relevant="additions text"></div>
+      <div class="ai-chat-suggestions"></div>
+      <div class="ai-chat-form-wrap">
+        <form class="ai-chat-form">
+          <label class="ai-chat-company" aria-hidden="true">Leave this empty <input id="ai-chat-company" name="company" tabindex="-1" autocomplete="off"></label>
+          <textarea id="ai-chat-input" rows="1" maxlength="3000" placeholder="Napisz wiadomość…" aria-label="Napisz wiadomość…"></textarea>
+          <button class="ai-chat-send" type="submit" aria-label="Wyślij wiadomość">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12 20 4l-4 16-4-6-8-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m12 14 4-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </form>
+        <div class="ai-chat-hint">Enter — wyślij · Shift+Enter — nowa linia</div>
+        <div class="ai-chat-status" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+    <button class="ai-chat-toggle" type="button" aria-expanded="false" aria-controls="novydev-ai" aria-label="Otwórz czat z AI">
+      <span class="ai-chat-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-5 4v-4.1a2.5 2.5 0 0 1-2-2.4v-8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 8h8M8 11.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+      <span data-ai-chat-label>AI Assistant</span>
+    </button>
+  </aside>
+\n\n  <footer class="footer">
     <span>© <span id="year"></span> NOVYDEV</span>
     <span data-i18n="footerMade">zrobione z kodu ✦</span>
     <span class="easter-hint" id="easter-hint" data-i18n="easterHint">* sprawdź easter egg <kbd id="easter-combo">↑ ↑ ↓ ↓ ← → ← → B A</kbd></span>
   </footer>
 
   <script type="module" src="ratings.js"></script>
-  <script type="module" src="newsletter.js"></script>
+  <script type="module" src="newsletter.js"></script>\n  <script src="chat-widget.js" defer></script>
   <script src="breakout.js" defer></script>
   <script src="arcade.js" defer></script>
   <script src="script.js" defer></script>
