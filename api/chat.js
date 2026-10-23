@@ -1,4 +1,4 @@
-const ALLOWED_ORIGINS = new Set(["https://novydev.pl", "https://www.novydev.pl"]);
+const ALLOWED_ORIGINS = new Set(["https://novydev.pl", "https://www.novydev.pl", "https://mythoria.pl", "https://www.mythoria.pl"]);
 const requests = globalThis.__novydevChatRequests || (globalThis.__novydevChatRequests = new Map());
 
 const INSTRUCTIONS = [
