@@ -62,3 +62,6 @@ The homepage newsletter form sends explicit signups to the Vercel serverless end
 
 In Vercel, configure `RESEND_API_KEY` for the **Production** environment and redeploy after changing it. The Resend sending domain `novydev.pl` should remain verified. The form includes email validation, an unchecked consent checkbox, a honeypot field, same-site origin checks, and best-effort request throttling.
 
+## AI assistant on the portfolio
+
+The floating multilingual chat uses the OpenAI Responses API through the server-side `/api/chat` function. Set `OPENAI_API_KEY` in Vercel's **Production** environment; optionally set `OPENAI_CHAT_MODEL` to override the default `gpt-6-luna` model. Do not place provider secrets in browser files. The widget responds in the language of the latest message, keeps recent conversation context in browser memory for that tab, and can use web search for current information. API usage may incur charges on the OpenAI API account.
