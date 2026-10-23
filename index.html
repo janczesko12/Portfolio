@@ -32,6 +32,7 @@
       <a href="/admin-aplikacje">Panel admina</a>
       <a href="#stack" data-i18n="navStack">Stack</a>
       <a href="#contact" data-i18n="navContact">Kontakt</a>
+      <a href="#newsletter" data-i18n="navNewsletter">Newsletter</a>
     </nav>
   </header>
 
@@ -217,6 +218,31 @@
         </form>
       </div>
     </section>
+
+    <section id="newsletter" class="section section-dark newsletter-section section-pad">
+      <div class="newsletter-card reveal">
+        <div class="newsletter-copy">
+          <p class="kicker" data-i18n="newsletterKicker">07 / NEWSLETTER</p>
+          <h2 data-i18n="newsletterTitle">Nowe projekty.<br><em>Prosto na maila.</em></h2>
+          <p data-i18n="newsletterDescription">Od czasu do czasu wyślę krótką aktualizację o nowych projektach, aplikacjach i eksperymentach. Bez spamu.</p>
+          <p class="newsletter-privacy" data-i18n="newsletterPrivacy">Adres będzie przechowywany w bazie newslettera. Wypisanie lub prośbę o usunięcie danych możesz wysłać na e-mail kontaktowy.</p>
+        </div>
+        <form id="newsletter-form" class="newsletter-form">
+          <label for="newsletter-email" data-i18n="newsletterEmailLabel">Twój adres e-mail</label>
+          <input id="newsletter-email" name="email" type="email" maxlength="254" placeholder="jan@example.com" autocomplete="email" required>
+          <div class="newsletter-honeypot" aria-hidden="true">
+            <label for="newsletter-company">Leave this field empty</label>
+            <input id="newsletter-company" name="company" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <label class="newsletter-consent" for="newsletter-consent">
+            <input id="newsletter-consent" name="consent" type="checkbox" required>
+            <span data-i18n="newsletterConsent">Zgadzam się na zapis mojego adresu e-mail i otrzymywanie informacji o nowych projektach NovyDev.</span>
+          </label>
+          <button class="btn btn-primary newsletter-submit" type="submit"><span data-i18n="newsletterSubmit">Dołącz do newslettera</span><span aria-hidden="true">↗</span></button>
+          <p id="newsletter-message" class="newsletter-message" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
   </main>
 
   <div id="project-modal" class="project-modal" aria-hidden="true">
@@ -252,6 +278,7 @@
   </footer>
 
   <script type="module" src="ratings.js"></script>
+  <script type="module" src="newsletter.js"></script>
   <script src="breakout.js" defer></script>
   <script src="arcade.js" defer></script>
   <script src="script.js" defer></script>
