@@ -969,3 +969,25 @@ body.novydev-easter main{animation:easterShake .12s steps(2,end) 4}
   #novydev-ai .ai-chat-panel { right: 0; bottom: 61px; height: min(620px, calc(100dvh - 92px)); min-height: 350px; width: calc(100vw - 24px); border-radius: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { #novydev-ai .ai-chat-panel, #novydev-ai .ai-chat-toggle { transition: none; } }
+
+/* Markdown formatting for NovyDev AI responses */
+#novydev-ai .ai-chat-message-body > :first-child { margin-top: 0; }
+#novydev-ai .ai-chat-message-body > :last-child { margin-bottom: 0; }
+#novydev-ai .ai-chat-message-body p { margin: 0 0 10px; }
+#novydev-ai .ai-chat-message-body strong { font-weight: 800; color: #f7f9f3; }
+#novydev-ai .ai-chat-message-body em { font-style: italic; }
+#novydev-ai .ai-chat-message-body h2,
+#novydev-ai .ai-chat-message-body h3,
+#novydev-ai .ai-chat-message-body h4,
+#novydev-ai .ai-chat-message-body h5 { margin: 13px 0 7px; color: #f7f9f3; line-height: 1.35; font-weight: 800; }
+#novydev-ai .ai-chat-message-body h2 { font-size: 1.18em; }
+#novydev-ai .ai-chat-message-body h3 { font-size: 1.1em; }
+#novydev-ai .ai-chat-message-body ul,
+#novydev-ai .ai-chat-message-body ol { margin: 7px 0 13px; padding-left: 1.45em; }
+#novydev-ai .ai-chat-message-body li { margin: 4px 0; padding-left: 2px; }
+#novydev-ai .ai-chat-message-body blockquote { margin: 10px 0; padding: 2px 0 2px 12px; border-left: 3px solid var(--accent, #b7ff4a); color: #bfc5d1; }
+#novydev-ai .ai-chat-message-body hr { border: 0; border-top: 1px solid rgba(255,255,255,.13); margin: 12px 0; }
+#novydev-ai .ai-chat-message-body .ai-chat-inline-code { padding: 2px 5px; border-radius: 5px; background: rgba(183,255,74,.09); color: #d3fb9d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92em; }
+#novydev-ai .ai-chat-message-body .ai-chat-code-block { max-width: 100%; overflow-x: auto; margin: 10px 0; padding: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: #090b10; color: #e4e8ef; white-space: pre; }
+#novydev-ai .ai-chat-message-body .ai-chat-code-block code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; line-height: 1.55; }
+#novydev-ai .ai-chat-message-body .ai-chat-code-block code[data-language]::before { content: attr(data-language); display: block; margin-bottom: 8px; color: #b7ff4a; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; }
