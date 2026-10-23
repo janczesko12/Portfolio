@@ -87,7 +87,7 @@ const portfolio = {
 
 const translations = {
   pl:{
-    navAbout:"O mnie",navProjects:"Projekty",navStack:"Stack",navContact:"Kontakt",
+    navAbout:"O mnie",navProjects:"Projekty",navStack:"Stack",navContact:"Kontakt",navNewsletter:"Newsletter",
     heroEyebrow:"portfolio / 2026",heroTitle:"Buduję <em>cyfrowe rzeczy</em>, które mają sens.",
     heroLead:"Aplikacje, automatyzacje, projekty AI i małe narzędzia rozwiązujące konkretne problemy.<br>Od pomysłu do działającego produktu.",
     heroProjects:"Zobacz projekty <span>↗</span>",heroContact:"Kontakt",
@@ -106,10 +106,10 @@ const translations = {
     stackKicker:"STACK",stackTitle:"Narzędzia, których używam.",stackLanguages:"JĘZYKI",stackTools:"NARZĘDZIA I PLATFORMY",stackInterests:"ZAINTERESOWANIA",
     contactKicker:"05 / KONTAKT",contactTitle:"Masz pomysł?<br><em>Napisz.</em>",contactDescription:"Zamiast długiego formularza — konkretnie. Link do GitHuba, e-mail albo wiadomość.",statusLabel:"STATUS",
     email:"E-mail",modalKicker:"SZCZEGÓŁY PROJEKTU",modalFeatures:"CO ZAWIERA",modalTech:"TECHNOLOGIE",modalOpen:"Otwórz projekt",modalBack:"Wróć",
-    modalPreparing:"Link w przygotowaniu",ratingsKicker:"06 / OCENA",ratingsTitle:"Jak oceniasz moje portfolio?",ratingsDescription:"Zostaw ocenę i krótką opinię. Każda ocena trafia do mojego podglądu.",ratingsVotes:"ocen",ratingsDashboard:"Podgląd wszystkich ocen ↗",ratingsChoose:"Wybierz ocenę 1–5",ratingsOpinion:"Opinia (opcjonalnie)",ratingsSubmit:"Wyślij ocenę",easterHint:"* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"zrobione z kodu ✦"
+    modalPreparing:"Link w przygotowaniu",newsletterKicker:"07 / NEWSLETTER",newsletterTitle:"Nowe projekty.<br><em>Prosto na maila.</em>",newsletterDescription:"Od czasu do czasu wyślę krótką aktualizację o nowych projektach, aplikacjach i eksperymentach. Bez spamu.",newsletterEmailLabel:"Twój adres e-mail",newsletterConsent:"Zgadzam się na zapis mojego adresu e-mail i otrzymywanie informacji o nowych projektach NovyDev.",newsletterPrivacy:"Adres będzie przechowywany w bazie newslettera. Wypisanie lub prośbę o usunięcie danych możesz wysłać na e-mail kontaktowy.",newsletterSubmit:"Dołącz do newslettera",ratingsKicker:"06 / OCENA",ratingsTitle:"Jak oceniasz moje portfolio?",ratingsDescription:"Zostaw ocenę i krótką opinię. Każda ocena trafia do mojego podglądu.",ratingsVotes:"ocen",ratingsDashboard:"Podgląd wszystkich ocen ↗",ratingsChoose:"Wybierz ocenę 1–5",ratingsOpinion:"Opinia (opcjonalnie)",ratingsSubmit:"Wyślij ocenę",easterHint:"* sprawdź easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"zrobione z kodu ✦"
   },
   en:{
-    navAbout:"About",navProjects:"Projects",navStack:"Stack",navContact:"Contact",
+    navAbout:"About",navProjects:"Projects",navStack:"Stack",navContact:"Contact",navNewsletter:"Newsletter",
     heroEyebrow:"portfolio / 2026",heroTitle:"I build <em>digital things</em> that make sense.",
     heroLead:"Apps, automations, AI projects and small tools that solve concrete problems.<br>From idea to working product.",
     heroProjects:"See projects <span>↗</span>",heroContact:"Contact",
@@ -128,7 +128,7 @@ const translations = {
     stackKicker:"STACK",stackTitle:"Tools I use.",stackLanguages:"LANGUAGES",stackTools:"TOOLS & PLATFORMS",stackInterests:"INTERESTS",
     contactKicker:"05 / CONTACT",contactTitle:"Got an idea?<br><em>Let's talk.</em>",contactDescription:"No long form — just be specific. GitHub link, email or a message.",statusLabel:"STATUS",
     email:"Email",modalKicker:"PROJECT DETAILS",modalFeatures:"INCLUDES",modalTech:"TECHNOLOGIES",modalOpen:"Open project",modalBack:"Back",
-    modalPreparing:"Link coming soon",ratingsKicker:"06 / RATE",ratingsTitle:"How would you rate my portfolio?",ratingsDescription:"Leave a rating and a short review. Every rating appears in my dashboard.",ratingsVotes:"ratings",ratingsDashboard:"View all ratings ↗",ratingsChoose:"Choose a rating 1–5",ratingsOpinion:"Review (optional)",ratingsSubmit:"Send rating",easterHint:"* check the easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"made with code ✦"
+    modalPreparing:"Link coming soon",newsletterKicker:"07 / NEWSLETTER",newsletterTitle:"New projects.<br><em>Sent to your inbox.</em>",newsletterDescription:"Occasional, short updates about new projects, apps and experiments. No spam.",newsletterEmailLabel:"Your email address",newsletterConsent:"I agree to save my email address and receive updates about new NovyDev projects.",newsletterPrivacy:"Your address will be stored for the newsletter. To unsubscribe or request deletion, contact me by email.",newsletterSubmit:"Join the newsletter",ratingsKicker:"06 / RATE",ratingsTitle:"How would you rate my portfolio?",ratingsDescription:"Leave a rating and a short review. Every rating appears in my dashboard.",ratingsVotes:"ratings",ratingsDashboard:"View all ratings ↗",ratingsChoose:"Choose a rating 1–5",ratingsOpinion:"Review (optional)",ratingsSubmit:"Send rating",easterHint:"* check the easter egg <kbd>↑ ↑ ↓ ↓ ← → ← → B A</kbd>",footerMade:"made with code ✦"
   }
 };
 
