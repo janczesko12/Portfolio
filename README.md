@@ -64,4 +64,4 @@ In Vercel, configure `RESEND_API_KEY` for the **Production** environment and red
 
 ## AI assistant on the portfolio
 
-The floating multilingual chat uses the OpenAI Responses API through the server-side `/api/chat` function. Set `OPENAI_API_KEY` in Vercel's **Production** environment; optionally set `OPENAI_CHAT_MODEL` to override the default `gpt-6-luna` model. Do not place provider secrets in browser files. The widget responds in the language of the latest message, keeps recent conversation context in browser memory for that tab, and can use web search for current information. API usage may incur charges on the OpenAI API account.
+The floating multilingual chat uses Google Gemini through the server-side `/api/chat` function. Set `GEMINI_API_KEY` in Vercel's **Production** environment. Optionally set `GEMINI_CHAT_MODEL` to override the default `gemini-3.8-flash` model. The endpoint uses Google Search grounding for current information when available. Do not place provider secrets in browser files. Recent conversation context is kept in browser memory for that tab. API usage is subject to the limits and billing settings of the Google AI account.
