@@ -39,37 +39,153 @@
     return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith("en") ? "en" : "pl";
   }
   function tr(key) { return copy[getLanguage()][key]; }
-  function appendTextWithLinks(parent, text) {
-    const urlPattern = /https?:\/\/[^\s<]+/g;
-    let lastIndex = 0;
-    let match;
-    while ((match = urlPattern.exec(text)) !== null) {
-      parent.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
-      let url = match[0];
-      let suffix = "";
-      while (/[.,!?;:)\]]$/.test(url)) {
-        suffix = url.slice(-1) + suffix;
-        url = url.slice(0, -1);
-      }
-      try {
-        const parsed = new URL(url);
-        if (parsed.protocol === "https:" || parsed.protocol === "http:") {
-          const link = document.createElement("a");
-          link.href = parsed.href;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.textContent = url;
-          parent.appendChild(link);
-        } else {
-          parent.appendChild(document.createTextNode(url));
-        }
-      } catch {
-        parent.appendChild(document.createTextNode(url));
-      }
-      if (suffix) parent.appendChild(document.createTextNode(suffix));
-      lastIndex = urlPattern.lastIndex;
+  function appendSafeLink(parent, rawUrl, label) {
+    let url = String(rawUrl || "");
+    let suffix = "";
+    while (/[.,!?;:)\]]$/.test(url)) {
+      suffix = url.slice(-1) + suffix;
+      url = url.slice(0, -1);
     }
-    parent.appendChild(document.createTextNode(text.slice(lastIndex)));
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+        parent.appendChild(document.createTextNode(url + suffix));
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = parsed.href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = label || url;
+      parent.appendChild(link);
+      if (suffix) parent.appendChild(document.createTextNode(suffix));
+    } catch {
+      parent.appendChild(document.createTextNode(url + suffix));
+    }
+  }
+
+  // Parse a safe subset of Markdown using DOM nodes, never untrusted innerHTML.
+  function renderInline(parent, source) {
+    const text = String(source);
+    const tokens = /\\[[^\\]]+\\]\\(https?:\\/\\/[^\\s)]+\\)|https?:\\/\\/[^\\s<>]+|\`[^\`\\n]+\`|\\*\\*[^*\\n]+\\*\\*|__[^_\\n]+__|\\*[^*\\n]+\\*|_[^_\\n]+_/g;
+    let cursor = 0;
+    let match;
+
+    while ((match = tokens.exec(text)) !== null) {
+      if (match.index > cursor) parent.appendChild(document.createTextNode(text.slice(cursor, match.index)));
+      const token = match[0];
+
+      if (token.startsWith("[") && token.includes("](")) {
+        const link = token.match(/^\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s)]+)\\)$/);
+        if (link) appendSafeLink(parent, link[2], link[1]);
+        else parent.appendChild(document.createTextNode(token));
+      } else if (token.startsWith("http://") || token.startsWith("https://")) {
+        appendSafeLink(parent, token, token);
+      } else if (token.startsWith("\`")) {
+        const code = document.createElement("code");
+        code.className = "ai-chat-inline-code";
+        code.textContent = token.slice(1, -1);
+        parent.appendChild(code);
+      } else if (token.startsWith("**") || token.startsWith("__")) {
+        const strong = document.createElement("strong");
+        renderInline(strong, token.slice(2, -2));
+        parent.appendChild(strong);
+      } else {
+        const emphasis = document.createElement("em");
+        renderInline(emphasis, token.slice(1, -1));
+        parent.appendChild(emphasis);
+      }
+      cursor = tokens.lastIndex;
+    }
+    if (cursor < text.length) parent.appendChild(document.createTextNode(text.slice(cursor)));
+  }
+
+  function isBlockStart(line) {
+    return /^\\s*(?:\`{3,}|#{1,4}\\s+|>\\s?|[-*+]\\s+|\\d+[.)]\\s+|(?:---+|___+|\\*\\*\\*+)\\s*$)/.test(line);
+  }
+
+  function renderMarkdown(parent, source) {
+    const lines = String(source).replace(/\\r\\n?/g, "\\n").split("\\n");
+    let i = 0;
+    parent.replaceChildren();
+
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim()) { i++; continue; }
+
+      if (/^\\s*\`{3,}/.test(line)) {
+        const opening = line.match(/^\\s*(\`{3,})(.*)$/);
+        const fenceLength = opening[1].length;
+        const language = opening[2].trim().split(/\\s+/)[0].replace(/[^a-zA-Z0-9_+-]/g, "").slice(0, 24);
+        i++;
+        const codeLines = [];
+        while (i < lines.length && !new RegExp("^\\\\s*\`{" + fenceLength + ",}\\\\s*$").test(lines[i])) {
+          codeLines.push(lines[i]);
+          i++;
+        }
+        if (i < lines.length) i++;
+        const pre = document.createElement("pre");
+        pre.className = "ai-chat-code-block";
+        const code = document.createElement("code");
+        if (language) code.dataset.language = language;
+        code.textContent = codeLines.join("\\n");
+        pre.appendChild(code);
+        parent.appendChild(pre);
+        continue;
+      }
+
+      const heading = line.match(/^\\s*(#{1,4})\\s+(.+?)\\s*#*\\s*$/);
+      if (heading) {
+        const el = document.createElement("h" + Math.min(heading[1].length + 1, 5));
+        renderInline(el, heading[2]);
+        parent.appendChild(el);
+        i++;
+        continue;
+      }
+
+      if (/^\\s*(?:---+|___+|\\*\\*\\*+)\\s*$/.test(line)) {
+        parent.appendChild(document.createElement("hr"));
+        i++;
+        continue;
+      }
+
+      if (/^\\s*>\\s?/.test(line)) {
+        const quote = document.createElement("blockquote");
+        while (i < lines.length && /^\\s*>\\s?/.test(lines[i])) {
+          if (quote.childNodes.length) quote.appendChild(document.createElement("br"));
+          renderInline(quote, lines[i++].replace(/^\\s*>\\s?/, ""));
+        }
+        parent.appendChild(quote);
+        continue;
+      }
+
+      const ordered = /^\\s*\\d+[.)]\\s+/.test(line);
+      const unordered = /^\\s*[-*+]\\s+/.test(line);
+      if (ordered || unordered) {
+        const list = document.createElement(ordered ? "ol" : "ul");
+        const pattern = ordered ? /^\\s*\\d+[.)]\\s+(.*)$/ : /^\\s*[-*+]\\s+(.*)$/;
+        while (i < lines.length) {
+          const item = lines[i].match(pattern);
+          if (!item) break;
+          const li = document.createElement("li");
+          renderInline(li, item[1]);
+          list.appendChild(li);
+          i++;
+        }
+        parent.appendChild(list);
+        continue;
+      }
+
+      const paragraphLines = [line.trim()];
+      i++;
+      while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) {
+        paragraphLines.push(lines[i].trim());
+        i++;
+      }
+      const paragraph = document.createElement("p");
+      renderInline(paragraph, paragraphLines.join(" "));
+      parent.appendChild(paragraph);
+    }
   }
 
   function addMessage(role, text) {
@@ -77,11 +193,7 @@
     bubble.className = "ai-chat-message " + role;
     const body = document.createElement("div");
     body.className = "ai-chat-message-body";
-    const lines = String(text).split("\n");
-    lines.forEach((line, index) => {
-      if (index) body.appendChild(document.createElement("br"));
-      appendTextWithLinks(body, line);
-    });
+    renderMarkdown(body, text);
     bubble.appendChild(body);
     messagesEl.appendChild(bubble);
     messagesEl.scrollTop = messagesEl.scrollHeight;
@@ -121,7 +233,7 @@
     const firstBody = messagesEl.querySelector(".ai-chat-message.assistant .ai-chat-message-body");
     if (history.length === 0 && firstBody) {
       firstBody.replaceChildren();
-      appendTextWithLinks(firstBody, tr("greeting"));
+      renderMarkdown(firstBody, tr("greeting"));
     }
     renderSuggestions();
   }
