@@ -58,9 +58,7 @@ W panelu wpisz nazwę, opis, platformę, wersję, kolejność sortowania, URL ik
 
 ## Newsletter
 
-The homepage newsletter form stores consented email addresses in the Firebase Firestore collection `newsletter_subscribers`. Each normalized email gets a stable SHA-256 document ID to prevent duplicate signups. Public visitors can create a subscription but cannot read the subscriber list.
+The homepage newsletter form sends explicit signups to the Vercel serverless endpoint `/api/newsletter`. The endpoint uses the server-only `RESEND_API_KEY` environment variable to add the contact to Resend, the `General` segment, and the `NovyDev Newsletter` topic. The API key must never be included in browser-side files.
 
-**Important for production:** after updating this repository, open Firebase Console for project `portfolio-395d6` → **Firestore Database → Rules**, replace the rules with the current contents of `firestore.rules`, and click **Publish**. The form will show an error instead of claiming success while the matching rule is unavailable.
-
-The current implementation records subscriptions in Firestore; it does not yet send campaign emails or confirmation emails automatically. To send newsletters, connect an email delivery provider and use the stored consented subscriber list. For removal or unsubscribe requests, use the contact email shown on the site.
+In Vercel, configure `RESEND_API_KEY` for the **Production** environment and redeploy after changing it. The Resend sending domain `novydev.pl` should remain verified. The form includes email validation, an unchecked consent checkbox, a honeypot field, same-site origin checks, and best-effort request throttling.
 
