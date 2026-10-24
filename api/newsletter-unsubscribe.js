@@ -105,12 +105,6 @@ async function syncResendOptOut(email) {
   });
   if (!topicResponse.ok) throw new Error("Resend topic opt-out failed (" + topicResponse.status + ")");
 
-  const contactResponse = await fetch("https://api.resend.com/contacts/" + encodeURIComponent(contact.id), {
-    method: "PATCH",
-    headers,
-    body: JSON.stringify({ unsubscribed: true })
-  });
-  if (!contactResponse.ok) throw new Error("Resend contact opt-out failed (" + contactResponse.status + ")");
   return true;
 }
 
