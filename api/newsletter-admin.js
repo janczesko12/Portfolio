@@ -161,7 +161,7 @@ module.exports = async function handler(req, res) {
     for (let i=0; i<mappedSubscribers.length; i+=100) {
       const chunk = mappedSubscribers.slice(i,i+100);
       const emails = chunk.map(s => {
-        const unsubscribeUrl = "https://www.novydev.pl/rezygnacja.html?id=" + encodeURIComponent(s.unsubscribeId);
+        const unsubscribeUrl = "https://www.novydev.pl/api/newsletter-unsubscribe?id=" + encodeURIComponent(s.unsubscribeId);
         const safeMessage = escapeHtml(message).replace(/\n/g,"<br>");
         const discordCta = DISCORD_URL ? '<p style="margin:24px 0"><a href="' + escapeHtml(DISCORD_URL) + '" style="display:inline-block;background:#5865f2;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:bold">Dołącz do Discorda</a></p>' : '';
         const fallbackUnsubscribeUrl = "https://www.novydev.pl/newsletter-opusc.html";
