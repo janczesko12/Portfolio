@@ -51,9 +51,9 @@ module.exports = async function handler(req, res) {
     return json(res, 405, { ok:false, error:"Method not allowed" });
   }
   try {
+    const db = getDb();
     const admin = await requireAdmin(req);
     if (!admin) return json(res, 401, { ok:false, error:"Admin authentication required" });
-    const db = getDb();
     const snapshot = await db.collection(COLLECTION).get();
     const subscribers = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }))
       .filter(s => s.consent === true && s.unsubscribedAt == null && typeof s.email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email));
