@@ -14,7 +14,7 @@
   }
 
   if (!token || !token.includes(".")) {
-    form.hidden = true;
+    form.querySelectorAll("input, textarea, button").forEach((control) => { control.disabled = true; });
     showError("Brakuje prawidłowego tokenu rezygnacji. Otwórz link z najnowszej wiadomości newslettera.");
     return;
   }
