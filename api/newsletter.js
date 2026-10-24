@@ -34,6 +34,12 @@ function rateLimited(key) {
   return false;
 }
 
+function safeApiReason(data) {
+  const message = typeof data?.message === "string" ? data.message : "";
+  // Keep diagnostics short and do not log a contact's email or any credentials.
+  return message.replace(/[\r\n\t]+/g, " ").slice(0, 180);
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader("Vary", "Origin");
   const origin = req.headers.origin;
@@ -64,29 +70,44 @@ module.exports = async function handler(req, res) {
 
   const contactPath = "/contacts/" + encodeURIComponent(email);
   try {
-    // Check for an existing contact so repeated signups don't create duplicates.
+    // Resolve a stable Resend contact ID first; topic updates use that ID rather than an email path.
     const existing = await resendRequest(contactPath, "GET");
+    let contactId;
     if (existing.status === 404) {
       const created = await resendRequest("/contacts", "POST", { email, unsubscribed: false });
-      if (!created.ok) {
-        // If a parallel request created the contact, continue with the existing-contact path.
-        if (created.status !== 409) throw new Error("contact create failed (" + created.status + ")");
+      if (created.ok) {
+        contactId = created.data?.id;
+      } else if (created.status === 409) {
+        // Another simultaneous request may have created the contact.
+        const refreshed = await resendRequest(contactPath, "GET");
+        if (!refreshed.ok) throw new Error("contact lookup after conflict failed (" + refreshed.status + ")");
+        contactId = refreshed.data?.id;
+      } else {
+        throw new Error("contact create failed (" + created.status + ")");
       }
     } else if (!existing.ok) {
       throw new Error("contact lookup failed (" + existing.status + ")");
+    } else {
+      contactId = existing.data?.id;
+    }
+    if (typeof contactId !== "string" || !contactId) {
+      throw new Error("contact lookup did not return an ID");
     }
 
-    // The visitor just gave fresh explicit consent in the unchecked form checkbox.
-    const updated = await resendRequest(contactPath, "PATCH", { unsubscribed: false });
+    // The visitor just gave fresh explicit consent in the checked form checkbox.
+    const updated = await resendRequest("/contacts/" + encodeURIComponent(contactId), "PATCH", { unsubscribed: false });
     if (!updated.ok) throw new Error("contact update failed (" + updated.status + ")");
 
-    const segment = await resendRequest(contactPath + "/segments/" + SEGMENT_ID, "POST");
+    const segment = await resendRequest("/contacts/" + encodeURIComponent(contactId) + "/segments/" + SEGMENT_ID, "POST");
     if (!segment.ok && segment.status !== 409) throw new Error("segment update failed (" + segment.status + ")");
 
-    const topic = await resendRequest(contactPath + "/topics", "PATCH", {
+    const topic = await resendRequest("/contacts/" + encodeURIComponent(contactId) + "/topics", "PATCH", {
       topics: [{ id: TOPIC_ID, subscription: "opt_in" }]
     });
-    if (!topic.ok) throw new Error("topic update failed (" + topic.status + ")");
+    if (!topic.ok) {
+      const reason = safeApiReason(topic.data);
+      throw new Error("topic update failed (" + topic.status + ")" + (reason ? ": " + reason : ""));
+    }
 
     // Mirror the consented subscriber to Firestore for the private admin API.
     // Configure FIREBASE_SERVICE_ACCOUNT_JSON in Vercel to enable this sync.
