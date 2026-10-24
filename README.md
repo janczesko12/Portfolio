@@ -62,6 +62,21 @@ The homepage newsletter form sends explicit signups to the Vercel serverless end
 
 In Vercel, configure `RESEND_API_KEY` for the **Production** environment and redeploy after changing it. The Resend sending domain `novydev.pl` should remain verified. The form includes email validation, an unchecked consent checkbox, a honeypot field, same-site origin checks, and best-effort request throttling.
 
+### Private newsletter administration API
+
+- `GET /api/newsletter-admin` lists eligible subscribers. It requires a Firebase Authentication ID token in `Authorization: Bearer <token>`. Only the verified administrator account `janczesko12@gmail.com` is accepted.
+- `POST /api/newsletter-admin` sends a newsletter only to consented subscribers. It requires JSON `{ "subject": "...", "message": "...", "confirmSend": true }` and the same administrator token. Deployment itself never sends a campaign.
+- `GET /api/newsletter-unsubscribe?token=...` displays a confirmation page; confirming it marks the Firestore record as unsubscribed.
+- `api/newsletter.js` mirrors new signups into `newsletter_subscribers` when Firebase service-account configuration is present. Earlier signups are not backfilled automatically.
+
+Set these Vercel **Production** environment variables and redeploy:
+- `FIREBASE_SERVICE_ACCOUNT_JSON` — the JSON contents of a Firebase service-account key for project `portfolio-395d6`. Keep this secret and never commit it.
+- `NEWSLETTER_UNSUBSCRIBE_SECRET` — a long, random secret used to sign unsubscribe tokens.
+- `RESEND_API_KEY` — the existing Resend sending key.
+- Optional: `NEWSLETTER_FROM` — defaults to `NovyDev <newsletter@novydev.pl>`; the sender domain must be verified in Resend.
+
+Create the service-account key in Firebase Console → Project settings → Service accounts. Do not paste the private key into chat or source control. Grant the service account only the permissions needed for Firestore access.
+
 ## AI assistant on the portfolio
 
 The floating multilingual chat uses Google Gemini through the server-side `/api/chat` function. Set `GEMINI_API_KEY` in Vercel's **Production** environment. Optionally set `GEMINI_CHAT_MODEL` to override the default `gemini-3.8-flash` model. The endpoint uses Google Search grounding for current information when available. Do not place provider secrets in browser files. Recent conversation context is kept in browser memory for that tab. API usage is subject to the limits and billing settings of the Google AI account.
