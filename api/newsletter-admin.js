@@ -5,7 +5,8 @@ const { getAuth } = require("firebase-admin/auth");
 
 const ADMIN_EMAIL = "janczesko12@gmail.com";
 const COLLECTION = "newsletter_subscribers";
-const DISCORD_URL = "https://discord.gg/invite/test";
+const TOPIC_ID = "afdf7bd8-1ec1-47e4-aa3f-b95efde438a5";
+const DISCORD_URL = process.env.NEWSLETTER_DISCORD_URL || "";
 const FROM = process.env.NEWSLETTER_FROM || "NovyDev <newsletter@novydev.pl>";
 const ALLOWED_ORIGINS = new Set(["https://novydev.pl", "https://www.novydev.pl"]);
 
@@ -42,6 +43,32 @@ function unsubscribeToken(email) {
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]);
 }
+async function hasNewsletterOptIn(email) {
+  const headers = { Authorization:"Bearer " + process.env.RESEND_API_KEY, "Content-Type":"application/json" };
+  const contactResponse = await fetch("https://api.resend.com/contacts/" + encodeURIComponent(email), { method:"GET", headers });
+  if (contactResponse.status === 404) return false;
+  if (!contactResponse.ok) throw new Error("Unable to verify a subscriber contact (" + contactResponse.status + ")");
+  const contact = await contactResponse.json().catch(() => ({}));
+  if (!contact.id || contact.unsubscribed === true) return false;
+
+  const topicsResponse = await fetch("https://api.resend.com/contacts/" + encodeURIComponent(contact.id) + "/topics", { method:"GET", headers });
+  if (!topicsResponse.ok) throw new Error("Unable to verify newsletter topic (" + topicsResponse.status + ")");
+  const topics = await topicsResponse.json().catch(() => ({}));
+  return Array.isArray(topics.data) && topics.data.some(topic => topic.id === TOPIC_ID && topic.subscription === "opt_in");
+}
+async function onlySubscribedToNewsletter(subscribers) {
+  const result = [];
+  // Keep parallelism bounded to avoid overwhelming the provider API on larger lists.
+  for (let i = 0; i < subscribers.length; i += 20) {
+    const group = subscribers.slice(i, i + 20);
+    const checked = await Promise.all(group.map(async subscriber => ({
+      subscriber,
+      active: await hasNewsletterOptIn(subscriber.email)
+    })));
+    result.push(...checked.filter(item => item.active).map(item => item.subscriber));
+  }
+  return result;
+}
 module.exports = async function handler(req, res) {
   res.setHeader("Vary", "Origin");
   const origin = req.headers.origin;
@@ -55,8 +82,15 @@ module.exports = async function handler(req, res) {
     const admin = await requireAdmin(req);
     if (!admin) return json(res, 401, { ok:false, error:"Admin authentication required" });
     const snapshot = await db.collection(COLLECTION).get();
-    const subscribers = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }))
+    let subscribers = snapshot.docs.map(doc => ({ id:doc.id, ...doc.data() }))
       .filter(s => s.consent === true && s.unsubscribedAt == null && typeof s.email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email));
+    if (!process.env.RESEND_API_KEY) return json(res,503,{ok:false,error:"Resend is not configured"});
+    try {
+      subscribers = await onlySubscribedToNewsletter(subscribers);
+    } catch (verificationError) {
+      console.error("Newsletter subscription verification failed:", verificationError.message);
+      return json(res,503,{ok:false,error:"Could not verify newsletter subscriptions. No email was sent."});
+    }
     if (req.method === "GET") {
       return json(res, 200, {
         ok:true, totalDocuments:snapshot.size, eligibleCount:subscribers.length,
@@ -79,8 +113,9 @@ module.exports = async function handler(req, res) {
         const token = unsubscribeToken(s.email);
         const unsubscribeUrl = "https://novydev.pl/rezygnacja.html?token=" + encodeURIComponent(token);
         const safeMessage = escapeHtml(message).replace(/\n/g,"<br>");
-        const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif;color:#172033"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:28px 12px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px"><tr><td style="padding:30px;font-size:16px;line-height:1.65;color:#172033"><h1 style="font-size:24px;line-height:1.25;color:#172033;margin:0 0 20px">NovyDev</h1><p style="font-size:16px;line-height:1.65;color:#172033">' + safeMessage + '</p><p style="margin:24px 0"><a href="' + DISCORD_URL + '" style="display:inline-block;background:#5865f2;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:bold">Dołącz do Discorda</a></p><p style="font-size:12px;line-height:1.5;color:#667085">Otrzymujesz tę wiadomość, ponieważ zapisano Cię do newslettera NovyDev. <a href="' + unsubscribeUrl + '" style="color:#475467">Wypisz się z newslettera</a>.</p></td></tr></table></td></tr></table></body></html>';
-        return { from:FROM, to:[s.email], subject, html, text:message + "\n\nDiscord: " + DISCORD_URL + "\n\nWypisz się: " + unsubscribeUrl };
+        const discordCta = DISCORD_URL ? '<p style="margin:24px 0"><a href="' + escapeHtml(DISCORD_URL) + '" style="display:inline-block;background:#5865f2;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:bold">Dołącz do Discorda</a></p>' : '';
+        const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body style="margin:0;background:#f4f6fb;font-family:Arial,Helvetica,sans-serif;color:#172033"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="padding:28px 12px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px"><tr><td style="padding:30px;font-size:16px;line-height:1.65;color:#172033"><h1 style="font-size:24px;line-height:1.25;color:#172033;margin:0 0 20px">NovyDev</h1><p style="font-size:16px;line-height:1.65;color:#172033">' + safeMessage + '</p>' + discordCta + '<p style="font-size:12px;line-height:1.5;color:#667085">Otrzymujesz tę wiadomość, ponieważ zapisano Cię do newslettera NovyDev. <a href="' + unsubscribeUrl + '" style="color:#475467">Wypisz się z newslettera</a>.</p></td></tr></table></td></tr></table></body></html>';
+        return { from:FROM, to:[s.email], subject, html, text:message + (DISCORD_URL ? "\n\nDiscord: " + DISCORD_URL : "") + "\n\nWypisz się: " + unsubscribeUrl };
       });
       const response = await fetch("https://api.resend.com/emails/batch", {
         method:"POST", headers:{ Authorization:"Bearer " + process.env.RESEND_API_KEY, "Content-Type":"application/json" },
