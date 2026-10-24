@@ -62,6 +62,8 @@ The homepage newsletter form sends explicit signups to the Vercel serverless end
 
 In Vercel, configure `RESEND_API_KEY` for the **Production** environment and redeploy after changing it. The Resend sending domain `novydev.pl` should remain verified. The form includes email validation, an unchecked consent checkbox, a honeypot field, same-site origin checks, and best-effort request throttling.
 
+Open the private dashboard at `/admin-newsletter` after deployment. It uses Google sign-in and the same verified administrator account as the existing app-management panel.
+
 ### Private newsletter administration API
 
 - `GET /api/newsletter-admin` lists eligible subscribers. It requires a Firebase Authentication ID token in `Authorization: Bearer <token>`. Only the verified administrator account `janczesko12@gmail.com` is accepted.
