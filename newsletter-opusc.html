@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Rezygnacja z newslettera — NovyDev</title>
+  <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .leave-page{width:min(calc(100% - 28px),900px);margin:0 auto;padding:clamp(34px,8vh,76px) 0 60px}
+    .leave-top{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:42px}
+    .leave-brand{display:inline-flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.16em;font-size:.8rem}
+    .leave-brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--accent);color:#08090d;letter-spacing:0}
+    .leave-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;align-items:center}
+    .leave-copy h1{font-size:clamp(2.7rem,6vw,4.7rem);line-height:.98;letter-spacing:-.055em;margin:14px 0 20px}
+    .leave-copy p{color:var(--muted);font-size:1.02rem;line-height:1.75}
+    .leave-card{padding:clamp(22px,4vw,34px);border:1px solid rgba(183,255,74,.2);border-radius:24px;background:radial-gradient(circle at 100% 0,rgba(183,255,74,.075),transparent 36%),rgba(255,255,255,.025);box-shadow:var(--shadow)}
+    .leave-card h2{font-size:1.55rem;line-height:1.2;margin:0 0 10px}
+    .leave-card p{font-size:.91rem;line-height:1.65;color:var(--muted);margin:0 0 22px}
+    .leave-label{display:block;font-size:.87rem;font-weight:750;margin:0 0 8px}
+    .leave-input{display:block;width:100%;padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.22);color:var(--text);font:inherit;font-size:.95rem;margin-bottom:14px}
+    .leave-input:focus{outline:2px solid var(--accent);outline-offset:3px}
+    .leave-submit{width:100%;cursor:pointer}
+    .leave-submit:disabled{opacity:.65;cursor:wait;transform:none}
+    .leave-status{font-size:.85rem;line-height:1.6;color:var(--muted);margin:15px 0 0;overflow-wrap:anywhere}
+    .leave-status.error{color:#ffaaa8}
+    .leave-success[hidden],.leave-form[hidden]{display:none}
+    .leave-check{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(183,255,74,.35);background:rgba(183,255,74,.11);color:var(--accent);font-size:1.45rem;margin-bottom:15px}
+    .leave-back{display:inline-flex;margin-top:25px;color:var(--muted);font-size:.86rem}
+    .leave-back:hover{color:var(--accent)}
+    @media(max-width:740px){.leave-page{padding-top:28px}.leave-top{margin-bottom:28px}.leave-layout{grid-template-columns:1fr;gap:14px}.leave-copy h1{font-size:clamp(2.8rem,13vw,4rem)}.leave-copy p{font-size:.96rem}.leave-card{border-radius:20px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="leave-page">
+    <header class="leave-top">
+      <a class="leave-brand" href="/" aria-label="NovyDev — strona główna"><span class="leave-brand-mark">N</span><span>NOVYDEV</span></a>
+      <a class="btn btn-ghost" href="/">Wróć na stronę ↗</a>
+    </header>
+    <div class="leave-layout">
+      <section class="leave-copy">
+        <p class="kicker">NEWSLETTER / USTAWIENIA</p>
+        <h1>Przykro nam, że <em>odchodzisz.</em></h1>
+        <p>Chcemy wysyłać tylko wiadomości, które naprawdę Cię interesują. Jeżeli newsletter NovyDev nie jest już dla Ciebie, pomożemy Ci zrezygnować.</p>
+        <p>Po wpisaniu adresu wyślemy wiadomość potwierdzającą. Dopiero kliknięcie linku w tej wiadomości wypisze Cię z listy. W potwierdzeniu znajdziesz też krótką, dobrowolną ankietę — Twoja opinia pomoże nam ulepszyć newsletter.</p>
+      </section>
+      <section class="leave-card" aria-labelledby="leave-title">
+        <div id="leave-form-area">
+          <h2 id="leave-title">Jakiego adresu używasz?</h2>
+          <p>Wpisz adres, na który przychodzą wiadomości od NovyDev. Ankieta jest opcjonalna, a rezygnacja zawsze bezpłatna.</p>
+          <form id="leave-form" class="leave-form">
+            <label class="leave-label" for="leave-email">Adres e-mail</label>
+            <input class="leave-input" id="leave-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="jan@example.com" required>
+            <button class="btn btn-primary leave-submit" id="leave-submit" type="submit">Wyślij e-mail potwierdzający <span aria-hidden="true">↗</span></button>
+            <p id="leave-status" class="leave-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div id="leave-success" class="leave-success" hidden>
+          <span class="leave-check" aria-hidden="true">✓</span>
+          <h2>Sprawdź swoją skrzynkę.</h2>
+          <p>Jeśli podany adres jest zapisany do newslettera, wysłaliśmy wiadomość z bezpiecznym linkiem do potwierdzenia rezygnacji. Kliknij go, aby zakończyć wypisanie i — jeśli chcesz — odpowiedzieć na krótką ankietę.</p>
+          <p>Nie widzisz wiadomości? Sprawdź folder Spam lub Oferty. Możesz zamknąć tę stronę.</p>
+        </div>
+      </section>
+    </div>
+    <a class="leave-back" href="/">← Wróć do NovyDev</a>
+  </main>
+  <script>
+    (() => {
+      const form = document.getElementById("leave-form");
+      const email = document.getElementById("leave-email");
+      const submit = document.getElementById("leave-submit");
+      const status = document.getElementById("leave-status");
+      const formArea = document.getElementById("leave-form-area");
+      const success = document.getElementById("leave-success");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (submit.disabled) return;
+        submit.disabled = true;
+        submit.textContent = "Wysyłanie…";
+        status.classList.remove("error");
+        status.textContent = "";
+        try {
+          const response = await fetch("/api/newsletter-unsubscribe-request", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({ email: email.value.trim() })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || result.ok !== true) {
+            throw new Error(result.error || "Nie udało się wysłać e-maila. Spróbuj ponownie.");
+          }
+          formArea.hidden = true;
+          success.hidden = false;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } catch (error) {
+          status.textContent = error.message || "Wystąpił błąd. Spróbuj ponownie.";
+          status.classList.add("error");
+          submit.disabled = false;
+          submit.innerHTML = 'Wyślij e-mail potwierdzający <span aria-hidden="true">↗</span>';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
