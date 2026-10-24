@@ -1,6 +1,7 @@
 (() => {
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token") || "";
+  const unsubscribeId = params.get("id") || "";
   const form = document.getElementById("unsubscribe-form");
   const tokenInput = document.getElementById("unsubscribe-token");
   const status = document.getElementById("unsubscribe-status");
@@ -13,13 +14,18 @@
     status.classList.add("error");
   }
 
-  if (!token || !token.includes(".")) {
+  if (unsubscribeId) {
+    // Opaque random ID from the server; the backend resolves it to the subscriber email.
+    tokenInput.value = "";
+  } else if (token && token.includes(".")) {
+    // Backward compatibility for previously delivered emails.
+    tokenInput.value = token;
+  } else {
     form.querySelectorAll("input, textarea, button").forEach((control) => { control.disabled = true; });
-    showError("Brakuje prawidłowego tokenu rezygnacji. Otwórz link z najnowszej wiadomości newslettera.");
+    showError("Brakuje prawidłowego identyfikatora rezygnacji. Otwórz link z najnowszej wiadomości newslettera.");
     return;
   }
 
-  tokenInput.value = token;
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (submit.disabled) return;
@@ -32,17 +38,20 @@
     status.textContent = "";
 
     try {
+      const payload = {
+        reason: selected ? selected.value : "",
+        comment
+      };
+      if (unsubscribeId) payload.id = unsubscribeId;
+      else payload.token = token;
+
       const response = await fetch("/api/newsletter-unsubscribe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify({
-          token,
-          reason: selected ? selected.value : "",
-          comment
-        })
+        body: JSON.stringify(payload)
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || result.ok !== true) {
