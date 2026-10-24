@@ -88,6 +88,27 @@ module.exports = async function handler(req, res) {
     });
     if (!topic.ok) throw new Error("topic update failed (" + topic.status + ")");
 
+    // Mirror the consented subscriber to Firestore for the private admin API.
+    // Configure FIREBASE_SERVICE_ACCOUNT_JSON in Vercel to enable this sync.
+    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+      const crypto = require("node:crypto");
+      const { initializeApp, cert, getApps } = require("firebase-admin/app");
+      const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+      if (!getApps().length) {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+        initializeApp({ credential: cert(serviceAccount), projectId: serviceAccount.project_id });
+      }
+      const subscriberId = crypto.createHash("sha256").update(email).digest("hex");
+      await getFirestore().collection("newsletter_subscribers").doc(subscriberId).set({
+        email,
+        consent: true,
+        createdAt: FieldValue.serverTimestamp(),
+        language: body.language === "en" ? "en" : "pl",
+        source: "novydev.pl",
+        unsubscribedAt: null
+      }, { merge: true });
+    }
+
     return sendJson(res, 200, { ok: true });
   } catch (error) {
     // Never log the submitted email address or any secret.
