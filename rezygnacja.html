@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Rezygnacja z newslettera — NovyDev</title>
+  <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .unsub-page{width:min(calc(100% - 28px),920px);margin:0 auto;padding:clamp(36px,8vh,80px) 0 64px}
+    .unsub-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:34px}
+    .unsub-brand{display:inline-flex;align-items:center;gap:10px;font-size:.8rem;font-weight:900;letter-spacing:.16em}
+    .unsub-brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--accent);color:#08090d;letter-spacing:0}
+    .unsub-layout{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:26px;align-items:start}
+    .unsub-intro{padding:18px 4px}
+    .unsub-intro h1{font-size:clamp(2.6rem,6vw,4.5rem);line-height:.98;letter-spacing:-.055em;margin:14px 0 18px}
+    .unsub-intro p{color:var(--muted);font-size:1.02rem;line-height:1.75}
+    .unsub-note{margin-top:26px;padding:15px 17px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025);color:#c5cad3;font-size:.86rem;line-height:1.6}
+    .unsub-card{padding:clamp(22px,4vw,34px);border:1px solid rgba(183,255,74,.18);border-radius:24px;background:radial-gradient(circle at 100% 0,rgba(183,255,74,.07),transparent 34%),rgba(255,255,255,.025);box-shadow:var(--shadow)}
+    .unsub-card h2{margin:0 0 8px;font-size:1.45rem;letter-spacing:-.03em}
+    .unsub-card .subcopy{color:var(--muted);font-size:.9rem;margin:0 0 20px}
+    .unsub-reasons{display:grid;gap:9px;margin:0;padding:0;border:0}
+    .unsub-reasons legend{font-weight:750;margin-bottom:12px;font-size:.94rem}
+    .unsub-reason{display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.13);cursor:pointer;transition:border-color .18s ease,background .18s ease}
+    .unsub-reason:hover{border-color:rgba(183,255,74,.38);background:rgba(183,255,74,.035)}
+    .unsub-reason input{margin-top:4px;accent-color:var(--accent);flex:0 0 auto}
+    .unsub-reason span{font-size:.9rem;line-height:1.5;color:#dfe3e9}
+    .unsub-label{display:block;font-size:.88rem;font-weight:700;margin:20px 0 8px}
+    .unsub-comment{display:block;width:100%;resize:vertical;min-height:100px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.2);color:var(--text);font:inherit;font-size:.9rem}
+    .unsub-comment:focus,.unsub-reason input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .unsub-help{font-size:.78rem;color:var(--muted);line-height:1.55;margin:10px 0 18px}
+    .unsub-submit{width:100%;cursor:pointer}
+    .unsub-submit:disabled{opacity:.6;cursor:wait;transform:none}
+    .unsub-status{font-size:.9rem;color:var(--muted);line-height:1.6;margin:14px 0 0}
+    .unsub-status.error{color:#ffaaa8}
+    .unsub-back{display:inline-flex;margin-top:24px;color:var(--muted);font-size:.86rem}
+    .unsub-back:hover{color:var(--accent)}
+    .unsub-success{padding:18px 0 2px}
+    .unsub-success[hidden],#unsubscribe-form[hidden]{display:none}
+    .unsub-success-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:16px;background:rgba(183,255,74,.12);border:1px solid rgba(183,255,74,.35);color:var(--accent);font-size:1.5rem}
+    .unsub-success h2{font-size:1.8rem;margin:17px 0 8px}
+    .unsub-success p{color:var(--muted);line-height:1.75}
+    @media(max-width:760px){.unsub-page{padding-top:28px}.unsub-layout{grid-template-columns:1fr;gap:16px}.unsub-intro{padding:8px 2px}.unsub-intro h1{font-size:clamp(2.8rem,13vw,4rem)}.unsub-intro p{font-size:.96rem}.unsub-top{margin-bottom:22px}.unsub-card{border-radius:20px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <main class="unsub-page">
+    <header class="unsub-top">
+      <a class="unsub-brand" href="/" aria-label="NovyDev — strona główna"><span class="unsub-brand-mark">N</span><span>NOVYDEV</span></a>
+      <a class="btn btn-ghost" href="/">Wróć na stronę ↗</a>
+    </header>
+    <div class="unsub-layout">
+      <section class="unsub-intro">
+        <p class="kicker">NEWSLETTER / USTAWIENIA</p>
+        <h1>Przykro nam, że <em>odchodzisz.</em></h1>
+        <p>Chcemy, żeby nasze wiadomości były przydatne, a nie kolejnym mailem do usunięcia. Dziękujemy, że poświęcasz chwilę, by dać nam znać, co możemy poprawić.</p>
+        <div class="unsub-note">Ankieta jest całkowicie dobrowolna. Możesz zrezygnować z newslettera bez zaznaczania odpowiedzi i bez wpisywania komentarza.</div>
+      </section>
+      <section class="unsub-card" aria-labelledby="unsub-title">
+        <div id="unsub-form-content">
+          <h2 id="unsub-title">Zanim się pożegnamy…</h2>
+          <p class="subcopy">Czy możesz powiedzieć nam, dlaczego rezygnujesz? Twoja odpowiedź pomoże nam ulepszyć NovyDev.</p>
+          <form id="unsubscribe-form" method="post" action="/api/newsletter-unsubscribe">
+            <input type="hidden" id="unsubscribe-token" name="token" value="">
+            <fieldset class="unsub-reasons">
+              <legend>Co jest głównym powodem rezygnacji?</legend>
+              <label class="unsub-reason"><input type="radio" name="reason" value="too_many"><span>Otrzymuję zbyt dużo wiadomości.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="not_relevant"><span>Treści nie są już dla mnie przydatne.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="signed_up_by_mistake"><span>Zapisałem(-am) się przypadkiem albo nie pamiętam zapisu.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="content_changed"><span>Interesują mnie inne tematy niż wcześniej.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="other_channels"><span>Wolę śledzić projekty NovyDev w innych miejscach.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="inbox_clutter"><span>Chcę ograniczyć liczbę e-maili w skrzynce.</span></label>
+              <label class="unsub-reason"><input type="radio" name="reason" value="other"><span>Inny powód.</span></label>
+            </fieldset>
+            <label class="unsub-label" for="unsubscribe-comment">Co moglibyśmy poprawić? <span style="font-weight:400;color:var(--muted)">(opcjonalnie)</span></label>
+            <textarea class="unsub-comment" id="unsubscribe-comment" name="comment" maxlength="500" placeholder="Napisz kilka słów — jeśli masz ochotę."></textarea>
+            <p class="unsub-help">Nie prosimy o żadne dodatkowe dane. Odpowiedź służy wyłącznie ulepszaniu newslettera.</p>
+            <button id="unsubscribe-submit" class="btn btn-primary unsub-submit" type="submit">Potwierdzam rezygnację <span aria-hidden="true">↗</span></button>
+            <p id="unsubscribe-status" class="unsub-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div id="unsubscribe-success" class="unsub-success" hidden>
+          <span class="unsub-success-icon" aria-hidden="true">✓</span>
+          <h2>Rezygnacja potwierdzona.</h2>
+          <p>Twój adres został wypisany z newslettera NovyDev. Nie będziemy już wysyłać Ci naszych newsletterów.</p>
+          <p>Dziękujemy za dotychczasowy czas. Drzwi pozostają otwarte — zapraszamy na stronę, kiedy tylko zechcesz.</p>
+          <a class="btn btn-primary" href="/">Wróć do NovyDev <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <script src="/rezygnacja.js" defer></script>
+</body>
+</html>
