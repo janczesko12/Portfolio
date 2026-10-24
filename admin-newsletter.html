@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0b10">
+  <title>Newsletter — NovyDev</title>
+  <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/applications.css">
+  <style>
+    .newsletter-admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1.25rem;margin-top:1.5rem}
+    .newsletter-admin-card{border:1px solid var(--border,rgba(255,255,255,.12));border-radius:18px;padding:1.25rem;background:rgba(255,255,255,.035);min-width:0}
+    .newsletter-admin-card h2{margin-top:0}
+    .newsletter-count{font-size:2.4rem;font-weight:800;line-height:1.1;margin:.4rem 0}
+    .newsletter-subscribers{max-height:360px;overflow:auto;overflow-wrap:anywhere}
+    .newsletter-subscriber{padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:.95rem}
+    .newsletter-compose label{display:block;margin:1rem 0 .4rem}
+    .newsletter-compose input,.newsletter-compose textarea{width:100%;box-sizing:border-box;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:.85rem;background:rgba(0,0,0,.2);color:inherit;font:inherit}
+    .newsletter-compose textarea{min-height:180px;resize:vertical}
+    .newsletter-note{font-size:.88rem;opacity:.75;line-height:1.5}
+    @media(max-width:760px){.newsletter-admin-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Strona główna NovyDev"><span class="brand-mark" aria-hidden="true">N</span><span>NOVYDEV</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav id="nav" class="nav admin-nav" aria-label="Główna nawigacja">
+      <a href="/#about">O mnie</a><a href="/#projects">Projekty</a><a href="/aplikacje">Aplikacje</a>
+      <a href="/admin-aplikacje">Panel aplikacji</a><a href="/admin-newsletter">Newsletter</a><a href="/#contact">Kontakt</a>
+    </nav>
+  </header>
+  <main class="admin-page section-pad">
+    <a class="btn btn-ghost page-return" href="/">← Wróć do portfolio</a>
+    <div class="admin-top">
+      <div><p class="kicker">NOVYDEV / ADMIN</p><h1>Panel <em>newslettera</em></h1><p class="admin-subtitle">Sprawdź zapisy i wyślij wiadomość tylko do osób, które wyraziły zgodę.</p></div>
+      <div id="auth-area"><button id="login-button" class="btn btn-primary" type="button">Zaloguj się kontem Google</button></div>
+    </div>
+    <div id="admin-message" class="admin-message" role="status">Zaloguj się zweryfikowanym kontem administratora.</div>
+    <section id="admin-workspace" hidden>
+      <div class="newsletter-admin-grid">
+        <section class="newsletter-admin-card">
+          <h2>Subskrybenci</h2>
+          <div id="subscriber-count" class="newsletter-count">—</div>
+          <p class="newsletter-note">Liczba adresów z aktywną zgodą w Firestore. Wypisane adresy nie otrzymają kampanii.</p>
+          <button id="refresh-subscribers" class="btn btn-ghost" type="button">Odśwież listę</button>
+          <div id="subscriber-list" class="newsletter-subscribers" aria-live="polite"></div>
+        </section>
+        <section class="newsletter-admin-card">
+          <h2>Nowa wiadomość</h2>
+          <form id="newsletter-compose" class="newsletter-compose">
+            <label for="newsletter-subject">Temat</label>
+            <input id="newsletter-subject" maxlength="150" required value="Wpadaj na naszego Discorda! 🎮">
+            <label for="newsletter-message">Treść</label>
+            <textarea id="newsletter-message" maxlength="5000" required>Hej! 👋
+
+Chcesz pogadać, poznać ekipę i być na bieżąco? Wpadaj na naszego Discorda!
+
+Do zobaczenia na serwerze! 🚀</textarea>
+            <p class="newsletter-note">Do każdej wiadomości zostanie dodany przycisk Discorda i link do wypisania. Wysłanie wymaga osobnego potwierdzenia.</p>
+            <button id="send-newsletter" class="btn btn-primary" type="submit">Przygotuj wysyłkę</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="/admin-newsletter.js"></script>
+  <script>
+    (() => {
+      const toggle=document.querySelector(".menu-toggle"),nav=document.querySelector("#nav");
+      if(!toggle||!nav)return;
+      toggle.addEventListener("click",()=>{const open=nav.classList.toggle("open");toggle.setAttribute("aria-expanded",String(open));});
+      nav.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>{nav.classList.remove("open");toggle.setAttribute("aria-expanded","false");}));
+    })();
+  </script>
+</body>
+</html>
