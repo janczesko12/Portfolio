@@ -87,7 +87,7 @@ function readBody(req) {
 
 async function syncResendOptOut(email) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return false;
+  if (!apiKey) throw new Error("Resend API key is not configured");
 
   const headers = { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" };
   const lookup = await fetch("https://api.resend.com/contacts/" + encodeURIComponent(email), {
@@ -137,37 +137,36 @@ module.exports = async function handler(req, res) {
       return fallbackPage(res, 400, "Link jest nieprawidłowy", "Ten link do rezygnacji jest nieprawidłowy lub wygasł. Otwórz najnowszą wiadomość od NovyDev.");
     }
 
-    const id = crypto.createHash("sha256").update(email).digest("hex");
-    const firestore = db();
-    await firestore.collection("newsletter_subscribers").doc(id).set({
-      consent: false,
-      unsubscribedAt: new Date()
-    }, { merge: true });
+    // First opt out in Resend. If this fails, do not tell the subscriber the request completed.
+    const providerSynced = await syncResendOptOut(email);
+    if (!providerSynced) throw new Error("Resend did not confirm the newsletter opt-out");
 
+    const id = crypto.createHash("sha256").update(email).digest("hex");
     const reason = REASONS.has(String(body.reason || "")) ? String(body.reason) : "";
     const comment = String(body.comment || "").trim().slice(0, 500);
-    if (reason || comment) {
-      try {
+
+    // Resend is the sending-side source of truth. Mirror the preference to Firestore
+    // for the admin list, but do not undo a successful opt-out if Firestore is unavailable.
+    try {
+      const firestore = db();
+      await firestore.collection("newsletter_subscribers").doc(id).set({
+        consent: false,
+        unsubscribedAt: new Date()
+      }, { merge: true });
+
+      if (reason || comment) {
         await firestore.collection("newsletter_unsubscribe_feedback").doc(id).set({
           emailHash: id,
           reason: reason || null,
           comment: comment || null,
           createdAt: new Date()
         }, { merge: true });
-      } catch (feedbackError) {
-        console.error("Newsletter feedback save failed:", feedbackError.message);
       }
+    } catch (storageError) {
+      console.error("Newsletter unsubscribe storage failed:", storageError.message);
     }
 
-    let providerSynced = false;
-    try {
-      providerSynced = await syncResendOptOut(email);
-    } catch (syncError) {
-      // Firestore has already opted the address out of the website's newsletter.
-      console.error("Resend unsubscribe sync failed:", syncError.message);
-    }
-
-    if (wantsJson) return json(res, 200, { ok: true, providerSynced });
+    if (wantsJson) return json(res, 200, { ok: true, providerSynced: true });
     return fallbackPage(res, 200, "Wypisano z newslettera", "Twoja rezygnacja została zapisana. Nie będziemy wysyłać Ci kolejnych wiadomości z newslettera NovyDev.");
   } catch (error) {
     console.error("Newsletter unsubscribe failed:", error.message);
