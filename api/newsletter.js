@@ -109,26 +109,53 @@ module.exports = async function handler(req, res) {
       throw new Error("topic update failed (" + topic.status + ")" + (reason ? ": " + reason : ""));
     }
 
-    // Mirror the consented subscriber to Firestore for the private admin API.
-    // Configure FIREBASE_SERVICE_ACCOUNT_JSON in Vercel to enable this sync.
-    if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-      const crypto = require("node:crypto");
-      const { initializeApp, cert, getApps } = require("firebase-admin/app");
-      const { getFirestore, FieldValue } = require("firebase-admin/firestore");
-      if (!getApps().length) {
-        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
-        initializeApp({ credential: cert(serviceAccount), projectId: serviceAccount.project_id });
+    // Keep an opaque, unguessable unsubscribe ID and a server-side ID -> email mapping.
+    // Never put the email itself in the unsubscribe URL.
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_JSON) throw new Error("Newsletter subscriber database is not configured");
+    const crypto = require("node:crypto");
+    const { initializeApp, cert, getApps } = require("firebase-admin/app");
+    const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+    if (!getApps().length) {
+      const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+      initializeApp({ credential: cert(serviceAccount), projectId: serviceAccount.project_id });
+    }
+    const firestore = getFirestore();
+    const subscriberId = crypto.createHash("sha256").update(email).digest("hex");
+    const subscriberRef = firestore.collection("newsletter_subscribers").doc(subscriberId);
+    await firestore.runTransaction(async transaction => {
+      const saved = await transaction.get(subscriberRef);
+      const previous = saved.exists ? saved.data() : {};
+      let unsubscribeId = previous.unsubscribeId;
+      const needsNewId = !unsubscribeId || previous.consent !== true || previous.unsubscribedAt != null;
+
+      if (needsNewId) {
+        const newId = crypto.randomBytes(32).toString("base64url");
+        if (unsubscribeId) {
+          transaction.set(firestore.collection("newsletter_unsubscribe_ids").doc(unsubscribeId), {
+            active: false,
+            replacedAt: FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+        unsubscribeId = newId;
       }
-      const subscriberId = crypto.createHash("sha256").update(email).digest("hex");
-      await getFirestore().collection("newsletter_subscribers").doc(subscriberId).set({
+
+      transaction.set(subscriberRef, {
         email,
         consent: true,
-        createdAt: FieldValue.serverTimestamp(),
+        unsubscribeId,
+        createdAt: previous.createdAt || FieldValue.serverTimestamp(),
         language: body.language === "en" ? "en" : "pl",
         source: "novydev.pl",
         unsubscribedAt: null
       }, { merge: true });
-    }
+
+      transaction.set(firestore.collection("newsletter_unsubscribe_ids").doc(unsubscribeId), {
+        email,
+        subscriberId,
+        active: true,
+        updatedAt: FieldValue.serverTimestamp()
+      }, { merge: true });
+    });
 
     return sendJson(res, 200, { ok: true });
   } catch (error) {
