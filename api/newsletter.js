@@ -101,9 +101,9 @@ module.exports = async function handler(req, res) {
     const segment = await resendRequest("/contacts/" + encodeURIComponent(contactId) + "/segments/" + SEGMENT_ID, "POST");
     if (!segment.ok && segment.status !== 409) throw new Error("segment update failed (" + segment.status + ")");
 
-    const topic = await resendRequest("/contacts/" + encodeURIComponent(contactId) + "/topics", "PATCH", {
-      topics: [{ id: TOPIC_ID, subscription: "opt_in" }]
-    });
+    const topic = await resendRequest("/contacts/" + encodeURIComponent(contactId) + "/topics", "PATCH", [
+      { id: TOPIC_ID, subscription: "opt_in" }
+    ]);
     if (!topic.ok) {
       const reason = safeApiReason(topic.data);
       throw new Error("topic update failed (" + topic.status + ")" + (reason ? ": " + reason : ""));
