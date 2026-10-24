@@ -125,18 +125,15 @@ module.exports = async function handler(req, res) {
     await firestore.runTransaction(async transaction => {
       const saved = await transaction.get(subscriberRef);
       const previous = saved.exists ? saved.data() : {};
-      let unsubscribeId = previous.unsubscribeId;
-      const needsNewId = !unsubscribeId || previous.consent !== true || previous.unsubscribedAt != null;
-
-      if (needsNewId) {
-        const newId = crypto.randomBytes(32).toString("base64url");
-        if (unsubscribeId) {
-          transaction.set(firestore.collection("newsletter_unsubscribe_ids").doc(unsubscribeId), {
-            active: false,
-            replacedAt: FieldValue.serverTimestamp()
-          }, { merge: true });
-        }
-        unsubscribeId = newId;
+      // A fresh signup replaces the previous ID so older newsletter links cannot
+      // unsubscribe someone again after they intentionally re-subscribe.
+      const previousUnsubscribeId = previous.unsubscribeId;
+      const unsubscribeId = crypto.randomBytes(32).toString("base64url");
+      if (previousUnsubscribeId) {
+        transaction.set(firestore.collection("newsletter_unsubscribe_ids").doc(previousUnsubscribeId), {
+          active: false,
+          replacedAt: FieldValue.serverTimestamp()
+        }, { merge: true });
       }
 
       transaction.set(subscriberRef, {
