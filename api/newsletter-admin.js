@@ -77,9 +77,25 @@ async function ensureSubscriberUnsubscribeId(db, subscriber) {
     const current = saved.data();
     if (current.consent !== true || current.unsubscribedAt != null || typeof current.email !== "string") return null;
 
-    const unsubscribeId = current.unsubscribeId || crypto.randomBytes(32).toString("base64url");
+    let unsubscribeId = current.unsubscribeId;
+    let mappingRef = unsubscribeId
+      ? db.collection("newsletter_unsubscribe_ids").doc(unsubscribeId)
+      : null;
+    let mapping = mappingRef ? await transaction.get(mappingRef) : null;
+    const mappingData = mapping && mapping.exists ? mapping.data() : null;
+    const needsReplacement = !unsubscribeId || !mappingData ||
+      mappingData.active !== true || mappingData.email !== current.email;
+
+    if (needsReplacement) {
+      if (unsubscribeId) {
+        transaction.set(mappingRef, { active: false, replacedAt: FieldValue.serverTimestamp() }, { merge: true });
+      }
+      unsubscribeId = crypto.randomBytes(32).toString("base64url");
+      mappingRef = db.collection("newsletter_unsubscribe_ids").doc(unsubscribeId);
+    }
+
     transaction.set(subscriberRef, { unsubscribeId }, { merge: true });
-    transaction.set(db.collection("newsletter_unsubscribe_ids").doc(unsubscribeId), {
+    transaction.set(mappingRef, {
       email: current.email,
       subscriberId: subscriber.id,
       active: true,
