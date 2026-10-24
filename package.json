@@ -1,0 +1,12 @@
+{
+  "name": "novydev-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "NovyDev portfolio with serverless newsletter administration",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
