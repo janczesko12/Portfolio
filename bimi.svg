@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny-ps" viewBox="0 0 64 64">
+  <title>NovyDev</title>
+  <rect x="0" y="0" width="64" height="64" fill="#b7ff4a"/>
+  <path d="M17 48V16h7l16 21V16h7v32h-7L24 27v21z" fill="#0a0d06"/>
+</svg>
