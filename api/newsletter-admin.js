@@ -1,6 +1,6 @@
 const crypto = require("node:crypto");
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
-const { getFirestore } = require("firebase-admin/firestore");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getAuth } = require("firebase-admin/auth");
 
 const ADMIN_EMAIL = "janczesko12@gmail.com";
@@ -69,6 +69,33 @@ async function onlySubscribedToNewsletter(subscribers) {
   }
   return result;
 }
+async function ensureSubscriberUnsubscribeId(db, subscriber) {
+  const subscriberRef = db.collection(COLLECTION).doc(subscriber.id);
+  return db.runTransaction(async transaction => {
+    const saved = await transaction.get(subscriberRef);
+    if (!saved.exists) return null;
+    const current = saved.data();
+    if (current.consent !== true || current.unsubscribedAt != null || typeof current.email !== "string") return null;
+
+    const unsubscribeId = current.unsubscribeId || crypto.randomBytes(32).toString("base64url");
+    transaction.set(subscriberRef, { unsubscribeId }, { merge: true });
+    transaction.set(db.collection("newsletter_unsubscribe_ids").doc(unsubscribeId), {
+      email: current.email,
+      subscriberId: subscriber.id,
+      active: true,
+      updatedAt: FieldValue.serverTimestamp()
+    }, { merge: true });
+    return { ...subscriber, email: current.email, unsubscribeId };
+  });
+}
+async function ensureUnsubscribeIds(db, subscribers) {
+  const result = [];
+  for (let i = 0; i < subscribers.length; i += 20) {
+    const mapped = await Promise.all(subscribers.slice(i, i + 20).map(s => ensureSubscriberUnsubscribeId(db, s)));
+    result.push(...mapped.filter(Boolean));
+  }
+  return result;
+}
 module.exports = async function handler(req, res) {
   res.setHeader("Vary", "Origin");
   const origin = req.headers.origin;
@@ -105,13 +132,20 @@ module.exports = async function handler(req, res) {
     if (!subject || subject.length > 150 || !message || message.length > 5000) return json(res,400,{ok:false,error:"Subject or message is missing or too long"});
     if (!subscribers.length) return json(res,409,{ok:false,error:"No eligible subscribers found",eligibleCount:0});
     if (body.confirmSend !== true) return json(res,400,{ok:false,error:"Explicit send confirmation required",eligibleCount:subscribers.length});
-    if (!process.env.RESEND_API_KEY || !process.env.NEWSLETTER_UNSUBSCRIBE_SECRET) return json(res,503,{ok:false,error:"Resend or unsubscribe configuration is missing"});
+    if (!process.env.RESEND_API_KEY) return json(res,503,{ok:false,error:"Resend is not configured"});
+    let mappedSubscribers;
+    try {
+      mappedSubscribers = await ensureUnsubscribeIds(db, subscribers);
+    } catch (mappingError) {
+      console.error("Newsletter unsubscribe ID assignment failed:", mappingError.message);
+      return json(res,503,{ok:false,error:"Could not prepare unsubscribe links. No email was sent."});
+    }
+    if (!mappedSubscribers.length) return json(res,409,{ok:false,error:"No active subscribers remained after final verification.",eligibleCount:0});
     const results = [];
-    for (let i=0; i<subscribers.length; i+=100) {
-      const chunk = subscribers.slice(i,i+100);
+    for (let i=0; i<mappedSubscribers.length; i+=100) {
+      const chunk = mappedSubscribers.slice(i,i+100);
       const emails = chunk.map(s => {
-        const token = unsubscribeToken(s.email);
-        const unsubscribeUrl = "https://novydev.pl/rezygnacja.html?token=" + encodeURIComponent(token);
+        const unsubscribeUrl = "https://www.novydev.pl/rezygnacja.html?id=" + encodeURIComponent(s.unsubscribeId);
         const safeMessage = escapeHtml(message).replace(/\n/g,"<br>");
         const discordCta = DISCORD_URL ? '<p style="margin:24px 0"><a href="' + escapeHtml(DISCORD_URL) + '" style="display:inline-block;background:#5865f2;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:9px;font-weight:bold">Dołącz do Discorda</a></p>' : '';
         const fallbackUnsubscribeUrl = "https://www.novydev.pl/newsletter-opusc.html";
