@@ -45,7 +45,7 @@
 
   async function loadingSequence() {
     input.disabled = true;
-    prompt.textContent = "boot@novydev:~$";
+    prompt.textContent = "boot@micrococostf:~$";
     print("NOVYDEV REMOTE ACCESS CONSOLE");
     print("UWAGA: Nieoficjalna symulacja terminala. Nie łączy się z siecią ani nie czyta danych.");
     print("");
@@ -93,7 +93,7 @@
   async function runFakeDataCollection() {
     step = "loading";
     input.disabled = true;
-    prompt.textContent = "admin@novydev:~$";
+    prompt.textContent = "admin@micrococostf:~$";
     print("");
     print("[AUTH] Credentials accepted. Starting post-login checks...", "success");
     const stages = [
