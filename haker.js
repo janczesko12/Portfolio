@@ -145,40 +145,9 @@
   function openFakeFile(filename) {
     print("C:\\Users\\" + loggedInAs + "\\vault> type " + filename);
     print("Otwieranie pliku: " + filename + " ...");
-    print("");
-    print("============================================================", "warning");
-    print("                    SYMULOWANA ZAWARTOŚĆ", "warning");
-    print("============================================================", "warning");
-    print("");
-    print("  X X   X X   DDDD");
-    print("   X     X    D   D");
-    print("  X X   X X   D   D");
-    print("   X     X    D   D");
-    print("  X X   X X   DDDD");
-    print("");
-    print("  NEVER GONNA GIVE YOU UP 🎵", "prank");
-    print("  RICKROLL URUCHOMIONY.");
-    print("");
-    const player = document.getElementById("rickroll-player");
-    if (player) {
-      player.hidden = false;
-      player.replaceChildren();
-      const frame = document.createElement("iframe");
-      frame.width = "560";
-      frame.height = "315";
-      frame.src = "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1&playsinline=1";
-      frame.title = "Rick Astley — Never Gonna Give You Up";
-      frame.allow = "autoplay; encrypted-media; picture-in-picture; web-share";
-      frame.referrerPolicy = "strict-origin-when-cross-origin";
-      frame.allowFullscreen = true;
-      frame.style.maxWidth = "100%";
-      frame.style.border = "1px solid #35ff35";
-      player.appendChild(frame);
-      print("Jeśli film nie ruszy automatycznie, naciśnij ▶ w odtwarzaczu.");
-    }
-    print("");
-    setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
-    step = "command";
+    print("Przekierowanie...");
+    // Otwiera wskazany przez użytkownika film w YouTube.
+    window.location.assign("https://youtu.be/QDia3e12czc?is=8OxGMJ_QxJEjjTJG");
   }
 
   function handleCommand(rawValue) {
