@@ -16,12 +16,15 @@
     #command::selection{background:#c8ffc8;color:#000}
     .system{color:#c8ffc8}.warning{color:#fff}.success{color:#aaffaa}
     .prank{color:#fff;font-weight:bold}
+    #rickroll-player{margin:18px 0;max-width:100%}
+    #rickroll-player iframe{display:block;width:min(560px,100%);aspect-ratio:16/9;height:auto}
     @media(max-width:480px){body{font-size:14px;padding:10px}}
   </style>
 </head>
 <body>
   <main aria-label="Symulowany wiersz polecenia">
     <div id="terminal" role="log" aria-live="polite"></div>
+    <div id="rickroll-player" hidden></div>
     <form id="entry-line" autocomplete="off">
       <label id="prompt" for="command">Login:</label>
       <input id="command" name="command" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
