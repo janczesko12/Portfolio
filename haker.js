@@ -46,11 +46,8 @@
   async function loadingSequence() {
     input.disabled = true;
     prompt.textContent = "boot@novydev:~$";
-    print("Microsoft Windows [Version 10.0.19045.4046]");
-    print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
-    print("");
     print("NOVYDEV REMOTE ACCESS CONSOLE");
-    print("TRYB DEMO: połączenia SSH i backdoor są tylko symulowane.");
+    print("UWAGA: Nieoficjalna symulacja terminala. Nie łączy się z siecią ani nie czyta danych.");
     print("");
     await sleep(350);
     print("[INIT] Starting remote access subsystem...");
@@ -82,7 +79,7 @@
     await sleep(350);
     print("[ OK ] BACKDOOR ENTRY GRANTED [SIMULATED]", "success");
     await sleep(320);
-    print("[LOAD] Mounting fake credential vault...");
+    print("[LOAD] Mounting sample credential vault...");
     await sleep(420);
     print("[ OK ] Vault mounted: /secure/dump/", "success");
     print("[INFO] All network actions above were simulated locally.", "warning");
@@ -101,15 +98,15 @@
     print("[AUTH] Credentials accepted. Starting post-login checks...", "success");
     const stages = [
       ["[CHECK] Checking simulated account permissions...", 450],
-      ["[SCAN ] Enumerating demo directories...", 520],
-      ["[SCAN ] Checking mock configuration files...", 520],
+      ["[SCAN ] Enumerating directories...", 520],
+      ["[SCAN ] Checking sample configuration files...", 520],
       ["[DATA ] Preparing sample API-key records...", 600],
-      ["[DATA ] Preparing fake login/password records...", 620],
-      ["[DATA ] Preparing mock cookie/session records...", 580],
-      ["[DATA ] Preparing demo database index...", 620],
-      ["[PACK ] Packing simulated files into vault...", 650],
-      ["[VERIFY] Verifying demo manifest and checksums...", 550],
-      ["[DONE ] 6 fake text files prepared. No real data accessed.", 450]
+      ["[DATA ] Preparing sample login/password records...", 620],
+      ["[DATA ] Preparing sample cookie/session records...", 580],
+      ["[DATA ] Preparing sample database index...", 620],
+      ["[PACK ] Packing prepared records into vault...", 650],
+      ["[VERIFY] Verifying manifest and checksums...", 550],
+      ["[DONE ] 6 sample text files prepared. No real data accessed.", 450]
     ];
     for (let i = 0; i < stages.length; i++) {
       await sleep(stages[i][1]);
@@ -214,8 +211,7 @@
       print("");
     } else if (command === "exit") {
       terminal.replaceChildren();
-      print("Microsoft Windows [Version 10.0.19045.4046]");
-      print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
+      print("NOVYDEV SYSTEM CONSOLE");
       print("");
       print("Sesja zakończona. Odśwież stronę, aby uruchomić scenkę ponownie.");
       form.hidden = true;
