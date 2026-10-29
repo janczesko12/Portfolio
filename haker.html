@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050807">
+  <meta name="description" content="Tajny terminal NovyDev — interaktywna symulacja hakerska.">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ROOT ACCESS // NovyDev</title>
+  <link rel="stylesheet" href="/haker.css">
+  <script src="/haker.js" defer></script>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="matrix-glow glow-one" aria-hidden="true"></div>
+  <div class="matrix-glow glow-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Wróć na NovyDev"><span class="brand-mark">N</span><span>NOVY<span class="accent">DEV</span></span></a>
+    <span class="top-status"><i class="pulse-dot"></i> SECURE CONNECTION <b>•</b> <span>LOCAL SIMULATION</span></span>
+    <a class="exit-link" href="/">← WYJDŹ</a>
+  </header>
+
+  <main class="shell">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> NOVYDEV CYBER LAB / SESSION 001</div>
+      <h1>UNAUTHORIZED<br><span>ACCESS</span><span class="cursor" aria-hidden="true">_</span></h1>
+      <p class="intro-copy">Wykryto chroniony katalog. Uruchom sekwencję i sprawdź, co udało się „znaleźć”.</p>
+      <div class="notice"><span class="notice-icon">⚠</span><span><b>TRYB DEMO</b> — to interaktywna scenka. Nie łączy się z żadnym celem ani nie odczytuje prawdziwych danych.</span></div>
+      <button class="start-button" id="start-hack" type="button"><span aria-hidden="true">▶</span> URUCHOM WŁAMANIE <span class="button-arrow">↗</span></button>
+    </section>
+
+    <section class="terminal panel" aria-label="Symulowany terminal">
+      <div class="panel-head">
+        <div class="window-dots"><i></i><i></i><i></i></div>
+        <span>root@novydev: /system/secure</span>
+        <span class="panel-live"><i class="pulse-dot"></i> <span id="terminal-state">STAN GOTOWOŚCI</span></span>
+      </div>
+      <div class="terminal-body" id="terminal-output" role="log" aria-live="polite">
+        <p class="terminal-muted">NovyDev Cyber Lab [wersja 1.0.4]</p>
+        <p class="terminal-muted">Wszystkie komunikaty poniżej są generowane w przeglądarce.</p>
+        <p><span class="prompt">root@novydev:~$</span> <span class="typed">oczekiwanie_na_polecenie</span><span class="cursor small">_</span></p>
+      </div>
+      <div class="progress-wrap" id="progress-wrap" hidden>
+        <div class="progress-label"><span id="progress-label">Inicjalizacja...</span><b id="progress-value">0%</b></div>
+        <div class="progress-track"><span id="progress-bar"></span></div>
+      </div>
+    </section>
+
+    <section class="files-section" id="files-section" hidden>
+      <div class="section-heading">
+        <div><div class="eyebrow">01 / EXTRACTED FILES</div><h2>Znalezione pliki<span class="accent">.</span></h2></div>
+        <span class="file-count" id="file-count">06 PLIKÓW</span>
+      </div>
+      <p class="section-copy">Kliknij dowolny plik, aby podejrzeć jego „zawartość”.</p>
+      <div class="file-grid" id="file-grid">
+        <button class="file-card" data-file="api_keys.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">api_keys.txt</span><span class="file-meta">API KEYS · 2.4 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+        <button class="file-card" data-file="logins.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">logins.txt</span><span class="file-meta">USER ACCOUNTS · 1.8 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+        <button class="file-card" data-file="passwords.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">passwords.txt</span><span class="file-meta">CREDENTIALS · 3.1 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+        <button class="file-card" data-file="mObywatel_logins.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">mObywatel_logins.txt</span><span class="file-meta">GOV ACCOUNT DATA · 0.9 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+        <button class="file-card" data-file="cookies.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">cookies.txt</span><span class="file-meta">SESSION COOKIES · 1.2 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+        <button class="file-card" data-file="database_dump.txt" type="button"><span class="file-icon">TXT</span><span class="file-name">database_dump.txt</span><span class="file-meta">DATABASE EXPORT · 4.6 KB</span><span class="file-open">OTWÓRZ ↗</span></button>
+      </div>
+    </section>
+
+    <section class="reveal-panel panel" id="reveal-panel" hidden aria-live="polite">
+      <div class="panel-head"><span class="reveal-file" id="reveal-file">plik.txt</span><button class="close-reveal" id="close-reveal" type="button">ZAMKNIJ ×</button></div>
+      <div class="reveal-content">
+        <div class="decrypt-line" id="decrypt-line"><span class="prompt">root@novydev:~$</span> decrypt --open-file</div>
+        <div class="prank-stamp" id="prank-stamp" hidden>XD</div>
+        <h2 class="prank-message" id="prank-message" hidden>XDD<br>DAŁEŚ SIĘ<br><span>NABRAĆ XDD</span></h2>
+        <p class="prank-footnote" id="prank-footnote" hidden>💚 Spokojnie — to tylko żart. Żadne prawdziwe hasła, tokeny, ciasteczka ani dane mObywatela nie zostały pobrane.</p>
+        <button class="back-files" id="back-files" hidden type="button">← WRÓĆ DO LISTY PLIKÓW</button>
+      </div>
+    </section>
+
+    <footer class="site-footer"><span>© NOVYDEV CYBER LAB</span><span>NO REAL ACCESS · NO DATA COLLECTED · JUST A PRANK <span class="accent">♥</span></span></footer>
+  </main>
+</body>
+</html>
