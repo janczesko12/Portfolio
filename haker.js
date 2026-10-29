@@ -1,109 +1,171 @@
 (() => {
   "use strict";
 
-  // Celowo lokalna scenka: brak fetch(), API, logowania, cookies i połączeń z serwerem.
-  const startButton = document.getElementById("start-hack");
-  const terminalOutput = document.getElementById("terminal-output");
-  const terminalState = document.getElementById("terminal-state");
-  const progressWrap = document.getElementById("progress-wrap");
-  const progressLabel = document.getElementById("progress-label");
-  const progressValue = document.getElementById("progress-value");
-  const progressBar = document.getElementById("progress-bar");
-  const filesSection = document.getElementById("files-section");
-  const revealPanel = document.getElementById("reveal-panel");
-  const revealFile = document.getElementById("reveal-file");
-  const decryptLine = document.getElementById("decrypt-line");
-  const prankStamp = document.getElementById("prank-stamp");
-  const prankMessage = document.getElementById("prank-message");
-  const prankFootnote = document.getElementById("prank-footnote");
-  const backFiles = document.getElementById("back-files");
-  const closeReveal = document.getElementById("close-reveal");
+  // Lokalna scenka-żart. Nie odczytuje ani nie wysyła haseł, cookies ani danych urządzenia.
+  const terminal = document.getElementById("terminal");
+  const form = document.getElementById("entry-line");
+  const prompt = document.getElementById("prompt");
+  const input = document.getElementById("command");
 
-  const stages = [
-    { label: "Uruchamianie fikcyjnego terminala...", log: "[*] Booting NovyDev Cyber Lab...", pct: 12 },
-    { label: "Skanowanie przykładowych katalogów...", log: "[*] Checking simulated file index...", pct: 31 },
-    { label: "Weryfikacja atrap plików...", log: "[+] Demo file signatures detected.", pct: 52 },
-    { label: "Otwieranie sejfu z żartami...", log: "[+] Fake vault unlocked. No real data accessed.", pct: 78 },
-    { label: "Przygotowywanie listy plików...", log: "[OK] Simulation complete. Zero network requests.", pct: 100 }
+  const files = [
+    "api_keys.txt",
+    "logins.txt",
+    "passwords.txt",
+    "mObywatel_logins.txt",
+    "cookies.txt",
+    "database_dump.txt"
   ];
-  let running = false;
-  let timers = [];
 
-  function wait(ms) {
-    return new Promise(resolve => {
-      const id = window.setTimeout(resolve, ms);
-      timers.push(id);
-    });
+  let step = "login";
+  let loggedInAs = "";
+
+  function print(text = "", className = "") {
+    const line = document.createElement("div");
+    if (className) line.className = className;
+    line.textContent = text;
+    terminal.appendChild(line);
+    window.scrollTo(0, document.body.scrollHeight);
   }
 
-  function addLog(text, className) {
-    const line = document.createElement("p");
-    line.className = "terminal-line" + (className ? " " + className : "");
-    const prompt = document.createElement("span");
-    prompt.className = "prompt";
-    prompt.textContent = "root@novydev:~$ ";
-    const message = document.createElement("span");
-    message.textContent = text;
-    line.append(prompt, message);
-    terminalOutput.appendChild(line);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  function setPrompt(text) {
+    prompt.textContent = text;
+    input.value = "";
+    input.focus();
   }
 
-  startButton.addEventListener("click", async () => {
-    if (running) return;
-    running = true;
-    startButton.disabled = true;
-    startButton.innerHTML = "<span>⌛</span> URUCHAMIANIE SYMULACJI...";
-    terminalState.textContent = "SYMULACJA W TOKU";
-    progressWrap.hidden = false;
-    addLog("start --simulation-only", "line-warn");
+  function normalizedPassword(value) {
+    return value.toLowerCase()
+      .replace(/[\u2010-\u2015]/g, "-")
+      .replace(/\s+/g, "");
+  }
 
-    for (const stage of stages) {
-      await wait(520);
-      addLog(stage.log, stage.pct === 100 ? "line-ok" : "");
-      progressLabel.textContent = stage.label;
-      progressValue.textContent = stage.pct + "%";
-      progressBar.style.width = stage.pct + "%";
+  function showDirectory() {
+    step = "command";
+    print("");
+    print("Access granted.", "success");
+    print("Łączenie z C:\\Users\\" + loggedInAs + "\\vault ...");
+    print("Połączenie: OK (SYMULACJA)");
+    print("");
+    print(" Directory of C:\\Users\\" + loggedInAs + "\\vault");
+    print("");
+    print("10/29/2026  09:14 PM    <DIR>          .");
+    print("10/29/2026  09:14 PM    <DIR>          ..");
+    for (const file of files) {
+      print("10/29/2026  09:14 PM             " + String(2048 + file.length * 137).padStart(5, " ") + " " + file);
+    }
+    print("               6 File(s)         12,844 bytes");
+    print("");
+    print("Wpisz nazwę pliku, aby go otworzyć. Możesz też wpisać DIR, HELP lub EXIT.");
+    setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
+  }
+
+  function openFakeFile(filename) {
+    print("C:\\Users\\" + loggedInAs + "\\vault> type " + filename);
+    print("Otwieranie pliku: " + filename + " ...");
+    print("");
+    print("============================================================", "warning");
+    print("                    SYMULOWANA ZAWARTOŚĆ", "warning");
+    print("============================================================", "warning");
+    print("");
+    print("  X X   X X   DDDD");
+    print("   X     X    D   D");
+    print("  X X   X X   D   D");
+    print("   X     X    D   D");
+    print("  X X   X X   DDDD");
+    print("");
+    print("  D A Ł E Ś   S I Ę   N A B R A Ć   X D D", "prank");
+    print("");
+    print("To tylko żart :) Nie pobrano żadnych prawdziwych kluczy API, haseł,");
+    print("loginów, ciasteczek ani danych mObywatela.");
+    print("Wszystkie pliki są atrapami wygenerowanymi w przeglądarce.");
+    print("");
+    setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
+    step = "command";
+  }
+
+  function handleCommand(rawValue) {
+    const value = rawValue.trim();
+    if (step === "login") {
+      if (value.toLowerCase() !== "admin") {
+        print("Login: " + value);
+        print("Nieprawidłowy login. Spróbuj ponownie.", "warning");
+        setPrompt("Login:");
+        return;
+      }
+      loggedInAs = "admin";
+      print("Login: " + value);
+      step = "password";
+      setPrompt("Hasło:");
+      return;
     }
 
-    await wait(350);
-    terminalState.textContent = "GOTOWE";
-    addLog("Dostępne atrapki plików: 6. Kliknij jedną z nich.", "line-ok");
-    filesSection.hidden = false;
-    startButton.innerHTML = "✓ SYMULACJA ZAKOŃCZONA";
-    filesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
+    if (step === "password") {
+      print("Hasło: " + value);
+      if (!["admin-hacked", "adminhacked"].includes(normalizedPassword(value))) {
+        print("BŁĄD: Nieprawidłowe hasło. Spróbuj ponownie.", "warning");
+        setPrompt("Hasło:");
+        return;
+      }
+      showDirectory();
+      return;
+    }
 
-  function openFile(filename) {
-    revealFile.textContent = filename;
-    revealPanel.hidden = false;
-    decryptLine.hidden = false;
-    decryptLine.textContent = "root@novydev:~$ decrypt --open-file " + filename;
-    prankStamp.hidden = true;
-    prankMessage.hidden = true;
-    prankFootnote.hidden = true;
-    backFiles.hidden = true;
-    revealPanel.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!value) {
+      setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
+      return;
+    }
 
-    window.setTimeout(() => {
-      decryptLine.hidden = true;
-      prankStamp.hidden = false;
-      prankMessage.hidden = false;
-      prankFootnote.hidden = false;
-      backFiles.hidden = false;
-    }, 620);
+    const command = value.toLowerCase();
+    print("C:\\Users\\" + loggedInAs + "\\vault>" + " " + value);
+
+    if (command === "dir" || command === "ls") {
+      showDirectory();
+      return;
+    }
+    if (command === "help") {
+      print("Dostępne polecenia: DIR, HELP, EXIT oraz nazwa jednego z plików TXT.");
+      print("");
+    } else if (command === "exit") {
+      terminal.replaceChildren();
+      print("Microsoft Windows [Version 10.0.19045.4046]");
+      print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
+      print("");
+      print("Sesja zakończona. Odśwież stronę, aby uruchomić scenkę ponownie.");
+      form.hidden = true;
+      return;
+    } else {
+      const fileName = files.find(file => file.toLowerCase() === command || file.toLowerCase() === command.replace(/^type\s+/, ""));
+      if (fileName) {
+        openFakeFile(fileName);
+        return;
+      }
+      const number = Number(command);
+      if (Number.isInteger(number) && number >= 1 && number <= files.length) {
+        openFakeFile(files[number - 1]);
+        return;
+      }
+      print("'" + value + "' is not recognized as an internal or external command.", "warning");
+      print("Wpisz HELP, aby zobaczyć polecenia.");
+      print("");
+    }
+    setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
   }
 
-  document.getElementById("file-grid").addEventListener("click", event => {
-    const card = event.target.closest("[data-file]");
-    if (!card) return;
-    openFile(card.dataset.file);
+  print("Microsoft Windows [Version 10.0.19045.4046]");
+  print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
+  print("");
+  print("NOVYDEV SECURE CONSOLE");
+  print("Uwaga: to tylko symulacja terminala, nie prawdziwe logowanie.");
+  print("");
+  print("Podaj dane dostępu do demonstracyjnego sejfu.");
+  print("");
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    const value = input.value;
+    input.value = "";
+    handleCommand(value);
   });
 
-  function hideReveal() {
-    revealPanel.hidden = true;
-    filesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-  closeReveal.addEventListener("click", hideReveal);
-  backFiles.addEventListener("click", hideReveal);
+  terminal.addEventListener("click", () => input.focus());
 })();
