@@ -1,7 +1,8 @@
 (() => {
   "use strict";
 
-  // Lokalna scenka-żart. Nie odczytuje ani nie wysyła haseł, cookies ani danych urządzenia.
+  // Lokalna scenka-żart. Teksty SSH/backdoor są wyłącznie animacją:
+  // nie ma połączeń sieciowych, prawdziwego SSH ani dostępu do żadnych danych.
   const terminal = document.getElementById("terminal");
   const form = document.getElementById("entry-line");
   const prompt = document.getElementById("prompt");
@@ -16,8 +17,10 @@
     "database_dump.txt"
   ];
 
-  let step = "login";
+  let step = "boot";
   let loggedInAs = "";
+
+  const sleep = ms => new Promise(resolve => window.setTimeout(resolve, ms));
 
   function print(text = "", className = "") {
     const line = document.createElement("div");
@@ -30,6 +33,7 @@
   function setPrompt(text) {
     prompt.textContent = text;
     input.value = "";
+    input.disabled = false;
     input.focus();
   }
 
@@ -37,6 +41,56 @@
     return value.toLowerCase()
       .replace(/[\u2010-\u2015]/g, "-")
       .replace(/\s+/g, "");
+  }
+
+  async function loadingSequence() {
+    input.disabled = true;
+    prompt.textContent = "boot@novydev:~$";
+    print("Microsoft Windows [Version 10.0.19045.4046]");
+    print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
+    print("");
+    print("NOVYDEV REMOTE ACCESS CONSOLE");
+    print("TRYB DEMO: połączenia SSH i backdoor są tylko symulowane.");
+    print("");
+    await sleep(350);
+    print("[INIT] Starting remote access subsystem...");
+    await sleep(420);
+    print("[ OK ] Loading network interface ................. done", "success");
+    await sleep(350);
+    print("[ OK ] Resolving gateway 192.168.1.1 .............. done", "success");
+    await sleep(400);
+    print("[SSH ] ssh admin@192.168.1.77 -p 22");
+    await sleep(450);
+    print("[SSH ] Connecting to 192.168.1.77:22 ...");
+    for (const pct of [18, 34, 51, 73, 92, 100]) {
+      await sleep(160);
+      const filled = Math.round(pct / 10);
+      print("       [" + "#".repeat(filled) + ".".repeat(10 - filled) + "] " + pct + "%");
+    }
+    await sleep(300);
+    print("[WARN] SSH key rejected. Trying alternate route...", "warning");
+    await sleep(420);
+    print("[SCAN] Searching simulated service paths...");
+    await sleep(450);
+    print("[FOUND] BACKDOOR endpoint detected: /dev/.system-cache", "success");
+    await sleep(370);
+    print("[AUTH] Attempting simulated BACKDOOR entry...");
+    for (const pct of [25, 50, 75, 100]) {
+      await sleep(210);
+      print("       Backdoor handshake [" + "#".repeat(pct / 25) + " " .repeat(4 - pct / 25) + "] " + pct + "%");
+    }
+    await sleep(350);
+    print("[ OK ] BACKDOOR ENTRY GRANTED [SIMULATED]", "success");
+    await sleep(320);
+    print("[LOAD] Mounting fake credential vault...");
+    await sleep(420);
+    print("[ OK ] Vault mounted: /secure/dump/", "success");
+    print("[INFO] All network actions above were simulated locally.", "warning");
+    print("");
+    print("Wymagane uwierzytelnienie administratora:");
+    print("");
+    step = "login";
+    setPrompt("Login:");
   }
 
   function showDirectory() {
@@ -100,7 +154,8 @@
     }
 
     if (step === "password") {
-      print("Hasło: " + value);
+      // Nie pokazujemy ani nie zapisujemy wpisanego hasła w terminalu.
+      print("Hasło: ********");
       if (!["admin-hacked", "adminhacked"].includes(normalizedPassword(value))) {
         print("BŁĄD: Nieprawidłowe hasło. Spróbuj ponownie.", "warning");
         setPrompt("Hasło:");
@@ -116,7 +171,7 @@
     }
 
     const command = value.toLowerCase();
-    print("C:\\Users\\" + loggedInAs + "\\vault>" + " " + value);
+    print("C:\\Users\\" + loggedInAs + "\\vault> " + value);
 
     if (command === "dir" || command === "ls") {
       showDirectory();
@@ -134,7 +189,7 @@
       form.hidden = true;
       return;
     } else {
-      const fileName = files.find(file => file.toLowerCase() === command || file.toLowerCase() === command.replace(/^type\s+/, ""));
+      const fileName = files.find(file => file.toLowerCase() === command || file.toLowerCase() === command.replace(/^type\\s+/, ""));
       if (fileName) {
         openFakeFile(fileName);
         return;
@@ -151,21 +206,17 @@
     setPrompt("C:\\Users\\" + loggedInAs + "\\vault>");
   }
 
-  print("Microsoft Windows [Version 10.0.19045.4046]");
-  print("(c) Microsoft Corporation. Wszelkie prawa zastrzeżone.");
-  print("");
-  print("NOVYDEV SECURE CONSOLE");
-  print("Uwaga: to tylko symulacja terminala, nie prawdziwe logowanie.");
-  print("");
-  print("Podaj dane dostępu do demonstracyjnego sejfu.");
-  print("");
-
   form.addEventListener("submit", event => {
     event.preventDefault();
+    if (input.disabled || step === "boot") return;
     const value = input.value;
     input.value = "";
     handleCommand(value);
   });
 
-  terminal.addEventListener("click", () => input.focus());
+  terminal.addEventListener("click", () => {
+    if (!input.disabled) input.focus();
+  });
+
+  loadingSequence();
 })();
