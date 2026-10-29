@@ -1,0 +1,11 @@
+{
+  "name": "NovyDev • LibrusSync",
+  "subtitle": "Polski asystent szkolny dla iPhone’a",
+  "description": "Źródło LibrusSync. Katalog aplikacji zostanie aktywowany po opublikowaniu zgodnej z AltStore PAL paczki Alternative Distribution Package (ADP) po notaryzacji Apple. Zwykły, niepodpisany IPA z GitHub Actions nie jest jeszcze paczką do instalacji przez PAL.",
+  "iconURL": "https://novydev.pl/favicon.svg",
+  "website": "https://novydev.pl/aplikacje/LibrusSync/altstore/",
+  "tintColor": "#8B5CF6",
+  "featuredApps": [],
+  "apps": [],
+  "news": []
+}

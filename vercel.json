@@ -10,6 +10,10 @@
   ],
   "rewrites": [
     {
+      "source": "/aplikacje/LibrusSync/altstore",
+      "destination": "/aplikacje/LibrusSync/altstore/source.json"
+    },
+    {
       "source": "/gra/designer.html",
       "destination": "https://huntly-janczesko12s-projects.vercel.app/designer.html"
     },

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0b10">
+  <meta name="description" content="Źródło AltStore PAL dla LibrusSync — asystenta szkolnego na iPhone’a od NovyDev.">
+  <title>LibrusSync · AltStore PAL — NovyDev</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .pal-page{max-width:900px;margin:0 auto;min-height:72vh;padding:74px 22px 100px}
+    .pal-hero{text-align:center;max-width:720px;margin:0 auto 36px}
+    .pal-mark{width:86px;height:86px;margin:0 auto 22px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.12);border-radius:26px;background:linear-gradient(145deg,rgba(139,92,246,.28),rgba(139,92,246,.05));font-size:40px;font-weight:800;letter-spacing:-.07em}
+    .pal-hero h1{font-size:clamp(2.5rem,7vw,4.8rem);line-height:.98;letter-spacing:-.065em;margin:12px 0 18px}
+    .pal-hero h1 em{color:var(--accent);font-style:normal}
+    .pal-hero>p:last-child{max-width:610px;margin:0 auto;color:var(--muted);font-size:1.05rem;line-height:1.7}
+    .pal-panel{border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));box-shadow:var(--shadow);padding:clamp(20px,4vw,32px);margin-top:18px}
+    .pal-status{display:flex;gap:12px;align-items:flex-start}
+    .pal-status-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:14px;background:rgba(245,158,11,.12);color:#fbbf24;font-size:21px}
+    .pal-status h2,.pal-panel h2{margin:0 0 8px;font-size:1.15rem}
+    .pal-panel p,.pal-panel li{color:var(--muted);line-height:1.7}
+    .pal-panel p:last-child{margin-bottom:0}
+    .pal-url{display:block;overflow-wrap:anywhere;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.18);padding:13px 14px;font:500 .9rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text)}
+    .pal-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .pal-steps{padding-left:21px;margin:12px 0 0}
+    .pal-steps li+li{margin-top:8px}
+    .pal-small{font-size:.9rem}
+    @media(max-width:600px){.pal-page{padding:52px 17px 76px}.pal-actions{flex-direction:column}.pal-actions .btn{width:100%;text-align:center}}
+  </style>
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Strona główna NovyDev"><span class="brand-mark" aria-hidden="true">N</span><span>NOVYDEV</span></a>
+    <a class="btn btn-ghost" href="/aplikacje">Wszystkie aplikacje</a>
+  </header>
+  <main class="pal-page">
+    <section class="pal-hero">
+      <div class="pal-mark" aria-hidden="true">L</div>
+      <p class="kicker">NOVYDEV / LIBRUSSYNC / ALTSTORE PAL</p>
+      <h1>LibrusSync <em>dla iPhone’a.</em></h1>
+      <p>Szkolny terminarz, inteligentne przypomnienia i podsumowanie najbliższych siedmiu dni. To oficjalny adres źródła PAL przygotowywany dla LibrusSync.</p>
+    </section>
+    <section class="pal-panel pal-status" aria-labelledby="status-heading">
+      <div class="pal-status-icon" aria-hidden="true">!</div>
+      <div>
+        <h2 id="status-heading">Źródło przygotowane — publikacja aplikacji jeszcze nieaktywna</h2>
+        <p>AltStore PAL wymaga paczki ADP przygotowanej po notaryzacji Apple. Aktualny plik IPA z GitHub Actions jest niepodpisany i nie może zostać opublikowany jako instalowalna wersja PAL.</p>
+      </div>
+    </section>
+    <section class="pal-panel">
+      <h2>Adres źródła AltStore PAL</h2>
+      <p>Po przygotowaniu paczki ten sam adres będzie używany do dodania źródła w AltStore PAL:</p>
+      <code class="pal-url" id="source-url">https://novydev.pl/aplikacje/LibrusSync/altstore</code>
+      <div class="pal-actions">
+        <button class="btn btn-primary" id="copy-url" type="button">Kopiuj adres źródła</button>
+        <a class="btn btn-ghost" href="https://github.com/janczesko12/LibrusSync" target="_blank" rel="noopener noreferrer">Kod źródłowy na GitHubie</a>
+      </div>
+      <p class="pal-small" id="copy-status" aria-live="polite"></p>
+    </section>
+    <section class="pal-panel">
+      <h2>Co trzeba zrobić, aby aplikacja była instalowalna w PAL?</h2>
+      <ol class="pal-steps">
+        <li>Aktywować płatne członkostwo Apple Developer i przygotować aplikację w App Store Connect.</li>
+        <li>Zgłosić LibrusSync do notaryzacji Apple zgodnie z procedurą AltStore PAL.</li>
+        <li>Pobrać paczkę ADP i umieścić ją na serwerze bez modyfikowania jej plików.</li>
+        <li>Uzupełnić źródło o identyfikator aplikacji, wersję, uprawnienia oraz adres manifestu ADP.</li>
+      </ol>
+      <p class="pal-small">Dokumentacja: <a href="https://faq.altstore.io/developers/distribute-with-altstore-pal" target="_blank" rel="noopener noreferrer">dystrybucja przez AltStore PAL</a> · <a href="https://faq.altstore.io/developers/make-a-source" target="_blank" rel="noopener noreferrer">format źródła</a>.</p>
+    </section>
+  </main>
+  <footer class="footer"><span>© <span id="year"></span> NOVYDEV</span><span>zrobione z kodu ✦</span></footer>
+  <script>
+    document.querySelector('#year').textContent = new Date().getFullYear();
+    document.querySelector('#copy-url').addEventListener('click', async () => {
+      const output = document.querySelector('#copy-status');
+      try {
+        await navigator.clipboard.writeText(document.querySelector('#source-url').textContent);
+        output.textContent = 'Adres źródła skopiowany.';
+      } catch {
+        output.textContent = 'Skopiuj adres ręcznie z pola powyżej.';
+      }
+    });
+  </script>
+</body>
+</html>
