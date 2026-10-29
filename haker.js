@@ -93,6 +93,38 @@
     setPrompt("Login:");
   }
 
+  async function runFakeDataCollection() {
+    step = "loading";
+    input.disabled = true;
+    prompt.textContent = "admin@novydev:~$";
+    print("");
+    print("[AUTH] Credentials accepted. Starting post-login checks...", "success");
+    const stages = [
+      ["[CHECK] Checking simulated account permissions...", 450],
+      ["[SCAN ] Enumerating demo directories...", 520],
+      ["[SCAN ] Checking mock configuration files...", 520],
+      ["[DATA ] Preparing sample API-key records...", 600],
+      ["[DATA ] Preparing fake login/password records...", 620],
+      ["[DATA ] Preparing mock cookie/session records...", 580],
+      ["[DATA ] Preparing demo database index...", 620],
+      ["[PACK ] Packing simulated files into vault...", 650],
+      ["[VERIFY] Verifying demo manifest and checksums...", 550],
+      ["[DONE ] 6 fake text files prepared. No real data accessed.", 450]
+    ];
+    for (let i = 0; i < stages.length; i++) {
+      await sleep(stages[i][1]);
+      const pct = Math.round(((i + 1) / stages.length) * 100);
+      print(stages[i][0], i === stages.length - 1 ? "success" : "");
+      const bars = Math.round(pct / 10);
+      print("         [" + "#".repeat(bars) + ".".repeat(10 - bars) + "] " + pct + "%");
+    }
+    print("");
+    print("[INFO] To wyłącznie animacja — nie czyta plików urządzenia.", "warning");
+    print("[INFO] Nie pobiera cookies ani danych kont i niczego nie wysyła.", "warning");
+    await sleep(350);
+    showDirectory();
+  }
+
   function showDirectory() {
     step = "command";
     print("");
@@ -161,7 +193,7 @@
         setPrompt("Hasło:");
         return;
       }
-      showDirectory();
+      runFakeDataCollection();
       return;
     }
 
